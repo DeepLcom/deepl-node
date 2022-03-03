@@ -1,0 +1,9 @@
+{
+  "name": "deepl-node-example-esmodule",
+  "description": "Example for deepl-node using ES Modules",
+  "type": "module",
+  "dependencies": {
+    "deepl-node": "file:../.."
+  },
+  "main": "index.js"
+}

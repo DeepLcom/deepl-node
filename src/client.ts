@@ -1,0 +1,233 @@
+// Copyright 2022 DeepL SE (https://www.deepl.com)
+// Use of this source code is governed by an MIT
+// license that can be found in the LICENSE file.
+
+import {ConnectionError} from "./errors";
+import {logDebug, logInfo, timeout} from "./utils";
+
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
+import {URLSearchParams} from "url";
+import FormData from "form-data";
+import {IncomingMessage} from "http";
+
+type HttpMethod = 'GET' | 'DELETE' | 'POST';
+
+/**
+ * Options for sending HTTP requests.
+ * @private
+ */
+interface SendRequestOptions {
+    /**
+     * Fields to include in message body (or params). Values must be either strings, or arrays of
+     * strings (for repeated parameters).
+     */
+    data?: URLSearchParams;
+    /** Extra HTTP headers to include in request, in addition to headers defined in constructor. */
+    headers?: Record<string, string>;
+    /** Buffer containing file data to include. */
+    fileBuffer?: Buffer;
+    /** Filename of file to include. */
+    filename?: string;
+}
+
+/**
+ * Internal class implementing exponential-backoff timer.
+ * @private
+ */
+class BackoffTimer {
+    private backoffInitial = 1.0;
+    private backoffMax = 120.0;
+    private backoffJitter = 0.23;
+    private backoffMultiplier = 1.6;
+    private numRetries: number;
+    private backoff: number;
+    private deadline: number;
+
+    constructor() {
+        this.numRetries = 0;
+        this.backoff = this.backoffInitial * 1000.0;
+        this.deadline = Date.now() + this.backoff;
+    }
+
+    getNumRetries(): number {
+        return this.numRetries;
+    }
+
+    getTimeout(): number {
+        return this.getTimeUntilDeadline();
+    }
+
+    getTimeUntilDeadline(): number {
+        return Math.max(this.deadline - Date.now(), 0.0);
+    }
+
+    async sleepUntilDeadline() {
+        await timeout(this.getTimeUntilDeadline());
+
+        // Apply multiplier to current backoff time
+        this.backoff = Math.min(this.backoff * this.backoffMultiplier, this.backoffMax * 1000.0);
+
+        // Get deadline by applying jitter as a proportion of backoff:
+        // if jitter is 0.1, then multiply backoff by random value in [0.9, 1.1]
+        this.deadline = Date.now() + this.backoff * (1 + this.backoffJitter * (2 * Math.random() - 1));
+        this.numRetries++;
+    }
+}
+
+/**
+ * Internal class implementing HTTP requests.
+ * @private
+ */
+export class HttpClient {
+    private readonly serverUrl: string;
+    private readonly headers: Record<string, string>;
+    private readonly minTimeout: number;
+    private readonly maxRetries: number;
+
+    constructor(serverUrl: string, headers: Record<string, string>, maxRetries: number, minTimeout: number) {
+        this.serverUrl = serverUrl;
+        this.headers = headers;
+        this.maxRetries = maxRetries;
+        this.minTimeout = minTimeout;
+    }
+
+    prepareRequest(
+        method: HttpMethod,
+        url: string,
+        timeout: number,
+        responseAsStream: boolean,
+        options: SendRequestOptions): AxiosRequestConfig {
+        const headers = Object.assign({}, this.headers, options.headers);
+
+        const axiosRequestConfig: AxiosRequestConfig = {
+            url,
+            method,
+            baseURL: this.serverUrl,
+            headers,
+            responseType: responseAsStream ? "stream" : "text",
+            timeout,
+            validateStatus: null  // do not throw errors for any status codes
+        };
+
+        if (options.fileBuffer) {
+            const form = new FormData();
+            form.append('file', options.fileBuffer, {filename: options.filename});
+            if (options.data) {
+                for (const [key, value] of options.data.entries()) {
+                    form.append(key, value);
+                }
+            }
+            axiosRequestConfig.data = form;
+            Object.assign(axiosRequestConfig.headers, form.getHeaders());
+        } else if (options.data) {
+            if (method === "GET") {
+                axiosRequestConfig.params = options.data;
+            } else {
+                axiosRequestConfig.data = options.data;
+            }
+        }
+        return axiosRequestConfig;
+    }
+
+    /**
+     * Makes API request retrying if necessary, and returns (as Promise) response.
+     * @param method HTTP method, for example "GET"
+     * @param url Path to endpoint, excluding base server URL.
+     * @param options Additional options controlling request.
+     * @param responseAsStream Set to true if the return type is IncomingMessage.
+     * @return Fulfills with status code and response (as text or stream).
+     */
+    async sendRequestWithBackoff<TContent extends string | IncomingMessage>(
+        method: HttpMethod,
+        url: string,
+        options?: SendRequestOptions,
+        responseAsStream = false
+    ): Promise<{ statusCode: number, content: TContent }> {
+        options = options === undefined ? {} : options;
+        logInfo(`Request to DeepL API ${method} ${url}`);
+        logDebug(`Request details: ${options.data}`);
+        const backoff = new BackoffTimer();
+        let response, error;
+        while (backoff.getNumRetries() <= this.maxRetries) {
+            const timeout = Math.max(this.minTimeout, backoff.getTimeout());
+            const axiosRequestConfig = this.prepareRequest(method, url, timeout, responseAsStream, options);
+            try {
+                response = await HttpClient.sendAxiosRequest<TContent>(axiosRequestConfig);
+                error = undefined;
+            } catch (e) {
+                response = undefined;
+                error = e as ConnectionError;
+            }
+
+            if (!HttpClient.shouldRetry(response?.statusCode, error) ||
+                backoff.getNumRetries() + 1 >= this.maxRetries) {
+                break;
+            }
+
+            if (error !== undefined) {
+                logDebug(`Encountered a retryable-error: ${error.message}`);
+            }
+
+            logInfo(`Starting retry ${backoff.getNumRetries() + 1} for request ${method}` +
+                ` ${url} after sleeping for ${backoff.getTimeUntilDeadline()} seconds.`);
+            await backoff.sleepUntilDeadline();
+        }
+
+        if (response !== undefined) {
+            const {statusCode, content} = response;
+            logInfo(`DeepL API response ${method} ${url} ${statusCode}`);
+            if (!responseAsStream) {
+                logDebug("Response details:", {content: content});
+            }
+            return response;
+        } else {
+            throw error;
+        }
+    }
+
+    /**
+     * Performs given HTTP request and returns status code and response content (text or stream).
+     * @param axiosRequestConfig
+     * @private
+     */
+    private static async sendAxiosRequest<TContent extends string | IncomingMessage>(
+        axiosRequestConfig: AxiosRequestConfig
+    ): Promise<{ statusCode: number, content: TContent }> {
+        try {
+            const response = await axios.request(axiosRequestConfig);
+
+            if (axiosRequestConfig.responseType === "text") {
+                // Workaround for axios-bug: https://github.com/axios/axios/issues/907
+                if (typeof (response.data) === "object") {
+                    response.data = JSON.stringify(response.data);
+                }
+            }
+            return {statusCode: response.status, content: response.data};
+        } catch (axios_error_raw) {
+            const axiosError = axios_error_raw as AxiosError;
+            const message: string = axiosError.message || "";
+
+            const error = new ConnectionError(`Connection failure: ${message}`);
+            error.error = axiosError;
+            if (axiosError.code === "ETIMEDOUT") {
+                error.shouldRetry = true;
+            } else if (axiosError.code === "ECONNABORTED") {
+                error.shouldRetry = true;
+            } else {
+                logDebug("Unrecognized axios error", axiosError);
+                error.shouldRetry = false;
+            }
+            throw error;
+        }
+    }
+
+    private static shouldRetry(statusCode?: number,
+                               error?: ConnectionError): boolean {
+        if (statusCode === undefined) {
+            return (error as ConnectionError).shouldRetry;
+        }
+
+        // Retry on Too-Many-Requests error and internal errors except Service-Unavailable errors
+        return statusCode === 429 || (statusCode >= 500 && statusCode !== 503);
+    }
+}

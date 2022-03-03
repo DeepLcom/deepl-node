@@ -1,0 +1,9 @@
+{
+  "name": "deepl-node-example-commonjs",
+  "description": "Example for deepl-node using CommonJS",
+  "type": "commonjs",
+  "dependencies": {
+    "deepl-node": "file:../.."
+  },
+  "main": "index.js"
+}
