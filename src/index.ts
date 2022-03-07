@@ -408,29 +408,34 @@ async function checkStatusCode(
         message = ', ' + content;
     }
 
-    if (statusCode === 403)
-        throw new AuthorizationError(`Authorization failure, check auth_key${message}`);
-    else if (statusCode === 456)
-        throw new QuotaExceededError(`Quota for this billing period has been exceeded${message}`);
-    else if (statusCode === 404) {
-        if (usingGlossary) throw new GlossaryNotFoundError(`Glossary not found${message}`);
-        throw new DeepLError(`Not found, check server_url${message}`);
-    } else if (statusCode === 400) throw new DeepLError(`Bad request${message}`);
-    else if (statusCode === 429)
-        throw new TooManyRequestsError(
-            `Too many requests, DeepL servers are currently experiencing high load${message}`,
-        );
-    else if (statusCode === 503) {
-        if (inDocumentDownload) {
-            throw new DocumentNotReadyError(`Document not ready${message}`);
-        } else {
-            throw new DeepLError(`Service unavailable${message}`);
+    switch (statusCode) {
+        case 403:
+            throw new AuthorizationError(`Authorization failure, check auth_key${message}`);
+        case 456:
+            throw new QuotaExceededError(
+                `Quota for this billing period has been exceeded${message}`,
+            );
+        case 404:
+            if (usingGlossary) throw new GlossaryNotFoundError(`Glossary not found${message}`);
+            throw new DeepLError(`Not found, check server_url${message}`);
+        case 400:
+            throw new DeepLError(`Bad request${message}`);
+        case 429:
+            throw new TooManyRequestsError(
+                `Too many requests, DeepL servers are currently experiencing high load${message}`,
+            );
+        case 503:
+            if (inDocumentDownload) {
+                throw new DocumentNotReadyError(`Document not ready${message}`);
+            } else {
+                throw new DeepLError(`Service unavailable${message}`);
+            }
+        default: {
+            const statusName = STATUS_CODES[statusCode] || 'Unknown';
+            throw new DeepLError(
+                `Unexpected status code: ${statusCode} ${statusName}${message}, content: ${content}`,
+            );
         }
-    } else {
-        const statusName = STATUS_CODES[statusCode] || 'Unknown';
-        throw new DeepLError(
-            `Unexpected status code: ${statusCode} ${statusName}${message}, content: ${content}`,
-        );
     }
 }
 
