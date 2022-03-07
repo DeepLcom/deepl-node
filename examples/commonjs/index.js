@@ -4,8 +4,8 @@
 
 const deepl = require('deepl-node');
 
-const authKey = process.env["DEEPL_AUTH_KEY"]
-const serverUrl = process.env["DEEPL_SERVER_URL"]
+const authKey = process.env['DEEPL_AUTH_KEY']
+const serverUrl = process.env['DEEPL_SERVER_URL']
 const translator = new deepl.Translator(authKey, {serverUrl: serverUrl});
 
 translator.getUsage()

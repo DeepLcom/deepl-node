@@ -32,9 +32,9 @@ export interface TranslatorOptions {
     minTimeout?: number;
 }
 
-export type Formality = "less" | "more" | "default";
-export type SentenceSplittingMode = "off" | "on" | "nonewlines" | "default";
-export type TagHandlingMode = "xml";
+export type Formality = 'less' | 'more' | 'default';
+export type SentenceSplittingMode = 'off' | 'on' | 'nonewlines' | 'default';
+export type TagHandlingMode = 'xml';
 export type GlossaryId = string;
 export type TagList = string | string[];
 
@@ -65,11 +65,11 @@ export interface GlossaryInfo {
 export interface TranslateTextOptions {
     /**
      * Specifies how input translation text should be split into sentences.
-     * - "on": Input translation text will be split into sentences using both newlines and
+     * - 'on': Input translation text will be split into sentences using both newlines and
      *   punctuation, this is the default behaviour.
-     * - "off": Input translation text will not be split into sentences. This is advisable for
+     * - 'off': Input translation text will not be split into sentences. This is advisable for
      *   applications where each input translation text is only one sentence.
-     * - "nonewlines": Input translation text will be split into sentences using only punctuation
+     * - 'nonewlines': Input translation text will be split into sentences using only punctuation
      *   but not newlines.
      */
     splitSentences?: SentenceSplittingMode;
@@ -84,7 +84,7 @@ export interface TranslateTextOptions {
     /** Specifies the ID of a glossary to use with translation. */
     glossary?: GlossaryId | GlossaryInfo;
 
-    /** Type of tags to parse before translation, only "xml" is currently available. */
+    /** Type of tags to parse before translation, only 'xml' is currently available. */
     tagHandling?: TagHandlingMode;
 
     /** Set to false to disable automatic tag detection, default is true. */
@@ -120,22 +120,22 @@ export interface DocumentTranslateOptions {
  * API accept case-insensitive language codes.
  */
 type CommonLanguageCode =
-    | "bg" | "cs" | "da" | "de" | "el" | "es" | "et" | "fi" | "fr" | "hu" | "it"
-    | "ja" | "lt" | "lv" | "nl" | "pl" | "ro" | "ru" | "sk" | "sl" | "sv" | "zh";
+    | 'bg' | 'cs' | 'da' | 'de' | 'el' | 'es' | 'et' | 'fi' | 'fr' | 'hu' | 'it'
+    | 'ja' | 'lt' | 'lv' | 'nl' | 'pl' | 'ro' | 'ru' | 'sk' | 'sl' | 'sv' | 'zh';
 
 /**
  * Language codes that may be used as a source language.
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type SourceLanguageCode = CommonLanguageCode | "en" | "pt";
+export type SourceLanguageCode = CommonLanguageCode | 'en' | 'pt';
 
 /**
  * Language codes that may be used as a target language.
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type TargetLanguageCode = CommonLanguageCode | "en-GB" | "en-US" | "pt-BR" | "pt-PT";
+export type TargetLanguageCode = CommonLanguageCode | 'en-GB' | 'en-US' | 'pt-BR' | 'pt-PT';
 
 /**
  * All language codes, including source-only and target-only language codes.
@@ -149,13 +149,13 @@ export type LanguageCode = SourceLanguageCode | TargetLanguageCode;
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type SourceGlossaryLanguageCode = "de" | "en" | "es" | "fr";
+export type SourceGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr';
 
 /**
  * Language codes that may be used as a target language for glossaries.
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type TargetGlossaryLanguageCode = "de" | "en" | "es" | "fr";
+export type TargetGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr';
 
 

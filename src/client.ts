@@ -2,13 +2,13 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {ConnectionError} from "./errors";
-import {logDebug, logInfo, timeout} from "./utils";
+import {ConnectionError} from './errors';
+import {logDebug, logInfo, timeout} from './utils';
 
-import axios, {AxiosError, AxiosRequestConfig} from "axios";
-import {URLSearchParams} from "url";
-import FormData from "form-data";
-import {IncomingMessage} from "http";
+import axios, {AxiosError, AxiosRequestConfig} from 'axios';
+import {URLSearchParams} from 'url';
+import FormData from 'form-data';
+import {IncomingMessage} from 'http';
 
 type HttpMethod = 'GET' | 'DELETE' | 'POST';
 
@@ -104,7 +104,7 @@ export class HttpClient {
             method,
             baseURL: this.serverUrl,
             headers,
-            responseType: responseAsStream ? "stream" : "text",
+            responseType: responseAsStream ? 'stream' : 'text',
             timeout,
             validateStatus: null  // do not throw errors for any status codes
         };
@@ -120,7 +120,7 @@ export class HttpClient {
             axiosRequestConfig.data = form;
             Object.assign(axiosRequestConfig.headers, form.getHeaders());
         } else if (options.data) {
-            if (method === "GET") {
+            if (method === 'GET') {
                 axiosRequestConfig.params = options.data;
             } else {
                 axiosRequestConfig.data = options.data;
@@ -131,7 +131,7 @@ export class HttpClient {
 
     /**
      * Makes API request retrying if necessary, and returns (as Promise) response.
-     * @param method HTTP method, for example "GET"
+     * @param method HTTP method, for example 'GET'
      * @param url Path to endpoint, excluding base server URL.
      * @param options Additional options controlling request.
      * @param responseAsStream Set to true if the return type is IncomingMessage.
@@ -177,7 +177,7 @@ export class HttpClient {
             const {statusCode, content} = response;
             logInfo(`DeepL API response ${method} ${url} ${statusCode}`);
             if (!responseAsStream) {
-                logDebug("Response details:", {content: content});
+                logDebug('Response details:', {content: content});
             }
             return response;
         } else {
@@ -196,25 +196,25 @@ export class HttpClient {
         try {
             const response = await axios.request(axiosRequestConfig);
 
-            if (axiosRequestConfig.responseType === "text") {
+            if (axiosRequestConfig.responseType === 'text') {
                 // Workaround for axios-bug: https://github.com/axios/axios/issues/907
-                if (typeof (response.data) === "object") {
+                if (typeof (response.data) === 'object') {
                     response.data = JSON.stringify(response.data);
                 }
             }
             return {statusCode: response.status, content: response.data};
         } catch (axios_error_raw) {
             const axiosError = axios_error_raw as AxiosError;
-            const message: string = axiosError.message || "";
+            const message: string = axiosError.message || '';
 
             const error = new ConnectionError(`Connection failure: ${message}`);
             error.error = axiosError;
-            if (axiosError.code === "ETIMEDOUT") {
+            if (axiosError.code === 'ETIMEDOUT') {
                 error.shouldRetry = true;
-            } else if (axiosError.code === "ECONNABORTED") {
+            } else if (axiosError.code === 'ECONNABORTED') {
                 error.shouldRetry = true;
             } else {
-                logDebug("Unrecognized axios error", axiosError);
+                logDebug('Unrecognized axios error', axiosError);
                 error.shouldRetry = false;
             }
             throw error;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {HttpClient} from "./client";
+import {HttpClient} from './client';
 import {
     AuthorizationError,
     DeepLError,
@@ -11,8 +11,8 @@ import {
     GlossaryNotFoundError,
     QuotaExceededError,
     TooManyRequestsError,
-} from "./errors";
-import {GlossaryEntries} from "./glossaryEntries";
+} from './errors';
+import {GlossaryEntries} from './glossaryEntries';
 import {
     parseDocumentHandle,
     parseDocumentStatus,
@@ -22,7 +22,7 @@ import {
     parseLanguageArray,
     parseTextResultArray,
     parseUsage,
-} from "./parsing";
+} from './parsing';
 import {
     DocumentTranslateOptions,
     Formality,
@@ -37,18 +37,18 @@ import {
     TargetLanguageCode,
     TranslateTextOptions,
     TranslatorOptions,
-} from "./types";
-import {isString, logInfo, streamToBuffer, streamToString, timeout} from "./utils";
+} from './types';
+import {isString, logInfo, streamToBuffer, streamToString, timeout} from './utils';
 
-import * as fs from "fs";
-import {IncomingMessage, STATUS_CODES} from "http";
-import path from "path";
-import {URLSearchParams} from "url";
-import * as util from "util";
+import * as fs from 'fs';
+import {IncomingMessage, STATUS_CODES} from 'http';
+import path from 'path';
+import {URLSearchParams} from 'url';
+import * as util from 'util';
 
-export * from "./errors";
-export * from "./glossaryEntries"
-export * from "./types";
+export * from './errors';
+export * from './glossaryEntries'
+export * from './types';
 
 /**
  * Stores the count and limit for one usage type.
@@ -95,8 +95,8 @@ export interface Language {
     /** Name of the language in English. */
     readonly name: string;
     /**
-     * Language code according to ISO 639-1, for example "en". Some target languages also include
-     * the regional variant according to ISO 3166-1, for example "en-US".
+     * Language code according to ISO 639-1, for example 'en'. Some target languages also include
+     * the regional variant according to ISO 3166-1, for example 'en-US'.
      */
     readonly code: LanguageCode;
     /**
@@ -135,7 +135,7 @@ export interface DocumentHandle {
     readonly documentKey: string;
 }
 
-export type DocumentStatusCode = "queued" | "translating" | "error" | "done";
+export type DocumentStatusCode = 'queued' | 'translating' | 'error' | 'done';
 
 /**
  * Status of a document translation request.
@@ -173,29 +173,29 @@ export interface DocumentStatus {
 /**
  * Changes the upper- and lower-casing of the given language code to match ISO 639-1 with an
  * optional regional code from ISO 3166-1.
- * For example, input "EN-US" returns "en-US".
+ * For example, input 'EN-US' returns 'en-US'.
  * @param langCode String containing language code to standardize.
  * @return Standardized language code.
  */
 export function standardizeLanguageCode(langCode: string): LanguageCode {
     if (!isString(langCode) || langCode.length === 0) {
-        throw new DeepLError("langCode must be a non-empty string");
+        throw new DeepLError('langCode must be a non-empty string');
     }
-    const [lang, region] = langCode.split("-", 2);
+    const [lang, region] = langCode.split('-', 2);
     return ((region === undefined) ? lang.toLowerCase() : (`${lang.toLowerCase()}-${region.toUpperCase()}`)) as LanguageCode;
 }
 
 /**
- * Removes the regional variant from a language, for example inputs "en" and "en-US" both return
- * "en".
+ * Removes the regional variant from a language, for example inputs 'en' and 'en-US' both return
+ * 'en'.
  * @param langCode String containing language code to convert.
  * @return Language code with regional variant removed.
  */
 export function nonRegionalLanguageCode(langCode: string): LanguageCode {
     if (!isString(langCode) || langCode.length === 0) {
-        throw new DeepLError("langCode must be a non-empty string");
+        throw new DeepLError('langCode must be a non-empty string');
     }
-    return langCode.split("-", 2)[0].toLowerCase() as LanguageCode;
+    return langCode.split('-', 2)[0].toLowerCase() as LanguageCode;
 }
 
 /**
@@ -220,7 +220,7 @@ export interface TextResult {
  * @return True if the key is associated with a free account, otherwise false.
  */
 export function isFreeAccountAuthKey(authKey: string): boolean {
-    return authKey.endsWith(":fx");
+    return authKey.endsWith(':fx');
 }
 
 /**
@@ -236,20 +236,20 @@ export class Translator {
      */
     constructor(authKey: string, options?: TranslatorOptions) {
         if (!isString(authKey) || authKey.length === 0) {
-            throw new DeepLError("authKey must be a non-empty string");
+            throw new DeepLError('authKey must be a non-empty string');
         }
 
         let serverUrl;
         if (options?.serverUrl !== undefined) {
             serverUrl = options.serverUrl
         } else if (isFreeAccountAuthKey(authKey)) {
-            serverUrl = "https://api-free.deepl.com";
+            serverUrl = 'https://api-free.deepl.com';
         } else {
-            serverUrl = "https://api.deepl.com";
+            serverUrl = 'https://api.deepl.com';
         }
         const headers = {
-            "Authorization": `DeepL-Auth-Key ${authKey}`,
-            "User-Agent": "deepl-node/0.1.1",
+            'Authorization': `DeepL-Auth-Key ${authKey}`,
+            'User-Agent': 'deepl-node/0.1.1',
             ...(options?.headers ?? {})
         };
 
@@ -266,7 +266,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("POST", "/v2/usage");
+        } = await this.httpClient.sendRequestWithBackoff<string>('POST', '/v2/usage');
         await checkStatusCode(statusCode, content);
         return parseUsage(content);
     }
@@ -279,7 +279,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", "/v2/languages");
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', '/v2/languages');
         await checkStatusCode(statusCode, content);
         return parseLanguageArray(content);
     }
@@ -289,11 +289,11 @@ export class Translator {
      * @return Fulfills with array of Language objects containing available target languages.
      */
     async getTargetLanguages(): Promise<readonly Language[]> {
-        const data = new URLSearchParams({"type": "target"})
+        const data = new URLSearchParams({'type': 'target'})
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", "/v2/languages", {
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', '/v2/languages', {
             data
         });
         await checkStatusCode(statusCode, content);
@@ -308,7 +308,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", "/v2/glossary-language-pairs");
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', '/v2/glossary-language-pairs');
         await checkStatusCode(statusCode, content);
         return parseGlossaryLanguagePairArray(content);
     }
@@ -358,7 +358,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("POST", "/v2/translate", {data});
+        } = await this.httpClient.sendRequestWithBackoff<string>('POST', '/v2/translate', {data});
         await checkStatusCode(statusCode, content);
         const textResults = parseTextResultArray(content);
         return singular ? textResults[0] : textResults;
@@ -417,7 +417,7 @@ export class Translator {
         } catch (errorUnknown: unknown) {
             if (onError) await onError();
             const error = (errorUnknown instanceof Error) ? errorUnknown : undefined;
-            const message = "Error occurred while translating document: " + (error?.message ? error?.message : errorUnknown);
+            const message = 'Error occurred while translating document: ' + (error?.message ? error?.message : errorUnknown);
             throw new DocumentTranslationError(message, documentHandle, error);
         }
     }
@@ -440,7 +440,7 @@ export class Translator {
             return this.internalUploadDocument(buffer, sourceLang, targetLang, path.basename(inputFile), options);
         } else {
             if (options?.filename === undefined) {
-                throw new DeepLError("options.filename must be specified unless using input file path");
+                throw new DeepLError('options.filename must be specified unless using input file path');
             }
 
             if (inputFile instanceof fs.ReadStream) {
@@ -467,7 +467,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", `/v2/document/${handle.documentId}`, {data});
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', `/v2/document/${handle.documentId}`, {data});
         await checkStatusCode(statusCode, content, false, true);
         return parseDocumentStatus(content);
     }
@@ -491,7 +491,7 @@ export class Translator {
         } else if (outputFile instanceof fs.WriteStream) {
             return this.internalDownloadDocument(handle, outputFile);
         } else { // FileHandle
-            const dummyFilePath = "";
+            const dummyFilePath = '';
             const outputStream = fs.createWriteStream(dummyFilePath, {fd: outputFile.fd});
             await this.internalDownloadDocument(handle, outputStream);
             try {
@@ -535,25 +535,25 @@ export class Translator {
         targetLang = nonRegionalLanguageCode(targetLang);
 
         if (!isString(name) || name.length === 0) {
-            throw new DeepLError("glossary name must be a non-empty string")
+            throw new DeepLError('glossary name must be a non-empty string')
         } else if (Object.keys(entries).length === 0) {
-            throw new DeepLError("glossary entries must not be empty");
+            throw new DeepLError('glossary entries must not be empty');
         }
 
         const tsv = entries.toTsv();
 
         const data = new URLSearchParams({
             name: name,
-            "source_lang": sourceLang,
-            "target_lang": targetLang,
-            entries_format: "tsv",
+            'source_lang': sourceLang,
+            'target_lang': targetLang,
+            entries_format: 'tsv',
             entries: tsv
         });
 
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("POST", "/v2/glossaries", {data});
+        } = await this.httpClient.sendRequestWithBackoff<string>('POST', '/v2/glossaries', {data});
         await checkStatusCode(statusCode, content, true);
         return parseGlossaryInfo(content);
     }
@@ -567,7 +567,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", `/v2/glossaries/${glossaryId}`);
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', `/v2/glossaries/${glossaryId}`);
         await checkStatusCode(statusCode, content, true);
         return parseGlossaryInfo(content);
     }
@@ -580,7 +580,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", '/v2/glossaries');
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', '/v2/glossaries');
         await checkStatusCode(statusCode, content, true);
         return parseGlossaryInfoList(content);
     }
@@ -596,7 +596,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("GET", `/v2/glossaries/${glossary}/entries`);
+        } = await this.httpClient.sendRequestWithBackoff<string>('GET', `/v2/glossaries/${glossary}/entries`);
         await checkStatusCode(statusCode, content, true);
         return new GlossaryEntries({tsv: content});
     }
@@ -611,7 +611,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("DELETE", `/v2/glossaries/${glossary}`);
+        } = await this.httpClient.sendRequestWithBackoff<string>('DELETE', `/v2/glossaries/${glossary}`);
         await checkStatusCode(statusCode, content, true);
     }
 
@@ -628,7 +628,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<string>("POST", `/v2/document`, {
+        } = await this.httpClient.sendRequestWithBackoff<string>('POST', '/v2/document', {
             data,
             fileBuffer,
             filename
@@ -646,7 +646,7 @@ export class Translator {
         const {
             statusCode,
             content
-        } = await this.httpClient.sendRequestWithBackoff<IncomingMessage>("GET", `/v2/document/${handle.documentId}/result`, {data}, true);
+        } = await this.httpClient.sendRequestWithBackoff<IncomingMessage>('GET', `/v2/document/${handle.documentId}/result`, {data}, true);
         await checkStatusCode(statusCode, content, false, true);
 
         content.pipe(outputStream);
@@ -673,7 +673,7 @@ function joinTagList(tagList: TagList): string {
     if (isString(tagList)) {
         return tagList;
     } else {
-        return tagList.join(",");
+        return tagList.join(',');
     }
 }
 
@@ -691,32 +691,32 @@ function buildURLSearchParams(sourceLang: LanguageCode | null,
     }
 
     if (glossary !== undefined && sourceLang === null) {
-        throw new DeepLError("sourceLang is required if using a glossary");
+        throw new DeepLError('sourceLang is required if using a glossary');
     }
 
     if (glossary !== undefined && !isString(glossary)) {
         if (nonRegionalLanguageCode(targetLang) !== glossary.targetLang ||
             sourceLang !== glossary.sourceLang) {
-            throw new DeepLError("sourceLang and targetLang must match glossary");
+            throw new DeepLError('sourceLang and targetLang must match glossary');
         }
     }
 
-    if (targetLang === "en") {
-        throw new DeepLError('targetLang="en" is deprecated, please use "en-GB" or "en-US" instead.');
-    } else if (targetLang === "pt") {
-        throw new DeepLError('targetLang="pt" is deprecated, please use "pt-PT" or "pt-BR" instead.');
+    if (targetLang === 'en') {
+        throw new DeepLError('targetLang=\'en\' is deprecated, please use \'en-GB\' or \'en-US\' instead.');
+    } else if (targetLang === 'pt') {
+        throw new DeepLError('targetLang=\'pt\' is deprecated, please use \'pt-PT\' or \'pt-BR\' instead.');
     }
 
     const searchParams = new URLSearchParams({
-        "target_lang": targetLang
+        'target_lang': targetLang
     });
     if (sourceLang !== null) {
-        searchParams.append("source_lang", sourceLang)
+        searchParams.append('source_lang', sourceLang)
     }
     if (formality !== undefined) {
         const formalityStr = String(formality).toLowerCase();
-        if (formalityStr !== "default") {
-            searchParams.append("formality", formalityStr);
+        if (formalityStr !== 'default') {
+            searchParams.append('formality', formalityStr);
         }
     }
     if (glossary !== undefined) {
@@ -726,7 +726,7 @@ function buildURLSearchParams(sourceLang: LanguageCode | null,
             }
             glossary = glossary.glossaryId;
         }
-        searchParams.append("glossary_id", glossary);
+        searchParams.append('glossary_id', glossary);
     }
     return searchParams;
 }
@@ -743,16 +743,16 @@ function appendTextsAndReturnIsSingular(data: URLSearchParams, texts: string | s
     const singular = !Array.isArray(texts);
     if (singular) {
         if (!isString(texts) || texts.length === 0) {
-            throw new DeepLError("texts parameter must be a non-empty string or array of non-empty strings");
+            throw new DeepLError('texts parameter must be a non-empty string or array of non-empty strings');
         }
-        data.append("text", texts);
+        data.append('text', texts);
     } else {
         for (const textsKey in texts) {
             const text = texts[textsKey];
             if (!isString(text) || text.length === 0) {
-                throw new DeepLError("texts parameter must not be a non-empty string or array of non-empty strings");
+                throw new DeepLError('texts parameter must not be a non-empty string or array of non-empty strings');
             }
-            data.append("text", text);
+            data.append('text', text);
         }
     }
     return singular;
@@ -772,31 +772,31 @@ function validateAndAppendTextOptions(data: URLSearchParams, options?: Translate
     }
     if (options.splitSentences) {
         options.splitSentences = options.splitSentences.toLowerCase() as SentenceSplittingMode;
-        if (options.splitSentences === "on" || options.splitSentences === "default") {
-            data.append("split_sentences", "1");
-        } else if (options.splitSentences === "off") {
-            data.append("split_sentences", "0");
+        if (options.splitSentences === 'on' || options.splitSentences === 'default') {
+            data.append('split_sentences', '1');
+        } else if (options.splitSentences === 'off') {
+            data.append('split_sentences', '0');
         } else {
-            data.append("split_sentences", options.splitSentences);
+            data.append('split_sentences', options.splitSentences);
         }
     }
     if (options.preserveFormatting) {
-        data.append("preserve_formatting", "1");
+        data.append('preserve_formatting', '1');
     }
     if (options.tagHandling) {
-        data.append("tag_handling", options.tagHandling);
+        data.append('tag_handling', options.tagHandling);
     }
     if (options.outlineDetection === false) {
-        data.append("outline_detection", "0");
+        data.append('outline_detection', '0');
     }
     if (options.nonSplittingTags) {
-        data.append("non_splitting_tags", joinTagList(options.nonSplittingTags));
+        data.append('non_splitting_tags', joinTagList(options.nonSplittingTags));
     }
     if (options.splittingTags) {
-        data.append("splitting_tags", joinTagList(options.splittingTags));
+        data.append('splitting_tags', joinTagList(options.splittingTags));
     }
     if (options.ignoreTags) {
-        data.append("ignore_tags", joinTagList(options.ignoreTags));
+        data.append('ignore_tags', joinTagList(options.ignoreTags));
     }
 }
 
@@ -817,7 +817,7 @@ async function checkStatusCode(statusCode: number, content: string | IncomingMes
         }
     }
 
-    let message = "";
+    let message = '';
     try {
         const jsonObj = JSON.parse(content)
         if (jsonObj.message !== undefined) {
@@ -828,7 +828,7 @@ async function checkStatusCode(statusCode: number, content: string | IncomingMes
         }
     } catch (error) {
         // JSON parsing errors are ignored, and we fall back to the raw content
-        message = ", " + content;
+        message = ', ' + content;
     }
 
     if (statusCode === 403)
@@ -850,7 +850,7 @@ async function checkStatusCode(statusCode: number, content: string | IncomingMes
             throw new DeepLError(`Service unavailable${message}`);
         }
     } else {
-        const statusName = STATUS_CODES[statusCode] || "Unknown";
+        const statusName = STATUS_CODES[statusCode] || 'Unknown';
         throw new DeepLError(`Unexpected status code: ${statusCode} ${statusName}${message}, content: ${content}`);
     }
 }

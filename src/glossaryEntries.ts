@@ -2,8 +2,8 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {DeepLError} from "./errors";
-import {isString} from "./utils";
+import {DeepLError} from './errors';
+import {isString} from './utils';
 
 /**
  * Stores the entries of a glossary.
@@ -17,7 +17,7 @@ export class GlossaryEntries {
      * @param options Controls how to create glossary entries. If options is unspecified, no
      *     entries will be created.
      * @param options.entries Object containing fields storing entries, for example:
-     *     `{"Hello": "Hallo"}`.
+     *     `{'Hello': 'Hallo'}`.
      * @param options.tsv String containing TSV to parse. Each line should contain a source and
      *     target term separated by a tab. Empty lines are ignored.
      * @return GlossaryEntries object containing parsed entries.
@@ -28,7 +28,7 @@ export class GlossaryEntries {
 
         if (options?.entries !== undefined) {
             if (options?.tsv !== undefined) {
-                throw new DeepLError("options.entries and options.tsv are mutually exclusive");
+                throw new DeepLError('options.entries and options.tsv are mutually exclusive');
             }
             Object.assign(this.implEntries, options.entries);
         }
@@ -39,7 +39,7 @@ export class GlossaryEntries {
                     continue;
                 }
 
-                const [source, target, extra] = entry.split("\t", 3);
+                const [source, target, extra] = entry.split('\t', 3);
                 if (target === undefined) {
                     throw new DeepLError(`Missing tab character in entry '${entry}'`);
                 } else if (extra !== undefined) {
@@ -80,7 +80,7 @@ export class GlossaryEntries {
             GlossaryEntries.validateGlossaryTerm(source);
             GlossaryEntries.validateGlossaryTerm(target);
             return `${source}\t${target}`;
-        }).join("\n");
+        }).join('\n');
     }
 
     /**

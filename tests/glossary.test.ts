@@ -2,14 +2,14 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import * as deepl from "deepl-node";
+import * as deepl from 'deepl-node';
 
 import fs from 'fs';
 import {makeTranslator, tempFiles, withRealServer,} from './core';
 import {v4 as randomUUID} from 'uuid';
 
-const invalidGlossaryId = "invalid_glossary_id";
-const nonExistentGlossaryId = "96ab91fd-e715-41a1-adeb-5d701f84a483";
+const invalidGlossaryId = 'invalid_glossary_id';
+const nonExistentGlossaryId = '96ab91fd-e715-41a1-adeb-5d701f84a483';
 
 function getGlossaryName(): string {
     return `deepl-node-test-glossary: ${expect.getState().currentTestName} ${randomUUID()}`;
@@ -24,7 +24,7 @@ interface CreateManagedGlossaryArgs {
 }
 
 async function createManagedGlossary(translator: deepl.Translator, args: CreateManagedGlossaryArgs): Promise<[deepl.GlossaryInfo, () => void]> {
-    args.glossaryNameSuffix = args?.glossaryNameSuffix || "";
+    args.glossaryNameSuffix = args?.glossaryNameSuffix || '';
     args.name = args?.name || (getGlossaryName() + args.glossaryNameSuffix);
     const glossary = await translator.createGlossary(args.name, args.sourceLang, args.targetLang, args.entries);
 
@@ -43,9 +43,9 @@ describe('translate using glossaries', () => {
     it('should create glossaries', async () => {
         const translator = makeTranslator();
         const glossaryName = getGlossaryName();
-        const sourceLang = "en";
-        const targetLang = "de";
-        const entries = new deepl.GlossaryEntries({entries: {"Hello": "Hallo"}});
+        const sourceLang = 'en';
+        const targetLang = 'de';
+        const entries = new deepl.GlossaryEntries({entries: {'Hello': 'Hallo'}});
         const [glossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
                 name: glossaryName,
@@ -77,13 +77,13 @@ describe('translate using glossaries', () => {
     it('should reject creating invalid glossaries', async () => {
         const translator = makeTranslator();
         const glossaryName = getGlossaryName();
-        const entries = new deepl.GlossaryEntries({entries: {"Hello": "Hallo"}});
+        const entries = new deepl.GlossaryEntries({entries: {'Hello': 'Hallo'}});
         try {
-            await expect(translator.createGlossary("", "en", "de", entries)).rejects.toThrowError(deepl.DeepLError);
-            await expect(translator.createGlossary(glossaryName, "en", "ja", entries)).rejects.toThrowError(deepl.DeepLError);
-            await expect(translator.createGlossary(glossaryName, "ja", "de", entries)).rejects.toThrowError(deepl.DeepLError);
-            const targetLangXX = <deepl.TargetLanguageCode>"xx"; // Type cast to silence type-checks
-            await expect(translator.createGlossary(glossaryName, "en", targetLangXX, entries)).rejects.toThrowError(deepl.DeepLError);
+            await expect(translator.createGlossary('', 'en', 'de', entries)).rejects.toThrowError(deepl.DeepLError);
+            await expect(translator.createGlossary(glossaryName, 'en', 'ja', entries)).rejects.toThrowError(deepl.DeepLError);
+            await expect(translator.createGlossary(glossaryName, 'ja', 'de', entries)).rejects.toThrowError(deepl.DeepLError);
+            const targetLangXX = <deepl.TargetLanguageCode>'xx'; // Type cast to silence type-checks
+            await expect(translator.createGlossary(glossaryName, 'en', targetLangXX, entries)).rejects.toThrowError(deepl.DeepLError);
         } finally {
             const glossaries = await translator.listGlossaries();
             for (const glossaryKey in glossaries) {
@@ -97,9 +97,9 @@ describe('translate using glossaries', () => {
 
     it('should get glossaries', async () => {
         const translator = makeTranslator();
-        const sourceLang = "en";
-        const targetLang = "de";
-        const entries = new deepl.GlossaryEntries({entries: {"Hello": "Hallo"}});
+        const sourceLang = 'en';
+        const targetLang = 'de';
+        const entries = new deepl.GlossaryEntries({entries: {'Hello': 'Hallo'}});
         const [createdGlossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
                 sourceLang,
@@ -124,11 +124,11 @@ describe('translate using glossaries', () => {
 
     it('should get glossary entries', async () => {
         const translator = makeTranslator();
-        const entries = new deepl.GlossaryEntries({entries: {"Apple": "Apfel", "Banana": "Banane"}});
+        const entries = new deepl.GlossaryEntries({entries: {'Apple': 'Apfel', 'Banana': 'Banane'}});
         const [createdGlossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
-                sourceLang: "en",
-                targetLang: "de",
+                sourceLang: 'en',
+                targetLang: 'de',
                 entries
             }
         );
@@ -147,9 +147,9 @@ describe('translate using glossaries', () => {
         const translator = makeTranslator();
         const [createdGlossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
-                sourceLang: "en",
-                targetLang: "de",
-                entries: new deepl.GlossaryEntries({entries: {"Hello": "Hallo"}})
+                sourceLang: 'en',
+                targetLang: 'de',
+                entries: new deepl.GlossaryEntries({entries: {'Hello': 'Hallo'}})
             }
         );
         try {
@@ -164,9 +164,9 @@ describe('translate using glossaries', () => {
         const translator = makeTranslator();
         const [createdGlossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
-                sourceLang: "en",
-                targetLang: "de",
-                entries: new deepl.GlossaryEntries({entries: {"Hello": "Hallo"}})
+                sourceLang: 'en',
+                targetLang: 'de',
+                entries: new deepl.GlossaryEntries({entries: {'Hello': 'Hallo'}})
             }
         );
         try {
@@ -181,54 +181,54 @@ describe('translate using glossaries', () => {
     });
 
     withRealServer('should translate text sentence using glossaries', async () => {
-        const sourceLang = "en";
-        const targetLang = "de";
-        const inputText = "The artist was awarded a prize."
+        const sourceLang = 'en';
+        const targetLang = 'de';
+        const inputText = 'The artist was awarded a prize.'
         const translator = makeTranslator();
         const [glossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
                 sourceLang,
                 targetLang,
-                entries: new deepl.GlossaryEntries({entries: {"artist": "Maler", "prize": "Gewinn"}})
+                entries: new deepl.GlossaryEntries({entries: {'artist': 'Maler', 'prize': 'Gewinn'}})
             }
         );
         try {
-            const result = await translator.translateText(inputText, "en", "de", {glossary});
-            expect(result.text).toContain("Maler");
-            expect(result.text).toContain("Gewinn");
+            const result = await translator.translateText(inputText, 'en', 'de', {glossary});
+            expect(result.text).toContain('Maler');
+            expect(result.text).toContain('Gewinn');
         } finally {
             await cleanupGlossary();
         }
     });
 
     it('should create basic text using glossaries', async () => {
-        const textsEn = ["Apple", "Banana"];
-        const textsDe = ["Apfel", "Banane"];
-        const entriesEnDe = new deepl.GlossaryEntries({entries: {"Apple": "Apfel", "Banana": "Banane"}});
-        const entriesDeEn = new deepl.GlossaryEntries({entries: {"Apfel": "Apple", "Banane": "Banana"}});
+        const textsEn = ['Apple', 'Banana'];
+        const textsDe = ['Apfel', 'Banane'];
+        const entriesEnDe = new deepl.GlossaryEntries({entries: {'Apple': 'Apfel', 'Banana': 'Banane'}});
+        const entriesDeEn = new deepl.GlossaryEntries({entries: {'Apfel': 'Apple', 'Banane': 'Banana'}});
 
         const translator = makeTranslator();
         const [glossaryEnDe, cleanupGlossaryEnDe] = await createManagedGlossary(translator,
             {
-                sourceLang: "en",
-                targetLang: "de",
+                sourceLang: 'en',
+                targetLang: 'de',
                 entries: entriesEnDe,
-                glossaryNameSuffix: "_ende",
+                glossaryNameSuffix: '_ende',
             }
         );
         const [glossaryDeEn, cleanupGlossaryDeEn] = await createManagedGlossary(translator,
             {
-                sourceLang: "de",
-                targetLang: "en",
+                sourceLang: 'de',
+                targetLang: 'en',
                 entries: entriesDeEn,
-                glossaryNameSuffix: "_deen",
+                glossaryNameSuffix: '_deen',
             }
         );
         try {
-            let result = await translator.translateText(textsEn, "en", "de", {glossary: glossaryEnDe});
+            let result = await translator.translateText(textsEn, 'en', 'de', {glossary: glossaryEnDe});
             expect(result.map((textResult: deepl.TextResult) => textResult.text)).toStrictEqual(textsDe);
 
-            result = await translator.translateText(textsDe, "de", "en-US", {glossary: glossaryDeEn});
+            result = await translator.translateText(textsDe, 'de', 'en-US', {glossary: glossaryDeEn});
             expect(result.map((textResult: deepl.TextResult) => textResult.text)).toStrictEqual(textsEn);
         } finally {
             await cleanupGlossaryEnDe();
@@ -238,20 +238,20 @@ describe('translate using glossaries', () => {
 
     it('should translate documents using glossaries', async () => {
         const [exampleDocumentPath, , outputDocumentPath] = tempFiles();
-        const inputText = "artist\nprize";
-        const expectedOutputText = "Maler\nGewinn";
+        const inputText = 'artist\nprize';
+        const expectedOutputText = 'Maler\nGewinn';
         fs.writeFileSync(exampleDocumentPath, inputText);
         const translator = makeTranslator();
         const [glossary, cleanupGlossary] = await createManagedGlossary(translator,
             {
-                sourceLang: "en",
-                targetLang: "de",
-                entries: new deepl.GlossaryEntries({entries: {"artist": "Maler", "prize": "Gewinn"}}),
+                sourceLang: 'en',
+                targetLang: 'de',
+                entries: new deepl.GlossaryEntries({entries: {'artist': 'Maler', 'prize': 'Gewinn'}}),
             }
         );
 
         try {
-            await translator.translateDocument(exampleDocumentPath, outputDocumentPath, "en", "de", {glossary});
+            await translator.translateDocument(exampleDocumentPath, outputDocumentPath, 'en', 'de', {glossary});
             expect(fs.readFileSync(outputDocumentPath).toString()).toBe(expectedOutputText);
         } finally {
             await cleanupGlossary();
@@ -259,30 +259,30 @@ describe('translate using glossaries', () => {
     });
 
     it('should reject translating invalid text with glossaries', async () => {
-        const text = "Test";
-        const entries = new deepl.GlossaryEntries({entries: {"Hello": "Hallo"}});
+        const text = 'Test';
+        const entries = new deepl.GlossaryEntries({entries: {'Hello': 'Hallo'}});
         const translator = makeTranslator();
         const [glossaryEnDe, cleanupGlossaryEnDe] = await createManagedGlossary(translator,
             {
-                sourceLang: "en",
-                targetLang: "de",
+                sourceLang: 'en',
+                targetLang: 'de',
                 entries,
-                glossaryNameSuffix: "_ende",
+                glossaryNameSuffix: '_ende',
             }
         );
         const [glossaryDeEn, cleanupGlossaryDeEn] = await createManagedGlossary(translator,
             {
-                sourceLang: "de",
-                targetLang: "en",
+                sourceLang: 'de',
+                targetLang: 'en',
                 entries,
-                glossaryNameSuffix: "_deen",
+                glossaryNameSuffix: '_deen',
             }
         );
         try {
-            await expect(translator.translateText(text, null, "de", {glossary: glossaryEnDe})).rejects.toThrowError("sourceLang is required");
-            await expect(translator.translateText(text, "de", "en-US", {glossary: glossaryEnDe})).rejects.toThrowError("Lang must match glossary");
-            const targetLangEn = <deepl.TargetLanguageCode>"en"; // Type cast to silence type-checks
-            await expect(translator.translateText(text, "de", targetLangEn, {glossary: glossaryDeEn})).rejects.toThrowError('targetLang="en" is deprecated');
+            await expect(translator.translateText(text, null, 'de', {glossary: glossaryEnDe})).rejects.toThrowError('sourceLang is required');
+            await expect(translator.translateText(text, 'de', 'en-US', {glossary: glossaryEnDe})).rejects.toThrowError('Lang must match glossary');
+            const targetLangEn = <deepl.TargetLanguageCode>'en'; // Type cast to silence type-checks
+            await expect(translator.translateText(text, 'de', targetLangEn, {glossary: glossaryDeEn})).rejects.toThrowError('targetLang=\'en\' is deprecated');
         } finally {
             await cleanupGlossaryEnDe();
             await cleanupGlossaryDeEn();

@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import * as deepl from "deepl-node";
+import * as deepl from 'deepl-node';
 
 import fs from 'fs';
 
@@ -12,11 +12,11 @@ const serverUrl = process.env.DEEPL_SERVER_URL;
 
 describe('general', () => {
     it('rejects empty authKey', () => {
-        expect(() => new deepl.Translator("", {serverUrl})).toThrow(/authKey.*empty/);
+        expect(() => new deepl.Translator('', {serverUrl})).toThrow(/authKey.*empty/);
     });
 
     it('rejects invalid authKey', async () => {
-        const translator = new deepl.Translator("invalid", {serverUrl});
+        const translator = new deepl.Translator('invalid', {serverUrl});
         await expect(translator.getUsage()).rejects.toThrowError(deepl.AuthorizationError);
     });
 
@@ -27,8 +27,8 @@ describe('general', () => {
         for (const langCode in exampleText) {
             const inputText = exampleText[langCode];
 
-            const promise = translator.translateText(inputText, null, "en-US").then((result: deepl.TextResult) => {
-                return expect(result.text.toLowerCase()).toContain("proton");
+            const promise = translator.translateText(inputText, null, 'en-US').then((result: deepl.TextResult) => {
+                return expect(result.text.toLowerCase()).toContain('proton');
             });
             promises.push(promise);
         }
@@ -37,14 +37,14 @@ describe('general', () => {
 
 
     it('throws AuthorizationError with an invalid auth key', async () => {
-        const translator = makeTranslator({authKey: "invalid"});
+        const translator = makeTranslator({authKey: 'invalid'});
         await expect(translator.getUsage()).rejects.toThrowError(deepl.AuthorizationError);
     });
 
     it('outputs usage', async () => {
         const translator = makeTranslator();
         const usage = await translator.getUsage();
-        expect(usage.toString()).toContain("Usage this billing period");
+        expect(usage.toString()).toContain('Usage this billing period');
     });
 
     it('lists source and target languages', () => {
@@ -52,17 +52,17 @@ describe('general', () => {
         return translator.getSourceLanguages().then((languages: readonly deepl.Language[]) => {
             for (const languagesKey in languages) {
                 const language = languages[languagesKey];
-                if (language.code === "en") {
-                    expect(language.name).toBe("English");
+                if (language.code === 'en') {
+                    expect(language.name).toBe('English');
                 }
                 expect(language.supportsFormality).toBeUndefined();
             }
         }).then(() => translator.getTargetLanguages()).then((languages: readonly deepl.Language[]) => {
             for (const languagesKey in languages) {
                 const language = languages[languagesKey];
-                if (language.code === "de") {
+                if (language.code === 'de') {
                     expect(language.supportsFormality).toBe(true);
-                    expect(language.name).toBe("English");
+                    expect(language.name).toBe('English');
                 }
                 expect(language.supportsFormality).toBeDefined();
             }
@@ -82,8 +82,8 @@ describe('general', () => {
     });
 
     it('should determine API free accounts using auth key', () => {
-        expect(deepl.isFreeAccountAuthKey("0000:fx")).toBe(true);
-        expect(deepl.isFreeAccountAuthKey("0000")).toBe(false);
+        expect(deepl.isFreeAccountAuthKey('0000:fx')).toBe(true);
+        expect(deepl.isFreeAccountAuthKey('0000')).toBe(false);
 
     });
 
@@ -102,7 +102,7 @@ describe('general', () => {
             maxRetries: 0,
             minTimeout: 1000
         });
-        await expect(translator.translateText(exampleText.en, null, "de")).rejects.toThrowError(deepl.TooManyRequestsError);
+        await expect(translator.translateText(exampleText.en, null, 'de')).rejects.toThrowError(deepl.TooManyRequestsError);
     });
 
     withMockServer('should give QuotaExceededError when usage limits are reached', async () => {
@@ -124,8 +124,8 @@ describe('general', () => {
         expect(usage.teamDocument).toBeUndefined();
 
         // Translate a document with characterLimit characters
-        fs.writeFileSync(exampleDocument, "a".repeat(characterLimit));
-        await translator.translateDocument(exampleDocument, outputDocumentPath, null, "de");
+        fs.writeFileSync(exampleDocument, 'a'.repeat(characterLimit));
+        await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de');
 
         usage = await translator.getUsage();
         expect(usage.character?.limitReached()).toBe(true);
@@ -133,11 +133,11 @@ describe('general', () => {
 
         // Translate another document to get error
         fs.unlinkSync(outputDocumentPath);
-        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, "de"))
-            .rejects.toThrowError("while translating document: Quota for this billing period has been exceeded");
+        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de'))
+            .rejects.toThrowError('while translating document: Quota for this billing period has been exceeded');
 
         // Translate text raises QuotaExceededError
-        await expect(translator.translateText("Test", null, "de")).rejects.toThrowError(deepl.QuotaExceededError);
+        await expect(translator.translateText('Test', null, 'de')).rejects.toThrowError(deepl.QuotaExceededError);
     });
 
     withMockServer('should give QuotaExceededError when team document usage limits are reached', async () => {
@@ -161,8 +161,8 @@ describe('general', () => {
         expect(usage.teamDocument?.limitReached()).toBe(false);
 
         // Translate a document with characterLimit characters
-        fs.writeFileSync(exampleDocument, "a".repeat(characterLimit));
-        await translator.translateDocument(exampleDocument, outputDocumentPath, null, "de");
+        fs.writeFileSync(exampleDocument, 'a'.repeat(characterLimit));
+        await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de');
 
         usage = await translator.getUsage();
         expect(usage.character?.limitReached()).toBe(true);
@@ -170,11 +170,11 @@ describe('general', () => {
 
         // Translate another document to get error
         fs.unlinkSync(outputDocumentPath);
-        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, "de"))
-            .rejects.toThrowError("while translating document: Quota for this billing period has been exceeded");
+        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de'))
+            .rejects.toThrowError('while translating document: Quota for this billing period has been exceeded');
 
         // Translate text raises QuotaExceededError
-        await expect(translator.translateText("Test", null, "de")).rejects.toThrowError(deepl.QuotaExceededError);
+        await expect(translator.translateText('Test', null, 'de')).rejects.toThrowError(deepl.QuotaExceededError);
     });
 
     withMockServer('should give QuotaExceededError when usage limits are reached', async () => {
@@ -194,7 +194,7 @@ describe('general', () => {
         expect(usage.teamDocument?.limit).toBe(teamDocumentLimit);
         expect(usage.teamDocument?.limitReached()).toBe(false);
 
-        await translator.translateDocument(exampleDocument, outputDocumentPath, null, "de");
+        await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de');
 
         usage = await translator.getUsage();
         expect(usage.anyLimitReached()).toBe(true);
@@ -204,8 +204,8 @@ describe('general', () => {
 
         // Translate another document to get error
         fs.unlinkSync(outputDocumentPath);
-        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, "de"))
-            .rejects.toThrowError("while translating document: Quota for this billing period has been exceeded");
+        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de'))
+            .rejects.toThrowError('while translating document: Quota for this billing period has been exceeded');
     });
 
 });

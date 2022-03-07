@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {DeepLError} from "./errors";
+import {DeepLError} from './errors';
 import {
     DocumentHandle,
     DocumentStatus,
@@ -15,8 +15,8 @@ import {
     TargetGlossaryLanguageCode,
     UsageDetail,
     Usage,
-} from "./index";
-import {GlossaryInfo, LanguageCode, SourceLanguageCode} from "./types";
+} from './index';
+import {GlossaryInfo, LanguageCode, SourceLanguageCode} from './types';
 
 /**
  * Type used during JSON parsing of API response for glossary info.
@@ -155,13 +155,13 @@ class UsageImpl implements Usage {
     /** Converts the usage details to a human-readable string. */
     toString(): string {
         const labelledDetails: Array<[string, UsageDetail?]> = [
-            ["Characters", this.character],
-            ["Documents", this.document],
-            ["Team documents", this.teamDocument]];
+            ['Characters', this.character],
+            ['Documents', this.document],
+            ['Team documents', this.teamDocument]];
         const detailsString = labelledDetails
             .filter(([, detail]) => detail)
             .map(([label, detail]) => `${label}: ${(detail as UsageDetail).count} of ${(detail as UsageDetail).limit}`);
-        return "Usage this billing period:\n" + detailsString.join("\n");
+        return 'Usage this billing period:\n' + detailsString.join('\n');
     }
 }
 
@@ -177,11 +177,11 @@ class DocumentStatusImpl implements DocumentStatus {
     }
 
     ok(): boolean {
-        return this.status === "queued" || this.status === "translating" || this.status === "done";
+        return this.status === 'queued' || this.status === 'translating' || this.status === 'done';
     }
 
     done(): boolean {
-        return this.status === "done";
+        return this.status === 'done';
     }
 }
 
@@ -244,7 +244,7 @@ export function parseDocumentStatus(json: string): DocumentStatus {
  * Parses the given usage API response to a UsageDetail object, which forms part of a Usage object.
  * @private
  */
-function parseUsageDetail(obj: UsageApiResponse, prefix: "character" | "document" | "team_document"): UsageDetail | undefined {
+function parseUsageDetail(obj: UsageApiResponse, prefix: 'character' | 'document' | 'team_document'): UsageDetail | undefined {
     const count = obj[`${prefix}_count`];
     const limit = obj[`${prefix}_limit`];
     if (count === undefined || limit === undefined)
@@ -260,9 +260,9 @@ export function parseUsage(json: string): Usage {
     try {
         const obj = JSON.parse(json) as UsageApiResponse;
         return new UsageImpl(
-            parseUsageDetail(obj, "character"),
-            parseUsageDetail(obj, "document"),
-            parseUsageDetail(obj, "team_document"));
+            parseUsageDetail(obj, 'character'),
+            parseUsageDetail(obj, 'document'),
+            parseUsageDetail(obj, 'team_document'));
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }

@@ -4,10 +4,10 @@
 
 import loglevel from 'loglevel';
 
-const logger = loglevel.getLogger("deepl");
+const logger = loglevel.getLogger('deepl');
 
 function concatLoggingArgs(args?: object): string {
-    let detail = ""
+    let detail = ''
     if (args) {
         for (const [key, value] of Object.entries(args)) {
             detail += `, ${key} = ${value}`;
@@ -54,5 +54,5 @@ export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isString(arg: any): arg is string {
-    return typeof arg === "string"
+    return typeof arg === 'string'
 }

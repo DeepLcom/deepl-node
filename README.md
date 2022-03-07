@@ -132,9 +132,9 @@ console.log(translations[1].detectedSourceLang); // 'es'
 
 // Translate into German with less and more Formality:
 console.log(await translator.translateText(
-    'How are you?', null, 'de', {formality: "less"})); // 'Wie geht es dir?'
+    'How are you?', null, 'de', {formality: 'less'})); // 'Wie geht es dir?'
 console.log(await translator.translateText(
-    'How are you?', null, 'de', {formality: "more"})); // 'Wie geht es Ihnen?'
+    'How are you?', null, 'de', {formality: 'more'})); // 'Wie geht es Ihnen?'
 ```
 
 #### Text translation options
@@ -197,7 +197,7 @@ try {
         'Bedienungsanleitung.docx',
         'en',
         'de',
-        {formality: "more"});
+        {formality: 'more'});
 } catch (error) {
     // If the error occurs after the document was already uploaded,
     // documentHandle will contain the document ID and key
@@ -240,16 +240,16 @@ pair. Note: glossaries are only supported for some language pairs, check the
 
 ```javascript
 // Create an English to German glossary with two terms:
-const entries = new deepl.GlossaryEntries({entries: {"artist": "Maler", "prize": "Gewinn"}});
+const entries = new deepl.GlossaryEntries({entries: {'artist': 'Maler', 'prize': 'Gewinn'}});
 const glossaryEnToDe = await translator.createGlossary(
     'My glossary', 'en', 'de', entries);
 ```
 
 Functions to get, list, and delete stored glossaries are also provided.
 ```javascript
-// Find details about the glossary named "My glossary"
+// Find details about the glossary named 'My glossary'
 const glossaries = await translator.listGlossaries();
-const glossary = glossaries.find((glossary) => glossary.name == "My glossary");
+const glossary = glossaries.find((glossary) => glossary.name == 'My glossary');
 console.log(`Glossary ID: ${glossary.glossaryId}, source: ${glossary.sourceLang}, ` +
     `target: ${glossary.targetLang}, contains ${glossary.entryCount} entries.`);
 ```
@@ -284,7 +284,7 @@ the `anyLimitReached()` function to check all usage subtypes.
 ```javascript
 const usage = await translator.getUsage();
 if (usage.anyLimitReached()) {
-    console.log("Translation limit exceeded.");
+    console.log('Translation limit exceeded.');
 }
 if (usage.character) {
     console.log(`Characters: ${usage.character.count} of ${usage.character.limit}`);
@@ -309,7 +309,7 @@ supports the optional `formality` parameter.
 const sourceLanguages = await translator.getSourceLanguages();
 for (let i = 0; i < sourceLanguages.length; i++) {
     const lang = sourceLanguages[i];
-    console.log(`${lang.name} (${lang.code})`); // Example: "English (EN)"
+    console.log(`${lang.name} (${lang.code})`); // Example: 'English (EN)'
 }
 
 const targetLanguages = await translator.getTargetLanguages();
@@ -317,7 +317,7 @@ for (let i = 0; i < targetLanguages.length; i++) {
     const lang = targetLanguages[i];
     if (lang.supportsFormality) {
         console.log(`${lang.name} (${lang.code}) supports formality`);
-        // Example: "German (DE) supports formality"
+        // Example: 'German (DE) supports formality'
     }
 }
 ```
@@ -333,7 +333,7 @@ const glossaryLanguages = await translator.getGlossaryLanguagePairs();
 for (let i = 0; i < glossaryLanguages.length; i++) {
     const languagePair = glossaryLanguages[i];
     console.log(`${languagePair.sourceLang} to ${languagePair.targetLang}`);
-    // Example: "en to de", "de to en", etc.
+    // Example: 'en to de', 'de to en', etc.
 }
 ```
 

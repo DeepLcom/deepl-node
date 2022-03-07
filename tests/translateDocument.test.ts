@@ -2,11 +2,11 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import * as deepl from "deepl-node";
+import * as deepl from 'deepl-node';
 
 import fs from 'fs';
 import path from 'path';
-import util from "util";
+import util from 'util';
 
 import {
     exampleDocumentInput,
@@ -30,13 +30,13 @@ describe('translate document', () => {
         const translator = makeTranslator();
         const [exampleDocument, , outputDocumentPath] = tempFiles();
         fs.writeFileSync(outputDocumentPath, fs.readFileSync(exampleDocument).toString());
-        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de')).rejects.toThrow("exists");
+        await expect(translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de')).rejects.toThrow('exists');
     });
 
     it('should not translate non-existent files', async () => {
         const translator = makeTranslator();
         const [, , outputDocumentPath] = tempFiles();
-        await expect(translator.translateDocument("nonExistentFile.txt", outputDocumentPath, null, 'de')).rejects.toThrow("no such file");
+        await expect(translator.translateDocument('nonExistentFile.txt', outputDocumentPath, null, 'de')).rejects.toThrow('no such file');
     });
 
     it('should translate using file streams', async () => {
@@ -46,9 +46,9 @@ describe('translate document', () => {
         const inputFileStream = fs.createReadStream(exampleDocument, {flags: 'r'});
 
         // Omitting the filename parameter will result in error
-        await expect(translator.uploadDocument(inputFileStream, null, "de")).rejects.toThrow("options.filename");
+        await expect(translator.uploadDocument(inputFileStream, null, 'de')).rejects.toThrow('options.filename');
 
-        const handle = await translator.uploadDocument(inputFileStream, null, "de", {filename: "test.txt"});
+        const handle = await translator.uploadDocument(inputFileStream, null, 'de', {filename: 'test.txt'});
         const {status} = await translator.isDocumentTranslationComplete(handle);
         expect(status.ok() && status.done()).toBeTruthy();
 
