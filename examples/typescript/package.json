@@ -1,15 +1,15 @@
 {
-  "name": "deepl-node-example-typescript",
-  "description": "Example for deepl-node using TypeScript",
-  "type": "module",
-  "dependencies": {
-    "deepl-node": "file:../.."
-  },
-  "main": "index.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.json"
-  },
-  "devDependencies": {
-    "typescript": ">=3.0"
-  }
+    "name": "deepl-node-example-typescript",
+    "description": "Example for deepl-node using TypeScript",
+    "type": "module",
+    "dependencies": {
+        "deepl-node": "file:../.."
+    },
+    "main": "index.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json"
+    },
+    "devDependencies": {
+        "typescript": ">=3.0"
+    }
 }

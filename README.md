@@ -70,12 +70,13 @@ file use `await` and `try`/`catch` blocks, however Promise-chaining is also
 possible:
 
 ```javascript
-translator.translateText('Hello, world!', null, 'fr')
-    .then(result => {
+translator
+    .translateText('Hello, world!', null, 'fr')
+    .then((result) => {
         console.log(result.text); // Bonjour, le monde !
     })
-    .catch(error => {
-        console.error(error)
+    .catch((error) => {
+        console.error(error);
     });
 ```
 
@@ -87,7 +88,10 @@ import * as deepl from 'deepl-node';
 (async () => {
     const targetLang: deepl.TargetLanguageCode = 'fr';
     const results = await translator.translateText(
-        ['Hello, world!', 'How are you?'], null, targetLang);
+        ['Hello, world!', 'How are you?'],
+        null,
+        targetLang,
+    );
     results.map((result: deepl.TextResult) => {
         console.log(result.text); // Bonjour, le monde !
     });
@@ -124,54 +128,53 @@ console.log(translationResult.text); // 'Bonjour, le monde !'
 const translations = await translator.translateText(
     ['お元気ですか？', '¿Cómo estás?'],
     null,
-    'en-GB');
+    'en-GB',
+);
 console.log(translations[0].text); // 'How are you?'
 console.log(translations[0].detectedSourceLang); // 'ja'
 console.log(translations[1].text); // 'How are you?'
 console.log(translations[1].detectedSourceLang); // 'es'
 
 // Translate into German with less and more Formality:
-console.log(await translator.translateText(
-    'How are you?', null, 'de', {formality: 'less'})); // 'Wie geht es dir?'
-console.log(await translator.translateText(
-    'How are you?', null, 'de', {formality: 'more'})); // 'Wie geht es Ihnen?'
+console.log(await translator.translateText('How are you?', null, 'de', { formality: 'less' })); // 'Wie geht es dir?'
+console.log(await translator.translateText('How are you?', null, 'de', { formality: 'more' })); // 'Wie geht es Ihnen?'
 ```
 
 #### Text translation options
 
-- `splitSentences`: specify how input text should be split into sentences,
-  default: `'on'`.
-    - `'on'`: input text will be split into sentences using both newlines and
-      punctuation.
-    - `'off'`: input text will not be split into sentences. Use this for
-      applications where each input text contains only one sentence.
-    - `'nonewlines'`: input text will be split into sentences using punctuation
-      but not newlines.
-- `preserveFormatting`: controls automatic-formatting-correction. Set to `true`
-  to prevent automatic-correction of formatting, default: `false`.
-- `formality`: controls whether translations should lean toward informal or
-  formal language. This option is only available for some target languages, see
-  [Listing available languages](#listing-available-languages).
-    - `'less'`: use informal language.
-    - `'more'`: use formal, more polite language.
-- `glossary`: specifies a glossary to use with translation, either as a string
-  containing the glossary ID, or a `GlossaryInfo` as returned by
-  `getGlossary()`.
-- `tagHandling`: type of tags to parse before translation, options are `'html'`
-  and `'xml'`.
+-   `splitSentences`: specify how input text should be split into sentences,
+    default: `'on'`.
+    -   `'on'`: input text will be split into sentences using both newlines and
+        punctuation.
+    -   `'off'`: input text will not be split into sentences. Use this for
+        applications where each input text contains only one sentence.
+    -   `'nonewlines'`: input text will be split into sentences using punctuation
+        but not newlines.
+-   `preserveFormatting`: controls automatic-formatting-correction. Set to `true`
+    to prevent automatic-correction of formatting, default: `false`.
+-   `formality`: controls whether translations should lean toward informal or
+    formal language. This option is only available for some target languages, see
+    [Listing available languages](#listing-available-languages).
+    -   `'less'`: use informal language.
+    -   `'more'`: use formal, more polite language.
+-   `glossary`: specifies a glossary to use with translation, either as a string
+    containing the glossary ID, or a `GlossaryInfo` as returned by
+    `getGlossary()`.
+-   `tagHandling`: type of tags to parse before translation, options are `'html'`
+    and `'xml'`.
 
 The following options are only used if `tagHandling` is `'xml'`:
 
-- `outlineDetection`: specify `false` to disable automatic tag detection,
-  default is `true`.
-- `splittingTags`: list of XML tags that should be used to split text into
-  sentences. Tags may be specified as an array of strings (`['tag1', 'tag2']`),
-  or a comma-separated list of strings (`'tag1,tag2'`). The default is an empty
-  list.
-- `nonSplittingTags`: list of XML tags that should not be used to split text
-  into sentences. Format and default are the same as for `splittingTags`.
-- `ignoreTags`: list of XML tags that containing content that should not be
-  translated. Format and default are the same as for `splittingTags`.
+-   `outlineDetection`: specify `false` to disable automatic tag detection,
+    default is `true`.
+-   `splittingTags`: list of XML tags that should be used to split text into
+    sentences. Tags may be specified as an array of strings (`['tag1', 'tag2']`),
+    or a comma-separated list of strings (`'tag1,tag2'`). The default is an empty
+    list.
+-   `nonSplittingTags`: list of XML tags that should not be used to split text
+    into sentences. Format and default are the same as for `splittingTags`.
+-   `ignoreTags`: list of XML tags that containing content that should not be
+    translated. Format and default are the same as for `splittingTags`.
 
 ### Translating documents
 
@@ -197,14 +200,14 @@ try {
         'Bedienungsanleitung.docx',
         'en',
         'de',
-        {formality: 'more'});
+        { formality: 'more' },
+    );
 } catch (error) {
     // If the error occurs after the document was already uploaded,
     // documentHandle will contain the document ID and key
     if (error.documentHandle) {
         const handle = error.documentHandle;
-        console.log(`Document ID: ${handle.documentId}, ` +
-            `Document key: ${handle.documentKey}`);
+        console.log(`Document ID: ${handle.documentId}, ` + `Document key: ${handle.documentKey}`);
     } else {
         console.log(`Error occurred during document upload: ${error}`);
     }
@@ -216,16 +219,16 @@ the translation is complete, and downloading. If your application needs to
 execute these steps individually, you can instead use the following functions
 directly:
 
-- `uploadDocument()`,
-- `getDocumentStatus()` (or `isDocumentTranslationComplete()`), and
-- `downloadDocument()`
+-   `uploadDocument()`,
+-   `getDocumentStatus()` (or `isDocumentTranslationComplete()`), and
+-   `downloadDocument()`
 
 #### Document translation options
 
-- `formality`: same as in [Text translation options](#text-translation-options).
-- `glossary`: same as in [Text translation options](#text-translation-options).
-- `filename`: if the input file is not provided as file path, this option is
-  needed to specify the file extension.
+-   `formality`: same as in [Text translation options](#text-translation-options).
+-   `glossary`: same as in [Text translation options](#text-translation-options).
+-   `filename`: if the input file is not provided as file path, this option is
+    needed to specify the file extension.
 
 ### Glossaries
 
@@ -240,18 +243,20 @@ pair. Note: glossaries are only supported for some language pairs, check the
 
 ```javascript
 // Create an English to German glossary with two terms:
-const entries = new deepl.GlossaryEntries({entries: {'artist': 'Maler', 'prize': 'Gewinn'}});
-const glossaryEnToDe = await translator.createGlossary(
-    'My glossary', 'en', 'de', entries);
+const entries = new deepl.GlossaryEntries({ entries: { artist: 'Maler', prize: 'Gewinn' } });
+const glossaryEnToDe = await translator.createGlossary('My glossary', 'en', 'de', entries);
 ```
 
 Functions to get, list, and delete stored glossaries are also provided.
+
 ```javascript
 // Find details about the glossary named 'My glossary'
 const glossaries = await translator.listGlossaries();
 const glossary = glossaries.find((glossary) => glossary.name == 'My glossary');
-console.log(`Glossary ID: ${glossary.glossaryId}, source: ${glossary.sourceLang}, ` +
-    `target: ${glossary.targetLang}, contains ${glossary.entryCount} entries.`);
+console.log(
+    `Glossary ID: ${glossary.glossaryId}, source: ${glossary.sourceLang}, ` +
+        `target: ${glossary.targetLang}, contains ${glossary.entryCount} entries.`,
+);
 ```
 
 To use a glossary when translating text and documents, include the ID
@@ -263,7 +268,8 @@ const resultWithGlossary = await translator.translateText(
     'The artist was awarded a prize.',
     'en',
     'de',
-    {glossary});
+    { glossary },
+);
 console.log(resultWithGlossary.text); // 'Der Maler wurde mit einem Gewinn ausgezeichnet.'
 // Without using a glossary would give:  'Der Künstler wurde mit einem Preis ausgezeichnet.'
 ```
@@ -343,23 +349,23 @@ The `Translator` constructor accepts configuration options as a second argument,
 for example:
 
 ```javascript
-const options = {maxRetries: 5, minTimeout: 10000};
+const options = { maxRetries: 5, minTimeout: 10000 };
 const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
 ```
 
 The available options are:
 
-- `maxRetries`: the maximum `Number` of failed HTTP requests to retry, per
-  function call. By default, 5 retries are made. See
-  [Request retries](#request-retries).
-- `minTimeout`: the `Number` of milliseconds used as connection timeout for each
-  HTTP request retry. The default value is 10000 (10 seconds).
-- `serverUrl`: `string` containing the URL of the DeepL API, can be overridden
-  for example for testing purposes. By default, the URL is selected based on the
-  user account type (free or paid).
-- `headers`: extra HTTP headers attached to every HTTP request. By default, no
-  extra headers are used. Note that Authorization and User-Agent headers are
-  added automatically but may be overridden by this option.
+-   `maxRetries`: the maximum `Number` of failed HTTP requests to retry, per
+    function call. By default, 5 retries are made. See
+    [Request retries](#request-retries).
+-   `minTimeout`: the `Number` of milliseconds used as connection timeout for each
+    HTTP request retry. The default value is 10000 (10 seconds).
+-   `serverUrl`: `string` containing the URL of the DeepL API, can be overridden
+    for example for testing purposes. By default, the URL is selected based on the
+    user account type (free or paid).
+-   `headers`: extra HTTP headers attached to every HTTP request. By default, no
+    extra headers are used. Note that Authorization and User-Agent headers are
+    added automatically but may be overridden by this option.
 
 #### Logging
 
@@ -414,11 +420,7 @@ tests using `npm test` with the `DEEPL_MOCK_SERVER_PORT` and `DEEPL_SERVER_URL`
 environment variables defined referring to the mock-server.
 
 [api-docs]: https://www.deepl.com/docs-api?utm_source=github&utm_medium=github-nodejs-readme
-
 [create-account]: https://www.deepl.com/pro?utm_source=github&utm_medium=github-nodejs-readme#developer
-
 [deepl-mock]: https://www.github.com/DeepLcom/deepl-mock
-
 [issues]: https://www.github.com/DeepLcom/deepl-node/issues
-
 [pro-account]: https://www.deepl.com/pro-account/?utm_source=github&utm_medium=github-nodejs-readme

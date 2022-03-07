@@ -2,13 +2,13 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {ConnectionError} from './errors';
-import {logDebug, logInfo, timeout} from './utils';
+import { ConnectionError } from './errors';
+import { logDebug, logInfo, timeout } from './utils';
 
-import axios, {AxiosError, AxiosRequestConfig} from 'axios';
-import {URLSearchParams} from 'url';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { URLSearchParams } from 'url';
 import FormData from 'form-data';
-import {IncomingMessage} from 'http';
+import { IncomingMessage } from 'http';
 
 type HttpMethod = 'GET' | 'DELETE' | 'POST';
 
@@ -69,7 +69,8 @@ class BackoffTimer {
 
         // Get deadline by applying jitter as a proportion of backoff:
         // if jitter is 0.1, then multiply backoff by random value in [0.9, 1.1]
-        this.deadline = Date.now() + this.backoff * (1 + this.backoffJitter * (2 * Math.random() - 1));
+        this.deadline =
+            Date.now() + this.backoff * (1 + this.backoffJitter * (2 * Math.random() - 1));
         this.numRetries++;
     }
 }
@@ -84,7 +85,12 @@ export class HttpClient {
     private readonly minTimeout: number;
     private readonly maxRetries: number;
 
-    constructor(serverUrl: string, headers: Record<string, string>, maxRetries: number, minTimeout: number) {
+    constructor(
+        serverUrl: string,
+        headers: Record<string, string>,
+        maxRetries: number,
+        minTimeout: number,
+    ) {
         this.serverUrl = serverUrl;
         this.headers = headers;
         this.maxRetries = maxRetries;
@@ -94,9 +100,10 @@ export class HttpClient {
     prepareRequest(
         method: HttpMethod,
         url: string,
-        timeout: number,
+        timeoutMs: number,
         responseAsStream: boolean,
-        options: SendRequestOptions): AxiosRequestConfig {
+        options: SendRequestOptions,
+    ): AxiosRequestConfig {
         const headers = Object.assign({}, this.headers, options.headers);
 
         const axiosRequestConfig: AxiosRequestConfig = {
@@ -105,13 +112,13 @@ export class HttpClient {
             baseURL: this.serverUrl,
             headers,
             responseType: responseAsStream ? 'stream' : 'text',
-            timeout,
-            validateStatus: null  // do not throw errors for any status codes
+            timeout: timeoutMs,
+            validateStatus: null, // do not throw errors for any status codes
         };
 
         if (options.fileBuffer) {
             const form = new FormData();
-            form.append('file', options.fileBuffer, {filename: options.filename});
+            form.append('file', options.fileBuffer, { filename: options.filename });
             if (options.data) {
                 for (const [key, value] of options.data.entries()) {
                     form.append(key, value);
@@ -141,16 +148,22 @@ export class HttpClient {
         method: HttpMethod,
         url: string,
         options?: SendRequestOptions,
-        responseAsStream = false
-    ): Promise<{ statusCode: number, content: TContent }> {
+        responseAsStream = false,
+    ): Promise<{ statusCode: number; content: TContent }> {
         options = options === undefined ? {} : options;
         logInfo(`Request to DeepL API ${method} ${url}`);
         logDebug(`Request details: ${options.data}`);
         const backoff = new BackoffTimer();
         let response, error;
         while (backoff.getNumRetries() <= this.maxRetries) {
-            const timeout = Math.max(this.minTimeout, backoff.getTimeout());
-            const axiosRequestConfig = this.prepareRequest(method, url, timeout, responseAsStream, options);
+            const timeoutMs = Math.max(this.minTimeout, backoff.getTimeout());
+            const axiosRequestConfig = this.prepareRequest(
+                method,
+                url,
+                timeoutMs,
+                responseAsStream,
+                options,
+            );
             try {
                 response = await HttpClient.sendAxiosRequest<TContent>(axiosRequestConfig);
                 error = undefined;
@@ -159,8 +172,10 @@ export class HttpClient {
                 error = e as ConnectionError;
             }
 
-            if (!HttpClient.shouldRetry(response?.statusCode, error) ||
-                backoff.getNumRetries() + 1 >= this.maxRetries) {
+            if (
+                !HttpClient.shouldRetry(response?.statusCode, error) ||
+                backoff.getNumRetries() + 1 >= this.maxRetries
+            ) {
                 break;
             }
 
@@ -168,20 +183,22 @@ export class HttpClient {
                 logDebug(`Encountered a retryable-error: ${error.message}`);
             }
 
-            logInfo(`Starting retry ${backoff.getNumRetries() + 1} for request ${method}` +
-                ` ${url} after sleeping for ${backoff.getTimeUntilDeadline()} seconds.`);
+            logInfo(
+                `Starting retry ${backoff.getNumRetries() + 1} for request ${method}` +
+                    ` ${url} after sleeping for ${backoff.getTimeUntilDeadline()} seconds.`,
+            );
             await backoff.sleepUntilDeadline();
         }
 
         if (response !== undefined) {
-            const {statusCode, content} = response;
+            const { statusCode, content } = response;
             logInfo(`DeepL API response ${method} ${url} ${statusCode}`);
             if (!responseAsStream) {
-                logDebug('Response details:', {content: content});
+                logDebug('Response details:', { content: content });
             }
             return response;
         } else {
-            throw error;
+            throw error as Error;
         }
     }
 
@@ -191,18 +208,18 @@ export class HttpClient {
      * @private
      */
     private static async sendAxiosRequest<TContent extends string | IncomingMessage>(
-        axiosRequestConfig: AxiosRequestConfig
-    ): Promise<{ statusCode: number, content: TContent }> {
+        axiosRequestConfig: AxiosRequestConfig,
+    ): Promise<{ statusCode: number; content: TContent }> {
         try {
             const response = await axios.request(axiosRequestConfig);
 
             if (axiosRequestConfig.responseType === 'text') {
                 // Workaround for axios-bug: https://github.com/axios/axios/issues/907
-                if (typeof (response.data) === 'object') {
+                if (typeof response.data === 'object') {
                     response.data = JSON.stringify(response.data);
                 }
             }
-            return {statusCode: response.status, content: response.data};
+            return { statusCode: response.status, content: response.data };
         } catch (axios_error_raw) {
             const axiosError = axios_error_raw as AxiosError;
             const message: string = axiosError.message || '';
@@ -221,8 +238,7 @@ export class HttpClient {
         }
     }
 
-    private static shouldRetry(statusCode?: number,
-                               error?: ConnectionError): boolean {
+    private static shouldRetry(statusCode?: number, error?: ConnectionError): boolean {
         if (statusCode === undefined) {
             return (error as ConnectionError).shouldRetry;
         }

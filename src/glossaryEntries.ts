@@ -2,8 +2,8 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {DeepLError} from './errors';
-import {isString} from './utils';
+import { DeepLError } from './errors';
+import { isString } from './utils';
 
 /**
  * Stores the entries of a glossary.
@@ -23,7 +23,7 @@ export class GlossaryEntries {
      * @return GlossaryEntries object containing parsed entries.
      * @throws DeepLError If given entries contain invalid characters.
      */
-    constructor(options?: {tsv?: string, entries?: Record<string, string>}) {
+    constructor(options?: { tsv?: string; entries?: Record<string, string> }) {
         this.implEntries = {};
 
         if (options?.entries !== undefined) {
@@ -31,8 +31,7 @@ export class GlossaryEntries {
                 throw new DeepLError('options.entries and options.tsv are mutually exclusive');
             }
             Object.assign(this.implEntries, options.entries);
-        }
-        else if (options?.tsv !== undefined) {
+        } else if (options?.tsv !== undefined) {
             const tsv = options.tsv;
             for (const entry of tsv.split(/\r\n|\n|\r/)) {
                 if (entry.length === 0) {
@@ -76,11 +75,13 @@ export class GlossaryEntries {
      * @throws {Error} If any glossary entries are invalid.
      */
     public toTsv(): string {
-        return Object.entries(this.implEntries).map(([source, target]) => {
-            GlossaryEntries.validateGlossaryTerm(source);
-            GlossaryEntries.validateGlossaryTerm(target);
-            return `${source}\t${target}`;
-        }).join('\n');
+        return Object.entries(this.implEntries)
+            .map(([source, target]) => {
+                GlossaryEntries.validateGlossaryTerm(source);
+                GlossaryEntries.validateGlossaryTerm(target);
+                return `${source}\t${target}`;
+            })
+            .join('\n');
     }
 
     /**
@@ -90,15 +91,19 @@ export class GlossaryEntries {
      */
     static validateGlossaryTerm(term: string) {
         if (!isString(term) || term.length === 0) {
-            throw new DeepLError(`'${term}' is not a valid term.`)
+            throw new DeepLError(`'${term}' is not a valid term.`);
         }
         for (let idx = 0; idx < term.length; idx++) {
             const charCode = term.charCodeAt(idx);
-            if ((0 <= charCode && charCode <= 31) || // C0 control characters
+            if (
+                (0 <= charCode && charCode <= 31) || // C0 control characters
                 (128 <= charCode && charCode <= 159) || // C1 control characters
-                charCode === 0x2028 || charCode === 0x2029   // Unicode newlines
+                charCode === 0x2028 ||
+                charCode === 0x2029 // Unicode newlines
             ) {
-                throw new DeepLError(`Term '${term}' contains invalid character: '${term[idx]}' (${charCode})`);
+                throw new DeepLError(
+                    `Term '${term}' contains invalid character: '${term[idx]}' (${charCode})`,
+                );
             }
         }
     }

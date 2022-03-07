@@ -17,6 +17,6 @@
         "target": "es2016"
     },
     "compileOnSave": false,
-    "exclude": ["tests", "dist", "node_modules"],
-    "include": ["src"]
+    "exclude": ["dist", "node_modules"],
+    "include": ["tests", "src", "examples"]
 }

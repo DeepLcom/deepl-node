@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {DeepLError} from './errors';
+import { DeepLError } from './errors';
 import {
     DocumentHandle,
     DocumentStatus,
@@ -16,20 +16,20 @@ import {
     UsageDetail,
     Usage,
 } from './index';
-import {GlossaryInfo, LanguageCode, SourceLanguageCode} from './types';
+import { GlossaryInfo, LanguageCode, SourceLanguageCode } from './types';
 
 /**
  * Type used during JSON parsing of API response for glossary info.
  * @private
  */
 interface GlossaryInfoApiResponse {
-    glossary_id: string,
-    name: string,
-    ready: boolean,
-    source_lang: string,
-    target_lang: string,
-    creation_time: string,
-    entry_count: number,
+    glossary_id: string;
+    name: string;
+    ready: boolean;
+    source_lang: string;
+    target_lang: string;
+    creation_time: string;
+    entry_count: number;
 }
 
 /**
@@ -37,7 +37,7 @@ interface GlossaryInfoApiResponse {
  * @private
  */
 interface GlossaryInfoListApiResponse {
-    glossaries: GlossaryInfoApiResponse[],
+    glossaries: GlossaryInfoApiResponse[];
 }
 
 /**
@@ -45,12 +45,12 @@ interface GlossaryInfoListApiResponse {
  * @private
  */
 interface UsageApiResponse {
-    character_count?: number,
-    character_limit?: number,
-    document_count?: number,
-    document_limit?: number,
-    team_document_count?: number,
-    team_document_limit?: number,
+    character_count?: number;
+    character_limit?: number;
+    document_count?: number;
+    document_limit?: number;
+    team_document_count?: number;
+    team_document_limit?: number;
 }
 
 /**
@@ -58,8 +58,8 @@ interface UsageApiResponse {
  * @private
  */
 interface TextResultApiResponse {
-    text: string,
-    detected_source_language: string,
+    text: string;
+    detected_source_language: string;
 }
 
 /**
@@ -67,7 +67,7 @@ interface TextResultApiResponse {
  * @private
  */
 interface TextResultArrayApiResponse {
-    translations: TextResultApiResponse[],
+    translations: TextResultApiResponse[];
 }
 
 /**
@@ -75,9 +75,9 @@ interface TextResultArrayApiResponse {
  * @private
  */
 interface LanguageApiResponse {
-    language: string,
-    name: string,
-    supports_formality?: boolean,
+    language: string;
+    name: string;
+    supports_formality?: boolean;
 }
 
 /**
@@ -85,8 +85,8 @@ interface LanguageApiResponse {
  * @private
  */
 interface GlossaryLanguagePairApiResponse {
-    source_lang: string,
-    target_lang: string,
+    source_lang: string;
+    target_lang: string;
 }
 
 /**
@@ -102,9 +102,9 @@ interface GlossaryLanguagePairArrayApiResponse {
  * @private
  */
 interface DocumentStatusApiResponse {
-    status: string,
-    seconds_remaining?: number,
-    billed_characters?: number,
+    status: string;
+    seconds_remaining?: number;
+    billed_characters?: number;
 }
 
 /**
@@ -112,8 +112,8 @@ interface DocumentStatusApiResponse {
  * @private
  */
 interface DocumentHandleApiResponse {
-    document_id: string,
-    document_key: string,
+    document_id: string;
+    document_key: string;
 }
 
 class UsageDetailImpl implements UsageDetail {
@@ -149,7 +149,12 @@ class UsageImpl implements Usage {
 
     /** Returns true if any usage type limit has been reached or passed, otherwise false. */
     anyLimitReached(): boolean {
-        return this.character?.limitReached() || this.document?.limitReached() || this.teamDocument?.limitReached() || false;
+        return (
+            this.character?.limitReached() ||
+            this.document?.limitReached() ||
+            this.teamDocument?.limitReached() ||
+            false
+        );
     }
 
     /** Converts the usage details to a human-readable string. */
@@ -157,10 +162,16 @@ class UsageImpl implements Usage {
         const labelledDetails: Array<[string, UsageDetail?]> = [
             ['Characters', this.character],
             ['Documents', this.document],
-            ['Team documents', this.teamDocument]];
+            ['Team documents', this.teamDocument],
+        ];
         const detailsString = labelledDetails
             .filter(([, detail]) => detail)
-            .map(([label, detail]) => `${label}: ${(detail as UsageDetail).count} of ${(detail as UsageDetail).limit}`);
+            .map(
+                ([label, detail]) =>
+                    `${label}: ${(detail as UsageDetail).count} of ${
+                        (detail as UsageDetail).limit
+                    }`,
+            );
         return 'Usage this billing period:\n' + detailsString.join('\n');
     }
 }
@@ -197,7 +208,7 @@ function parseRawGlossaryInfo(obj: GlossaryInfoApiResponse): GlossaryInfo {
         sourceLang: obj.source_lang as SourceGlossaryLanguageCode,
         targetLang: obj.target_lang as TargetGlossaryLanguageCode,
         creationTime: new Date(obj.creation_time),
-        entryCount: obj.entry_count
+        entryCount: obj.entry_count,
     };
 }
 
@@ -221,7 +232,9 @@ export function parseGlossaryInfo(json: string): GlossaryInfo {
 export function parseGlossaryInfoList(json: string): GlossaryInfo[] {
     try {
         const obj = JSON.parse(json) as GlossaryInfoListApiResponse;
-        return obj.glossaries.map((rawGlossaryInfo: GlossaryInfoApiResponse) => parseRawGlossaryInfo(rawGlossaryInfo));
+        return obj.glossaries.map((rawGlossaryInfo: GlossaryInfoApiResponse) =>
+            parseRawGlossaryInfo(rawGlossaryInfo),
+        );
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }
@@ -234,7 +247,11 @@ export function parseGlossaryInfoList(json: string): GlossaryInfo[] {
 export function parseDocumentStatus(json: string): DocumentStatus {
     try {
         const obj = JSON.parse(json) as DocumentStatusApiResponse;
-        return new DocumentStatusImpl(obj.status as DocumentStatusCode, obj.seconds_remaining, obj.billed_characters);
+        return new DocumentStatusImpl(
+            obj.status as DocumentStatusCode,
+            obj.seconds_remaining,
+            obj.billed_characters,
+        );
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }
@@ -244,11 +261,13 @@ export function parseDocumentStatus(json: string): DocumentStatus {
  * Parses the given usage API response to a UsageDetail object, which forms part of a Usage object.
  * @private
  */
-function parseUsageDetail(obj: UsageApiResponse, prefix: 'character' | 'document' | 'team_document'): UsageDetail | undefined {
+function parseUsageDetail(
+    obj: UsageApiResponse,
+    prefix: 'character' | 'document' | 'team_document',
+): UsageDetail | undefined {
     const count = obj[`${prefix}_count`];
     const limit = obj[`${prefix}_limit`];
-    if (count === undefined || limit === undefined)
-        return undefined;
+    if (count === undefined || limit === undefined) return undefined;
     return new UsageDetailImpl(count, limit);
 }
 
@@ -262,7 +281,8 @@ export function parseUsage(json: string): Usage {
         return new UsageImpl(
             parseUsageDetail(obj, 'character'),
             parseUsageDetail(obj, 'document'),
-            parseUsageDetail(obj, 'team_document'));
+            parseUsageDetail(obj, 'team_document'),
+        );
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }
@@ -278,9 +298,27 @@ export function parseTextResultArray(json: string): TextResult[] {
         return obj.translations.map((translation: TextResultApiResponse) => {
             return {
                 text: translation.text,
-                detectedSourceLang: standardizeLanguageCode(translation.detected_source_language) as SourceLanguageCode
-            }
+                detectedSourceLang: standardizeLanguageCode(
+                    translation.detected_source_language,
+                ) as SourceLanguageCode,
+            };
         });
+    } catch (error) {
+        throw new DeepLError(`Error parsing response JSON: ${error}`);
+    }
+}
+
+/**
+ * Parses the given language API response to a Language object.
+ * @private
+ */
+function parseLanguage(lang: LanguageApiResponse): Language {
+    try {
+        return {
+            name: lang.name,
+            code: lang.language as LanguageCode,
+            supportsFormality: lang.supports_formality,
+        };
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }
@@ -296,15 +334,14 @@ export function parseLanguageArray(json: string): Language[] {
 }
 
 /**
- * Parses the given language API response to a Language object.
+ * Parses the given glossary language pair API response to a GlossaryLanguagePair object.
  * @private
  */
-function parseLanguage(lang: LanguageApiResponse): Language {
+function parseGlossaryLanguagePair(obj: GlossaryLanguagePairApiResponse): GlossaryLanguagePair {
     try {
         return {
-            name: lang.name,
-            code: (lang.language as LanguageCode),
-            supportsFormality: lang.supports_formality
+            sourceLang: obj.source_lang as SourceGlossaryLanguageCode,
+            targetLang: obj.target_lang as TargetGlossaryLanguageCode,
         };
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
@@ -317,19 +354,9 @@ function parseLanguage(lang: LanguageApiResponse): Language {
  */
 export function parseGlossaryLanguagePairArray(json: string): GlossaryLanguagePair[] {
     const obj = JSON.parse(json) as GlossaryLanguagePairArrayApiResponse;
-    return obj.supported_languages.map((langPair: GlossaryLanguagePairApiResponse) => parseGlossaryLanguagePair(langPair));
-}
-
-/**
- * Parses the given glossary language pair API response to a GlossaryLanguagePair object.
- * @private
- */
-function parseGlossaryLanguagePair(obj: GlossaryLanguagePairApiResponse): GlossaryLanguagePair {
-    try {
-        return {sourceLang: obj.source_lang as SourceGlossaryLanguageCode, targetLang: obj.target_lang as TargetGlossaryLanguageCode};
-    } catch (error) {
-        throw new DeepLError(`Error parsing response JSON: ${error}`);
-    }
+    return obj.supported_languages.map((langPair: GlossaryLanguagePairApiResponse) =>
+        parseGlossaryLanguagePair(langPair),
+    );
 }
 
 /**
@@ -339,7 +366,7 @@ function parseGlossaryLanguagePair(obj: GlossaryLanguagePairApiResponse): Glossa
 export function parseDocumentHandle(json: string): DocumentHandle {
     try {
         const obj = JSON.parse(json) as DocumentHandleApiResponse;
-        return {documentId: obj.document_id, documentKey: obj.document_key};
+        return { documentId: obj.document_id, documentKey: obj.document_key };
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }

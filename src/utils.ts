@@ -7,7 +7,7 @@ import loglevel from 'loglevel';
 const logger = loglevel.getLogger('deepl');
 
 function concatLoggingArgs(args?: object): string {
-    let detail = ''
+    let detail = '';
     if (args) {
         for (const [key, value] of Object.entries(args)) {
             detail += `, ${key} = ${value}`;
@@ -34,7 +34,7 @@ export async function streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buf
         stream.on('data', (chunk: Buffer) => chunks.push(chunk));
         stream.on('error', (err) => reject(err));
         stream.on('end', () => resolve(Buffer.concat(chunks)));
-    })
+    });
 }
 
 /**
@@ -46,7 +46,7 @@ export async function streamToString(stream: NodeJS.ReadableStream): Promise<str
 }
 
 // Wrap setTimeout() with Promise
-export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));
+export const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Returns true if the given argument is a string.
@@ -54,5 +54,5 @@ export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isString(arg: any): arg is string {
-    return typeof arg === 'string'
+    return typeof arg === 'string';
 }

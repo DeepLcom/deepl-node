@@ -10,7 +10,7 @@ export interface TranslatorOptions {
      * Base URL of DeepL API, can be overridden for example for testing purposes. By default, the
      * correct DeepL API URL is selected based on the user account type (free or paid).
      */
-    serverUrl?: string,
+    serverUrl?: string;
 
     /**
      * HTTP headers attached to every HTTP request. By default, no extra headers are used. Note that
@@ -56,7 +56,6 @@ export interface GlossaryInfo {
     readonly creationTime: Date;
     /** The number of entries contained in the glossary. */
     readonly entryCount: number;
-
 }
 
 /**
@@ -120,8 +119,28 @@ export interface DocumentTranslateOptions {
  * API accept case-insensitive language codes.
  */
 type CommonLanguageCode =
-    | 'bg' | 'cs' | 'da' | 'de' | 'el' | 'es' | 'et' | 'fi' | 'fr' | 'hu' | 'it'
-    | 'ja' | 'lt' | 'lv' | 'nl' | 'pl' | 'ro' | 'ru' | 'sk' | 'sl' | 'sv' | 'zh';
+    | 'bg'
+    | 'cs'
+    | 'da'
+    | 'de'
+    | 'el'
+    | 'es'
+    | 'et'
+    | 'fi'
+    | 'fr'
+    | 'hu'
+    | 'it'
+    | 'ja'
+    | 'lt'
+    | 'lv'
+    | 'nl'
+    | 'pl'
+    | 'ro'
+    | 'ru'
+    | 'sk'
+    | 'sl'
+    | 'sv'
+    | 'zh';
 
 /**
  * Language codes that may be used as a source language.
@@ -157,5 +176,3 @@ export type SourceGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr';
  * API accept case-insensitive language codes.
  */
 export type TargetGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr';
-
-

@@ -4,9 +4,9 @@
 
 import * as deepl from 'deepl-node';
 
-const authKey = process.env['DEEPL_AUTH_KEY']
-const serverUrl = process.env['DEEPL_SERVER_URL']
-const translator = new deepl.Translator(authKey, {serverUrl: serverUrl});
+const authKey = process.env['DEEPL_AUTH_KEY'];
+const serverUrl = process.env['DEEPL_SERVER_URL'];
+const translator = new deepl.Translator(authKey, { serverUrl: serverUrl });
 
 (async () => {
     try {
@@ -20,5 +20,3 @@ const translator = new deepl.Translator(authKey, {serverUrl: serverUrl});
         process.exit(1);
     }
 })();
-
-

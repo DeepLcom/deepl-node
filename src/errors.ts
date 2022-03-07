@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import {DocumentHandle} from './index';
+import { DocumentHandle } from './index';
 
 export class DeepLError extends Error {
     public error?: Error;
@@ -14,14 +14,11 @@ export class DeepLError extends Error {
     }
 }
 
-export class AuthorizationError extends DeepLError {
-}
+export class AuthorizationError extends DeepLError {}
 
-export class QuotaExceededError extends DeepLError {
-}
+export class QuotaExceededError extends DeepLError {}
 
-export class TooManyRequestsError extends DeepLError {
-}
+export class TooManyRequestsError extends DeepLError {}
 
 export class ConnectionError extends DeepLError {
     shouldRetry: boolean;
@@ -41,15 +38,6 @@ export class DocumentTranslationError extends DeepLError {
     }
 }
 
-export class GlossaryNotFoundError extends DeepLError {
-    constructor(message: string) {
-        super(message);
-    }
-}
+export class GlossaryNotFoundError extends DeepLError {}
 
-
-export class DocumentNotReadyError extends DeepLError {
-    constructor(message: string) {
-        super(message);
-    }
-}
+export class DocumentNotReadyError extends DeepLError {}

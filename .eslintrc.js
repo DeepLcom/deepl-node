@@ -1,21 +1,26 @@
 module.exports = exports = {
-    'extends': [
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended'
-    ],
-    'parser': '@typescript-eslint/parser',
-    'plugins': ['@typescript-eslint'],
-    'root': true,
-    'env': {
-        'node': true
+    root: true,
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: ['./tsconfig-eslint.json'],
     },
-    'ignorePatterns': [
-        'node_modules/**',
-        'dist/**',
-        'examples/commonjs/index.js'
+    plugins: ['@typescript-eslint', 'import'],
+    extends: [
+        'eslint:recommended',
+        'airbnb-typescript',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:eslint-comments/recommended',
+        'plugin:promise/recommended',
+        'prettier',
     ],
-    'rules': {
-        'eqeqeq': 'error',
-        'quotes': ['error', 'single']
+    env: {
+        node: true,
+    },
+    ignorePatterns: ['node_modules/**', 'dist/**', 'examples/**', '**/*.js'],
+    rules: {
+        eqeqeq: 'error',
+        '@typescript-eslint/lines-between-class-members': 'off',
+        'react/jsx-filename-extension': 'off',
     },
 };

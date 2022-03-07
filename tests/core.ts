@@ -7,39 +7,38 @@ import * as deepl from 'deepl-node';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import {v4 as randomUUID} from 'uuid';
-
+import { v4 as randomUUID } from 'uuid';
 
 // Note: this constant cannot be exported immediately, because exports are locally undefined
-const _exampleText: Record<string, string> = {
-    'bg': 'протонен лъч',
-    'cs': 'protonový paprsek',
-    'da': 'protonstråle',
-    'de': 'Protonenstrahl',
-    'el': 'δέσμη πρωτονίων',
-    'en': 'proton beam',
+const internalExampleText: Record<string, string> = {
+    bg: 'протонен лъч',
+    cs: 'protonový paprsek',
+    da: 'protonstråle',
+    de: 'Protonenstrahl',
+    el: 'δέσμη πρωτονίων',
+    en: 'proton beam',
     'en-US': 'proton beam',
     'en-GB': 'proton beam',
-    'es': 'haz de protones',
-    'et': 'prootonikiirgus',
-    'fi': 'protonisäde',
-    'fr': 'faisceau de protons',
-    'hu': 'protonnyaláb',
-    'it': 'fascio di protoni',
-    'ja': '陽子ビーム',
-    'lt': 'protonų spindulys',
-    'lv': 'protonu staru kūlis',
-    'nl': 'protonenbundel',
-    'pl': 'wiązka protonów',
-    'pt': 'feixe de prótons',
+    es: 'haz de protones',
+    et: 'prootonikiirgus',
+    fi: 'protonisäde',
+    fr: 'faisceau de protons',
+    hu: 'protonnyaláb',
+    it: 'fascio di protoni',
+    ja: '陽子ビーム',
+    lt: 'protonų spindulys',
+    lv: 'protonu staru kūlis',
+    nl: 'protonenbundel',
+    pl: 'wiązka protonów',
+    pt: 'feixe de prótons',
     'pt-BR': 'feixe de prótons',
     'pt-PT': 'feixe de prótons',
-    'ro': 'fascicul de protoni',
-    'ru': 'протонный луч',
-    'sk': 'protónový lúč',
-    'sl': 'protonski žarek',
-    'sv': 'protonstråle',
-    'zh': '质子束',
+    ro: 'fascicul de protoni',
+    ru: 'протонный луч',
+    sk: 'protónový lúč',
+    sl: 'protonski žarek',
+    sv: 'protonstråle',
+    zh: '质子束',
 };
 
 const usingMockServer = process.env.DEEPL_MOCK_SERVER_PORT !== undefined;
@@ -56,11 +55,11 @@ function makeSessionName(): string {
     return `${expect.getState().currentTestName}/${randomUUID()}`;
 }
 
-export const exampleText = _exampleText;
-export const exampleDocumentInput = _exampleText.en;
-export const exampleDocumentOutput = _exampleText.de;
-export const exampleLargeDocumentInput = (_exampleText.en + '\n').repeat(1000);
-export const exampleLargeDocumentOutput = (_exampleText.de + '\n').repeat(1000);
+export const exampleText = internalExampleText;
+export const exampleDocumentInput = exampleText.en;
+export const exampleDocumentOutput = exampleText.de;
+export const exampleLargeDocumentInput = (exampleText.en + '\n').repeat(1000);
+export const exampleLargeDocumentOutput = (exampleText.de + '\n').repeat(1000);
 
 /**
  * Creates temp directory, test files for a small and large .txt document, and an output path.
@@ -106,22 +105,52 @@ export function makeTranslator(options?: TestTranslatorOptions) {
         throw Error('DEEPL_AUTH_KEY environment variable must be defined unless using mock-server');
     }
 
-    const authKey = options?.authKey || (options?.randomAuthKey ? randomAuthKey() : process.env.DEEPL_AUTH_KEY || '');
+    const authKey =
+        options?.authKey ||
+        (options?.randomAuthKey ? randomAuthKey() : process.env.DEEPL_AUTH_KEY || '');
 
     const serverUrl = process.env.DEEPL_SERVER_URL;
 
     const sessionHeaders: Record<string, string> = {};
-    if (options?.mockServerNoResponseTimes !== undefined) sessionHeaders['mock-server-session-no-response-count'] = String(options?.mockServerNoResponseTimes);
-    if (options?.mockServer429ResponseTimes !== undefined) sessionHeaders['mock-server-session-429-count'] = String(options?.mockServer429ResponseTimes);
-    if (options?.mockServerInitCharacterLimit !== undefined) sessionHeaders['mock-server-session-init-character-limit'] = String(options?.mockServerInitCharacterLimit);
-    if (options?.mockServerInitDocumentLimit !== undefined) sessionHeaders['mock-server-session-init-document-limit'] = String(options?.mockServerInitDocumentLimit);
-    if (options?.mockServerInitTeamDocumentLimit !== undefined) sessionHeaders['mock-server-session-init-team-document-limit'] = String(options?.mockServerInitTeamDocumentLimit);
-    if (options?.mockServerDocFailureTimes !== undefined) sessionHeaders['mock-server-session-doc-failure'] = String(options?.mockServerDocFailureTimes);
-    if (options?.mockServerDocQueueTime !== undefined) sessionHeaders['mock-server-session-doc-queue-time'] = String(options?.mockServerDocQueueTime);
-    if (options?.mockServerDocTranslateTime !== undefined) sessionHeaders['mock-server-session-doc-translate-time'] = String(options?.mockServerDocTranslateTime);
-    if (options?.mockServerExpectProxy !== undefined) sessionHeaders['mock-server-session-expect-proxy'] = options?.mockServerExpectProxy ? '1' : '0';
+    if (options?.mockServerNoResponseTimes !== undefined)
+        sessionHeaders['mock-server-session-no-response-count'] = String(
+            options?.mockServerNoResponseTimes,
+        );
+    if (options?.mockServer429ResponseTimes !== undefined)
+        sessionHeaders['mock-server-session-429-count'] = String(
+            options?.mockServer429ResponseTimes,
+        );
+    if (options?.mockServerInitCharacterLimit !== undefined)
+        sessionHeaders['mock-server-session-init-character-limit'] = String(
+            options?.mockServerInitCharacterLimit,
+        );
+    if (options?.mockServerInitDocumentLimit !== undefined)
+        sessionHeaders['mock-server-session-init-document-limit'] = String(
+            options?.mockServerInitDocumentLimit,
+        );
+    if (options?.mockServerInitTeamDocumentLimit !== undefined)
+        sessionHeaders['mock-server-session-init-team-document-limit'] = String(
+            options?.mockServerInitTeamDocumentLimit,
+        );
+    if (options?.mockServerDocFailureTimes !== undefined)
+        sessionHeaders['mock-server-session-doc-failure'] = String(
+            options?.mockServerDocFailureTimes,
+        );
+    if (options?.mockServerDocQueueTime !== undefined)
+        sessionHeaders['mock-server-session-doc-queue-time'] = String(
+            options?.mockServerDocQueueTime,
+        );
+    if (options?.mockServerDocTranslateTime !== undefined)
+        sessionHeaders['mock-server-session-doc-translate-time'] = String(
+            options?.mockServerDocTranslateTime,
+        );
+    if (options?.mockServerExpectProxy !== undefined)
+        sessionHeaders['mock-server-session-expect-proxy'] = options?.mockServerExpectProxy
+            ? '1'
+            : '0';
     if (Object.entries(sessionHeaders).length !== 0) {
-        if (!usingMockServer && !options?.mockServerOptional) throw new Error('Mock-server session is only used if using mock-server.');
+        if (!usingMockServer && !options?.mockServerOptional)
+            throw new Error('Mock-server session is only used if using mock-server.');
         sessionHeaders['mock-server-session'] = makeSessionName();
     }
 
@@ -129,7 +158,7 @@ export function makeTranslator(options?: TestTranslatorOptions) {
         serverUrl: serverUrl,
         headers: sessionHeaders,
         minTimeout: options?.minTimeout,
-        maxRetries: options?.maxRetries
+        maxRetries: options?.maxRetries,
     });
 }
 
@@ -139,7 +168,7 @@ export const withMockServer = usingMockServer ? it : it.skip;
 export const withRealServer = usingMockServer ? it.skip : it;
 
 // Wrap setTimeout() with Promise
-export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));
+export const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 module.exports = {
     exampleText,
@@ -153,5 +182,3 @@ module.exports = {
     makeTranslator,
     timeout,
 };
-
-
