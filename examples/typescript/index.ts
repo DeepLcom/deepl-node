@@ -6,10 +6,16 @@ const serverUrl = process.env["DEEPL_SERVER_URL"]
 const translator = new deepl.Translator(authKey, {serverUrl: serverUrl});
 
 (async () => {
-    const targetLang: deepl.TargetLanguageCode = 'fr';
-    const results = await translator.translateText(
-        ['Hello, world!', 'How are you?'], null, targetLang);
-    results.map((result: deepl.TextResult) => {
+    try {
+        console.log(await translator.getUsage());
+
+        const targetLang: deepl.TargetLanguageCode = 'fr';
+
+        const result: deepl.TextResult = await translator.translateText('Hello, world!', null, targetLang);
+
         console.log(result.text); // Bonjour, le monde !
-    });
+    } catch (error) {
+        console.log(error);
+        process.exit(1);
+    }
 })();
