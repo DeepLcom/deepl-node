@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Change TypeScript-example to match other examples.
 - Improvements to code style and formatting.
+- Increase TypeScript compiler target to `es2019`.
 ### Deprecated
 ### Removed
 ### Fixed

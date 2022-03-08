@@ -14,7 +14,7 @@
         "types": ["node", "jest"],
         "module": "commonjs",
         "outDir": "dist",
-        "target": "es2016"
+        "target": "es2019"
     },
     "compileOnSave": false,
     "exclude": ["tests", "dist", "node_modules"],
