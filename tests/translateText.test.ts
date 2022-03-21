@@ -146,22 +146,38 @@ describe('translate text', () => {
         await translator.translateText(input, null, 'de', { preserveFormatting: true });
     });
 
-    withRealServer('should translate using specified tags', async () => {
+    it('should translate with tag_handling option', async () => {
+        const text =
+            '\
+     <!DOCTYPE html>\n\
+     <html>\n\
+       <body>\n\
+         <p>This is an example sentence.</p>\n\
+     </body>\n\
+     </html>';
+        const translator = makeTranslator();
+        // Note: this test may use the mock server that will not translate the text,
+        // therefore we do not check the translated result.
+        await translator.translateText(text, null, 'de', { tagHandling: 'xml' });
+        await translator.translateText(text, null, 'de', { tagHandling: 'html' });
+    });
+
+    withRealServer('should translate using specified XML tags', async () => {
         const translator = makeTranslator();
         const text =
             "\
-            <document>\n\
-                <meta>\n\
-                    <title>A document's title</title>\n\
-                </meta>\n\
-                <content>\n\
-                    <par>\n\
-                        <span>This is a sentence split</span><span>across two &lt;span&gt; tags that should be treated as one.</span>\n\
-                    </par>\n\
-                    <par>Here is a sentence. Followed by a second one.</par>\n\
-                    <raw>This sentence will not be translated.</raw>\n\
-                </content>\n\
-            </document>";
+<document>\n\
+    <meta>\n\
+        <title>A document's title</title>\n\
+    </meta>\n\
+    <content>\n\
+        <par>\n\
+            <span>This is a sentence split</span><span>across two &lt;span&gt; tags that should be treated as one.</span>\n\
+        </par>\n\
+        <par>Here is a sentence. Followed by a second one.</par>\n\
+        <raw>This sentence will not be translated.</raw>\n\
+    </content>\n\
+</document>";
         const result = await translator.translateText(text, null, 'de', {
             tagHandling: 'xml',
             outlineDetection: false,
@@ -171,5 +187,23 @@ describe('translate text', () => {
         });
         expect(result.text).toContain('<raw>This sentence will not be translated.</raw>');
         expect(result.text).toContain('<title>Der Titel');
+    });
+
+    withRealServer('should translate using specified HTML tags', async () => {
+        const translator = makeTranslator();
+        const text =
+            '\
+<!DOCTYPE html>\n\
+<html>\n\
+  <body>\n\
+    <h1>My First Heading</h1>\n\
+    <p translate="no">My first paragraph.</p>\n\
+  </body>\n\
+</html>';
+
+        const result = await translator.translateText(text, null, 'de', { tagHandling: 'html' });
+
+        expect(result.text).toContain('<h1>Meine erste Überschrift</h1>');
+        expect(result.text).toContain('<p translate="no">My first paragraph.</p>');
     });
 });

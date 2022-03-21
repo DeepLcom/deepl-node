@@ -34,7 +34,7 @@ export interface TranslatorOptions {
 
 export type Formality = 'less' | 'more' | 'default';
 export type SentenceSplittingMode = 'off' | 'on' | 'nonewlines' | 'default';
-export type TagHandlingMode = 'xml';
+export type TagHandlingMode = 'html' | 'xml';
 export type GlossaryId = string;
 export type TagList = string | string[];
 
