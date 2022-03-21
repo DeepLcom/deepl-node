@@ -29,10 +29,6 @@ describe('translate text', () => {
         expect(result.text).toBe(exampleText.de);
         expect(result.detectedSourceLang).toBe('en');
 
-        result = await translator.translateText(exampleText.en, 'en', 'de');
-        expect(result.text).toBe(exampleText.de);
-        expect(result.detectedSourceLang).toBe('en');
-
         const sourceLangEn = <deepl.SourceLanguageCode>'eN'; // Type cast to silence type-checks
         const targetLangDe = <deepl.TargetLanguageCode>'De'; // Type cast to silence type-checks
         result = await translator.translateText(exampleText.en, sourceLangEn, targetLangDe);
@@ -132,7 +128,7 @@ describe('translate text', () => {
         await translator.translateText(input, null, 'de', { splitSentences: 'nonewlines' });
         await translator.translateText(input, null, 'de', { splitSentences: 'default' });
 
-        // Invalid sentence splitting modes are ignored
+        // Invalid sentence splitting modes are rejected
         const invalidSplitSentences = <deepl.SentenceSplittingMode>'invalid'; // Type cast to silence type-checks
         await expect(
             translator.translateText(input, null, 'de', { splitSentences: invalidSplitSentences }),
