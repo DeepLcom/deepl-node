@@ -195,12 +195,6 @@ describe('translate document', () => {
             let handle = await translator.uploadDocument(exampleDocument, null, 'de');
             let status = await translator.getDocumentStatus(handle);
             expect(status.ok()).toBe(true);
-            expect(status.done()).toBe(false);
-
-            // Calling downloadDocument() before document is ready will fail
-            await expect(translator.downloadDocument(handle, outputDocumentPath)).rejects.toThrow(
-                'Document not ready',
-            );
 
             // Test recreating handle as an object
             handle = { documentId: handle.documentId, documentKey: handle.documentKey };
@@ -231,6 +225,13 @@ describe('translate document', () => {
         const handle = await translator.uploadDocument(exampleDocument, null, 'de');
         const status = await translator.getDocumentStatus(handle);
         expect(status.ok()).toBe(true);
+        expect(status.done()).toBe(false);
+
+        // Calling downloadDocument() before document is ready will fail
+        await expect(translator.downloadDocument(handle, outputDocumentPath)).rejects.toThrow(
+            'Document not ready',
+        );
+
         const { handle: handleResult, status: statusResult } =
             await translator.isDocumentTranslationComplete(handle);
         expect(handle.documentId).toBe(handleResult.documentId);
