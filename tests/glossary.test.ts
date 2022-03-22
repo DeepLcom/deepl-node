@@ -311,7 +311,7 @@ describe('translate using glossaries', () => {
         } finally {
             await cleanupGlossary();
         }
-    });
+    }, 20000); // Increased timeout for test involving document translation
 
     it('should reject translating invalid text with glossaries', async () => {
         const text = 'Test';
