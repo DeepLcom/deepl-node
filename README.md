@@ -315,7 +315,7 @@ supports the optional `formality` parameter.
 const sourceLanguages = await translator.getSourceLanguages();
 for (let i = 0; i < sourceLanguages.length; i++) {
     const lang = sourceLanguages[i];
-    console.log(`${lang.name} (${lang.code})`); // Example: 'English (EN)'
+    console.log(`${lang.name} (${lang.code})`); // Example: 'English (en)'
 }
 
 const targetLanguages = await translator.getTargetLanguages();
