@@ -183,13 +183,12 @@ describe('translate document', () => {
         ).rejects.toThrow(/(nvalid file)|(file extension)/);
     });
 
-    it(
+    withMockServer(
         'should support low level use',
         async () => {
             // Set a small document queue time to attempt downloading a queued document
             const translator = makeTranslator({
                 mockServerDocQueueTime: 100,
-                mockServerOptional: true,
             });
             const [exampleDocument, , outputDocumentPath] = tempFiles();
             let handle = await translator.uploadDocument(exampleDocument, null, 'de');

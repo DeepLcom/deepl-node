@@ -88,12 +88,6 @@ describe('translate using glossaries', () => {
             await expect(translator.createGlossary('', 'en', 'de', entries)).rejects.toThrowError(
                 deepl.DeepLError,
             );
-            await expect(
-                translator.createGlossary(glossaryName, 'en', 'ja', entries),
-            ).rejects.toThrowError(deepl.DeepLError);
-            await expect(
-                translator.createGlossary(glossaryName, 'ja', 'de', entries),
-            ).rejects.toThrowError(deepl.DeepLError);
             const targetLangXX = <deepl.TargetLanguageCode>'xx'; // Type cast to silence type-checks
             await expect(
                 translator.createGlossary(glossaryName, 'en', targetLangXX, entries),
