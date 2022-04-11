@@ -83,7 +83,7 @@ export interface TranslateTextOptions {
     /** Specifies the ID of a glossary to use with translation. */
     glossary?: GlossaryId | GlossaryInfo;
 
-    /** Type of tags to parse before translation, only 'xml' is currently available. */
+    /** Type of tags to parse before translation, options are 'html' and 'xml'. */
     tagHandling?: TagHandlingMode;
 
     /** Set to false to disable automatic tag detection, default is true. */
