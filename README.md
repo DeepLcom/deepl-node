@@ -37,16 +37,14 @@ Import the package and construct a `Translator`. The first argument is a string
 containing your API authentication key as found in your
 [DeepL Pro Account][pro-account].
 
-To avoid writing your key in source code, you can set it in an environment
-variable `DEEPL_AUTH_KEY`, and read the variable in your code, however any
-string will work.
+Be careful not to expose your key, for example when sharing source code.
 
 An example using `async`/`await` and ES Modules:
 
 ```javascript
 import * as deepl from 'deepl-node';
 
-const authKey = process.env['DEEPL_AUTH_KEY'];
+const authKey = "f63c02c5-f056-..."; // Replace with your key
 const translator = new deepl.Translator(authKey);
 
 (async () => {
@@ -54,6 +52,10 @@ const translator = new deepl.Translator(authKey);
     console.log(result.text); // Bonjour, le monde !
 })();
 ```
+
+This example is for demonstration purposes only. In production code, the
+authentication key should not be hard-coded, but instead fetched from a
+configuration file or environment variable.
 
 If you are using CommonJS, you should instead require the package:
 
