@@ -776,7 +776,8 @@ export class Translator {
      * Returns a promise that resolves when the given document translation completes, or rejects if
      * there was an error communicating with the DeepL API or the document translation failed.
      * @param handle {DocumentHandle} Handle to the document translation.
-     * @return Fulfills with input DocumentHandle and DocumentStatus when the document translation completes.
+     * @return Fulfills with input DocumentHandle and DocumentStatus when the document translation
+     * completes successfully, rejects if translation fails or a communication error occurs.
      */
     async isDocumentTranslationComplete(
         handle: DocumentHandle,
@@ -789,6 +790,10 @@ export class Translator {
             await timeout(secs * 1000);
             logInfo(`Rechecking document translation status after sleeping for ${secs} seconds.`);
             status = await this.getDocumentStatus(handle);
+        }
+        if (!status.ok()) {
+            const message = 'unknown error';
+            throw new DeepLError(message);
         }
         return { handle, status };
     }
