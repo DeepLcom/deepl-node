@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+* Add `errorMessage` property to `DocumentStatus`, describing the error in case
+  of document translation failure.
 ### Changed
 ### Deprecated
 ### Removed

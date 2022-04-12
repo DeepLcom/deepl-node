@@ -11,6 +11,7 @@ import util from 'util';
 import {
     exampleDocumentInput,
     exampleDocumentOutput,
+    exampleText,
     makeTranslator,
     tempFiles,
     timeout,
@@ -161,16 +162,18 @@ describe('translate document', () => {
         ).rejects.toThrow('formality');
     });
 
-    withMockServer('should handle document failure', async () => {
-        const translator = makeTranslator({ mockServerDocFailureTimes: 1 });
+    it('should handle document failure', async () => {
+        const translator = makeTranslator();
         const [exampleDocument, , outputDocumentPath] = tempFiles();
+        fs.writeFileSync(exampleDocument, exampleText.de);
+        // Translating text from DE to DE will trigger error
         const promise = translator.translateDocument(
             exampleDocument,
             outputDocumentPath,
             null,
             'de',
         );
-        await expect(promise).rejects.toThrowError(deepl.DocumentTranslationError);
+        await expect(promise).rejects.toThrow(/Source and target language/);
     });
 
     it('should reject invalid document', async () => {

@@ -105,6 +105,7 @@ interface DocumentStatusApiResponse {
     status: string;
     seconds_remaining?: number;
     billed_characters?: number;
+    error_message?: string;
 }
 
 /**
@@ -180,11 +181,18 @@ class DocumentStatusImpl implements DocumentStatus {
     public status: DocumentStatusCode;
     public secondsRemaining?: number;
     public billedCharacters?: number;
+    public errorMessage?: string;
 
-    constructor(status: DocumentStatusCode, secondsRemaining?: number, billedCharacters?: number) {
+    constructor(
+        status: DocumentStatusCode,
+        secondsRemaining?: number,
+        billedCharacters?: number,
+        errorMessage?: string,
+    ) {
         this.status = status;
         this.secondsRemaining = secondsRemaining;
         this.billedCharacters = billedCharacters;
+        this.errorMessage = errorMessage;
     }
 
     ok(): boolean {
@@ -251,6 +259,7 @@ export function parseDocumentStatus(json: string): DocumentStatus {
             obj.status as DocumentStatusCode,
             obj.seconds_remaining,
             obj.billed_characters,
+            obj.error_message,
         );
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);

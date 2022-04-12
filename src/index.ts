@@ -159,6 +159,11 @@ export interface DocumentStatus {
     readonly billedCharacters?: number;
 
     /**
+     * A short description of the error, or undefined if no error has occurred.
+     */
+    readonly errorMessage?: string;
+
+    /**
      * True if no error has occurred, otherwise false. Note that if the document translation is in
      * progress, this returns true.
      */
@@ -792,7 +797,7 @@ export class Translator {
             status = await this.getDocumentStatus(handle);
         }
         if (!status.ok()) {
-            const message = 'unknown error';
+            const message = status.errorMessage || 'unknown error';
             throw new DeepLError(message);
         }
         return { handle, status };
