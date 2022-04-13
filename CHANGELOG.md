@@ -5,15 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [1.2.0] - 2022-04-13
 ### Added
 * Add `errorMessage` property to `DocumentStatus`, describing the error in case
   of document translation failure.
-### Changed
-### Deprecated
-### Removed
-### Fixed
-### Security
 
 
 ## [1.1.1] - 2022-04-12
@@ -53,7 +48,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.1.1...HEAD
+[1.2.0]: https://github.com/DeepLcom/deepl-node/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/DeepLcom/deepl-node/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/DeepLcom/deepl-node/compare/v0.1.2...v1.1.0
 [0.1.2]: https://github.com/DeepLcom/deepl-node/compare/v0.1.1...v0.1.2
