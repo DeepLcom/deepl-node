@@ -11,7 +11,7 @@
     "bugs": "https://github.com/DeepLcom/deepl-node/issues",
     "homepage": "https://www.deepl.com/",
     "engines": {
-        "node": "^12.0 || ^14.0 || ^16.0 || ^17.0"
+        "node": ">=12.0"
     },
     "keywords": [
         "deepl",
@@ -19,7 +19,7 @@
         "api"
     ],
     "dependencies": {
-        "@types/node": ">=16.11.7",
+        "@types/node": ">=12.0",
         "axios": ">=0.21.2",
         "form-data": "^3.0.0",
         "loglevel": ">=1.6.2"
