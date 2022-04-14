@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.2.1] - 2022-04-14
+### Changed
+* Simplify and widen the accepted version range for `node` and `@types/node`. 
+
+
 ## [1.2.0] - 2022-04-13
 ### Added
 * Add `errorMessage` property to `DocumentStatus`, describing the error in case
@@ -48,6 +53,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[1.2.1]: https://github.com/DeepLcom/deepl-node/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/DeepLcom/deepl-node/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/DeepLcom/deepl-node/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/DeepLcom/deepl-node/compare/v0.1.2...v1.1.0
