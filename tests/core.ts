@@ -24,6 +24,7 @@ const internalExampleText: Record<string, string> = {
     fi: 'protonisäde',
     fr: 'faisceau de protons',
     hu: 'protonnyaláb',
+    id: 'berkas proton',
     it: 'fascio di protoni',
     ja: '陽子ビーム',
     lt: 'protonų spindulys',
@@ -38,6 +39,7 @@ const internalExampleText: Record<string, string> = {
     sk: 'protónový lúč',
     sl: 'protonski žarek',
     sv: 'protonstråle',
+    tr: 'proton ışını',
     zh: '质子束',
 };
 

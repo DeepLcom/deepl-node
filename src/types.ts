@@ -129,6 +129,7 @@ type CommonLanguageCode =
     | 'fi'
     | 'fr'
     | 'hu'
+    | 'id'
     | 'it'
     | 'ja'
     | 'lt'
@@ -140,6 +141,7 @@ type CommonLanguageCode =
     | 'sk'
     | 'sl'
     | 'sv'
+    | 'tr'
     | 'zh';
 
 /**
