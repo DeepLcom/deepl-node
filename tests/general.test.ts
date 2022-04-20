@@ -26,9 +26,9 @@ describe('general', () => {
         const promises = [];
         for (const langCode in exampleText) {
             const inputText = exampleText[langCode];
-
+            const sourceLang = deepl.nonRegionalLanguageCode(langCode);
             const promise = translator
-                .translateText(inputText, null, 'en-US')
+                .translateText(inputText, sourceLang, 'en-US')
                 // eslint-disable-next-line @typescript-eslint/no-loop-func, promise/always-return
                 .then((result: deepl.TextResult) => {
                     expect(result.text.toLowerCase()).toContain('proton');
