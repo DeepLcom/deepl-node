@@ -470,7 +470,7 @@ export class Translator {
         }
         const headers = {
             Authorization: `DeepL-Auth-Key ${authKey}`,
-            'User-Agent': 'deepl-node/1.2.1',
+            'User-Agent': 'deepl-node/1.2.2',
             ...(options?.headers ?? {}),
         };
 
