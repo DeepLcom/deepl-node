@@ -168,11 +168,11 @@ export type LanguageCode = SourceLanguageCode | TargetLanguageCode;
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type SourceGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr';
+export type SourceGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr' | 'ja';
 
 /**
  * Language codes that may be used as a target language for glossaries.
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type TargetGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr';
+export type TargetGlossaryLanguageCode = SourceGlossaryLanguageCode;
