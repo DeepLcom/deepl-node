@@ -29,6 +29,7 @@ import {
     GlossaryId,
     GlossaryInfo,
     LanguageCode,
+    NonRegionalLanguageCode,
     SentenceSplittingMode,
     SourceGlossaryLanguageCode,
     SourceLanguageCode,
@@ -198,11 +199,11 @@ export function standardizeLanguageCode(langCode: string): LanguageCode {
  * @param langCode String containing language code to convert.
  * @return Language code with regional variant removed.
  */
-export function nonRegionalLanguageCode(langCode: string): LanguageCode {
+export function nonRegionalLanguageCode(langCode: string): NonRegionalLanguageCode {
     if (!isString(langCode) || langCode.length === 0) {
         throw new DeepLError('langCode must be a non-empty string');
     }
-    return langCode.split('-', 2)[0].toLowerCase() as LanguageCode;
+    return langCode.split('-', 2)[0].toLowerCase() as NonRegionalLanguageCode;
 }
 
 /**

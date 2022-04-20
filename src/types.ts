@@ -166,6 +166,12 @@ export type TargetLanguageCode = CommonLanguageCode | 'en-GB' | 'en-US' | 'pt-BR
 export type LanguageCode = SourceLanguageCode | TargetLanguageCode;
 
 /**
+ * Language codes that do not include a regional variant, for example 'en' is included, but 'en-US'
+ * is not.
+ */
+export type NonRegionalLanguageCode = CommonLanguageCode | 'en' | 'pt';
+
+/**
  * Language codes that may be used as a source language for glossaries.
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
