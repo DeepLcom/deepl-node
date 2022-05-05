@@ -143,7 +143,8 @@ export type DocumentStatusCode = 'queued' | 'translating' | 'error' | 'done';
  */
 export interface DocumentStatus {
     /**
-     * One of the Status enum values below.
+     * One of the status values defined in DocumentStatusCode.
+     * @see DocumentStatusCode
      */
     readonly status: DocumentStatusCode;
 
@@ -165,8 +166,8 @@ export interface DocumentStatus {
     readonly errorMessage?: string;
 
     /**
-     * True if no error has occurred, otherwise false. Note that if the document translation is in
-     * progress, this returns true.
+     * True if no error has occurred, otherwise false. Note that while the document translation is
+     * in progress, this returns true.
      */
     ok(): boolean;
 
