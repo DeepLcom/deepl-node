@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [1.3.0] - 2022-05-18
+## [1.3.1] - 2022-05-18
+Replaces version 1.3.0 which was broken due an incorrect package version. 
 ### Added
 * New languages available: Indonesian (`'id'`) and Turkish (`'tr'`). Add
   language code constants and tests.
@@ -15,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Change return type of `nonRegionalLanguageCode()` to newly-added type
   `NonRegionalLanguageCode`.
+
+
+## [1.3.0] - 2022-05-18
+Due to an incorrect package version, this version was removed. 
 
 
 ## [1.2.2] - 2022-04-20
@@ -75,7 +80,8 @@ client library took over this package name. Thanks to
 ownership.
 
 
-[1.3.0]: https://github.com/DeepLcom/deepl-node/compare/v1.2.2...v1.3.0
+[1.3.1]: https://github.com/DeepLcom/deepl-node/compare/v1.2.2...v1.3.1
+[1.3.0]: https://github.com/DeepLcom/deepl-node/releases/tag/v1.3.0
 [1.2.2]: https://github.com/DeepLcom/deepl-node/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/DeepLcom/deepl-node/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/DeepLcom/deepl-node/compare/v1.1.1...v1.2.0
