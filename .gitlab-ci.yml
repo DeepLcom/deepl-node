@@ -86,8 +86,9 @@ test:
         - npm run test:coverage
     artifacts:
         reports:
-            cobertura:
-                - coverage/clover.xml
+            coverage_report:
+                coverage_format: cobertura
+                path: coverage/clover.xml
             junit:
                 - junit.xml
         when: always
