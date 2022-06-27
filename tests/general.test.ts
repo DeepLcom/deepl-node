@@ -61,15 +61,17 @@ describe('general', () => {
             }
             expect(language.supportsFormality).toBeUndefined();
         }
+        expect(sourceLanguages.filter((language) => language.code === 'en').length).toBe(1);
 
         for (const languagesKey in targetLanguages) {
             const language = targetLanguages[languagesKey];
             if (language.code === 'de') {
                 expect(language.supportsFormality).toBe(true);
-                expect(language.name).toBe('English');
+                expect(language.name).toBe('German');
             }
             expect(language.supportsFormality).toBeDefined();
         }
+        expect(targetLanguages.filter((language) => language.code === 'de').length).toBe(1);
     });
 
     it('lists glossary language pairs', () => {

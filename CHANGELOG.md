@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update contributing guidelines, we can now accept Pull Requests.
 ### Fixed
 * Fix GitLab CI config.
+* Correct language code case in `getSourceLanguages()` and 
+  `getTargetLanguages()` result.
 
 
 ## [1.3.1] - 2022-05-18

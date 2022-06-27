@@ -16,7 +16,7 @@ import {
     UsageDetail,
     Usage,
 } from './index';
-import { GlossaryInfo, LanguageCode, SourceLanguageCode } from './types';
+import { GlossaryInfo, SourceLanguageCode } from './types';
 
 /**
  * Type used during JSON parsing of API response for glossary info.
@@ -325,7 +325,7 @@ function parseLanguage(lang: LanguageApiResponse): Language {
     try {
         return {
             name: lang.name,
-            code: lang.language as LanguageCode,
+            code: standardizeLanguageCode(lang.language),
             supportsFormality: lang.supports_formality,
         };
     } catch (error) {
