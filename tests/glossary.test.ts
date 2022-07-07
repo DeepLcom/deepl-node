@@ -338,5 +338,5 @@ describe('translate using glossaries', () => {
             await cleanupGlossaryEnDe();
             await cleanupGlossaryDeEn();
         }
-    });
+    }, 20000);
 });
