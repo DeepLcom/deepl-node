@@ -1,3 +1,11 @@
+# Note: This GitLab CI configuration is used for internal testing, users can ignore it.
+include:
+    - project: '${CI_PROJECT_NAMESPACE}/ci-libs-for-client-libraries'
+      file:
+          - '/${CI_PROJECT_NAME}/.gitlab-ci.yml'
+
+# Global --------------------------
+
 image: node:latest
 
 cache:
@@ -47,21 +55,9 @@ build:
 
 # stage: test ----------------------
 
-.use-test-server:
-    secrets:
-        DEEPL_AUTH_KEY:
-            vault: jenkins/client_libraries/test_auth_key@backend
-            file: false
-        DEEPL_SERVER_URL:
-            vault: jenkins/client_libraries/test_server_url@backend
-            file: false
-
 test:
-    extends: .use-test-server
     stage: test
-    services:
-        - name: $DOCKER_REGISTRY/deepl/deepl-mock
-          alias: deepl-mock
+    extends: .test
     parallel:
         matrix:
             - DOCKER_IMAGE: 'node:17'
@@ -95,9 +91,7 @@ test:
 
 examples:
     stage: test
-    services:
-        - name: $DOCKER_REGISTRY/deepl/deepl-mock
-          alias: deepl-mock
+    extends: .test
     parallel:
         matrix:
             - DOCKER_IMAGE: 'node:12'
@@ -128,6 +122,7 @@ examples:
 
 publish to NPM:
     stage: publish
+    extends: .publish
     dependencies:
         - build
     rules:
@@ -135,7 +130,3 @@ publish to NPM:
     script:
         - npm config set //registry.npmjs.org/:_authToken ${NPM_PUBLISH_TOKEN}
         - npm publish
-    secrets:
-        NPM_PUBLISH_TOKEN:
-            vault: jenkins/client_libraries/npm_publish_token@backend
-            file: false
