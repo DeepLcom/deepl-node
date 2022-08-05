@@ -737,7 +737,7 @@ export class Translator {
     async getDocumentStatus(handle: DocumentHandle): Promise<DocumentStatus> {
         const data = new URLSearchParams({ document_key: handle.documentKey });
         const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
-            'GET',
+            'POST',
             `/v2/document/${handle.documentId}`,
             { data },
         );
@@ -946,7 +946,7 @@ export class Translator {
         const data = new URLSearchParams({ document_key: handle.documentKey });
         const { statusCode, content } =
             await this.httpClient.sendRequestWithBackoff<IncomingMessage>(
-                'GET',
+                'POST',
                 `/v2/document/${handle.documentId}/result`,
                 { data },
                 true,
