@@ -538,36 +538,6 @@ export class Translator {
     }
 
     /**
-     * Translates specified text string into the target language.
-     * @param texts String containing input text to translate.
-     * @param sourceLang Language code of input text language, or null to use auto-detection.
-     * @param targetLang Language code of language to translate into.
-     * @param options Optional TranslateTextOptions object containing additional options controlling translation.
-     * @return Fulfills with a TextResult object; use the `TextResult.text` property to access the translated text.
-     */
-    async translateText(
-        texts: string,
-        sourceLang: SourceLanguageCode | null,
-        targetLang: TargetLanguageCode,
-        options?: TranslateTextOptions,
-    ): Promise<TextResult>;
-
-    /**
-     * Translates specified array of text strings into the target language.
-     * @param texts Array of strings containing input texts to translate.
-     * @param sourceLang Language code of input text language, or null to use auto-detection.
-     * @param targetLang Language code of language to translate into.
-     * @param options Optional TranslateTextOptions object containing additional options controlling translation.
-     * @return Fulfills with an array of TextResult objects corresponding to input texts; use the `TextResult.text` property to access the translated text.
-     */
-    async translateText(
-        texts: string[],
-        sourceLang: SourceLanguageCode | null,
-        targetLang: TargetLanguageCode,
-        options?: TranslateTextOptions,
-    ): Promise<TextResult[]>;
-
-    /**
      * Translates specified text string or array of text strings into the target language.
      * @param texts Text string or array of strings containing input text(s) to translate.
      * @param sourceLang Language code of input text language, or null to use auto-detection.
@@ -575,12 +545,12 @@ export class Translator {
      * @param options Optional TranslateTextOptions object containing additional options controlling translation.
      * @return Fulfills with a TextResult object or an array of TextResult objects corresponding to input texts; use the `TextResult.text` property to access the translated text.
      */
-    async translateText(
-        texts: string | string[],
+    async translateText<T extends string | string[]>(
+        texts: T,
         sourceLang: SourceLanguageCode | null,
         targetLang: TargetLanguageCode,
         options?: TranslateTextOptions,
-    ): Promise<TextResult | TextResult[]> {
+    ): Promise<T extends string ? TextResult : TextResult[]> {
         const data = buildURLSearchParams(
             sourceLang,
             targetLang,
@@ -597,7 +567,9 @@ export class Translator {
         );
         await checkStatusCode(statusCode, content);
         const textResults = parseTextResultArray(content);
-        return singular ? textResults[0] : textResults;
+        return (singular ? textResults[0] : textResults) as T extends string
+            ? TextResult
+            : TextResult[];
     }
 
     /**

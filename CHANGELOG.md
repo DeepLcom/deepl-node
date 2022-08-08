@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fix GitLab CI config.
 * Correct language code case in `getSourceLanguages()` and 
   `getTargetLanguages()` result.
+* Use TypeScript conditional types on `translateText()` to fix TS compiler
+  errors.
+  * Issue [#9](https://github.com/DeepLcom/deepl-node/issues/9) thanks to
+    [Jannis Blossey](https://github.com/jblossey)
 
 
 ## [1.3.1] - 2022-05-18
