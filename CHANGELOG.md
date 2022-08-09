@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Added
+* Add `createGlossaryWithCsv()` allowing glossaries downloaded from website to
+  be easily uploaded to API.
+
+
 ## [1.3.2] - 2022-08-09
 ### Changed
 * Update contributing guidelines, we can now accept Pull Requests.
@@ -93,6 +99,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.3.2..HEAD
 [1.3.2]: https://github.com/DeepLcom/deepl-node/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/DeepLcom/deepl-node/compare/v1.2.2...v1.3.1
 [1.3.0]: https://github.com/DeepLcom/deepl-node/releases/tag/v1.3.0

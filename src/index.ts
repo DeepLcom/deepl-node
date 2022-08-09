@@ -778,7 +778,7 @@ export class Translator {
     }
 
     /**
-     * Creates a new glossary on DeepL server with given name, languages, and entries.
+     * Creates a new glossary on the DeepL server with given name, languages, and entries.
      * @param name User-defined name to assign to the glossary.
      * @param sourceLang Language code of the glossary source terms.
      * @param targetLang Language code of the glossary target terms.
@@ -791,33 +791,43 @@ export class Translator {
         targetLang: LanguageCode,
         entries: GlossaryEntries,
     ): Promise<GlossaryInfo> {
-        // Glossaries are only supported for base language types
-        sourceLang = nonRegionalLanguageCode(sourceLang);
-        targetLang = nonRegionalLanguageCode(targetLang);
-
-        if (!isString(name) || name.length === 0) {
-            throw new DeepLError('glossary name must be a non-empty string');
-        } else if (Object.keys(entries.entries()).length === 0) {
+        if (Object.keys(entries.entries()).length === 0) {
             throw new DeepLError('glossary entries must not be empty');
         }
 
         const tsv = entries.toTsv();
+        return this.internalCreateGlossary(name, sourceLang, targetLang, 'tsv', tsv);
+    }
 
-        const data = new URLSearchParams({
-            name: name,
-            source_lang: sourceLang,
-            target_lang: targetLang,
-            entries_format: 'tsv',
-            entries: tsv,
-        });
+    /**
+     * Creates a new glossary on DeepL server with given name, languages, and CSV data.
+     * @param name User-defined name to assign to the glossary.
+     * @param sourceLang Language code of the glossary source terms.
+     * @param targetLang Language code of the glossary target terms.
+     * @param csvFile String containing the path of the CSV file to be translated, or a Stream,
+     *     Buffer, or a FileHandle containing CSV file content.
+     * @return Fulfills with a GlossaryInfo containing details about the created glossary.
+     */
+    async createGlossaryWithCsv(
+        name: string,
+        sourceLang: LanguageCode,
+        targetLang: LanguageCode,
+        csvFile: string | Buffer | fs.ReadStream | fs.promises.FileHandle,
+    ): Promise<GlossaryInfo> {
+        let csvContent;
+        if (isString(csvFile)) {
+            csvContent = (await fs.promises.readFile(csvFile)).toString();
+        } else if (csvFile instanceof fs.ReadStream) {
+            csvContent = (await streamToBuffer(csvFile)).toString();
+        } else if (csvFile instanceof Buffer) {
+            csvContent = csvFile.toString();
+        } else {
+            // FileHandle
+            csvContent = (await csvFile.readFile()).toString();
+            await csvFile.close();
+        }
 
-        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
-            'POST',
-            '/v2/glossaries',
-            { data },
-        );
-        await checkStatusCode(statusCode, content, true);
-        return parseGlossaryInfo(content);
+        return this.internalCreateGlossary(name, sourceLang, targetLang, 'csv', csvContent);
     }
 
     /**
@@ -930,6 +940,42 @@ export class Translator {
             outputStream.on('finish', resolve);
             outputStream.on('error', reject);
         });
+    }
+
+    /**
+     * Create glossary with given details.
+     * @private
+     */
+    private async internalCreateGlossary(
+        name: string,
+        sourceLang: LanguageCode,
+        targetLang: LanguageCode,
+        entriesFormat: string,
+        entries: string,
+    ): Promise<GlossaryInfo> {
+        // Glossaries are only supported for base language types
+        sourceLang = nonRegionalLanguageCode(sourceLang);
+        targetLang = nonRegionalLanguageCode(targetLang);
+
+        if (!isString(name) || name.length === 0) {
+            throw new DeepLError('glossary name must be a non-empty string');
+        }
+
+        const data = new URLSearchParams({
+            name: name,
+            source_lang: sourceLang,
+            target_lang: targetLang,
+            entries_format: entriesFormat,
+            entries: entries,
+        });
+
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'POST',
+            '/v2/glossaries',
+            { data },
+        );
+        await checkStatusCode(statusCode, content, true);
+        return parseGlossaryInfo(content);
     }
 
     /**

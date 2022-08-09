@@ -80,6 +80,39 @@ describe('translate using glossaries', () => {
         }
     });
 
+    it('should create glossaries from CSV', async () => {
+        const translator = makeTranslator();
+        const glossaryName = getGlossaryName();
+        const sourceLang = 'en';
+        const targetLang = 'de';
+
+        const expectedEntries = new deepl.GlossaryEntries({
+            entries: {
+                sourceEntry1: 'targetEntry1',
+                'source"Entry': 'target,Entry',
+            },
+        });
+        const csvFile = Buffer.from(
+            'sourceEntry1,targetEntry1,en,de\n"source""Entry","target,Entry",en,de',
+        );
+        const glossary = await translator.createGlossaryWithCsv(
+            glossaryName,
+            sourceLang,
+            targetLang,
+            csvFile,
+        );
+        try {
+            const entries = await translator.getGlossaryEntries(glossary);
+            expect(entries.entries()).toStrictEqual(expectedEntries.entries());
+        } finally {
+            try {
+                await translator.deleteGlossary(glossary);
+            } catch (e) {
+                // Suppress errors
+            }
+        }
+    });
+
     it('should reject creating invalid glossaries', async () => {
         const translator = makeTranslator();
         const glossaryName = getGlossaryName();
