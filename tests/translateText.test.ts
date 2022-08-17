@@ -110,6 +110,19 @@ describe('translate text', () => {
         expect(
             (await translator.translateText(input, null, 'de', { formality: formalityMore })).text,
         ).toBe(formal);
+
+        expect(
+            (await translator.translateText(input, null, 'de', { formality: 'prefer_less' })).text,
+        ).toBe(informal);
+        expect(
+            (await translator.translateText(input, null, 'de', { formality: 'prefer_more' })).text,
+        ).toBe(formal);
+
+        // Using prefer_* with a language that does not support formality is not an error
+        await translator.translateText(input, null, 'tr', { formality: 'prefer_more' });
+        await expect(
+            translator.translateText(input, null, 'tr', { formality: 'more' }),
+        ).rejects.toThrow('formality');
     });
 
     it('should reject invalid formality', async () => {

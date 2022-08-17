@@ -51,7 +51,7 @@ export interface TranslatorOptions {
     proxy?: ProxyConfig;
 }
 
-export type Formality = 'less' | 'more' | 'default';
+export type Formality = 'less' | 'more' | 'default' | 'prefer_less' | 'prefer_more';
 export type SentenceSplittingMode = 'off' | 'on' | 'nonewlines' | 'default';
 export type TagHandlingMode = 'html' | 'xml';
 export type GlossaryId = string;
