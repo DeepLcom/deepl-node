@@ -9,6 +9,7 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { URLSearchParams } from 'url';
 import FormData from 'form-data';
 import { IncomingMessage } from 'http';
+import { ProxyConfig } from './types';
 
 type HttpMethod = 'GET' | 'DELETE' | 'POST';
 
@@ -84,17 +85,20 @@ export class HttpClient {
     private readonly headers: Record<string, string>;
     private readonly minTimeout: number;
     private readonly maxRetries: number;
+    private readonly proxy?: ProxyConfig;
 
     constructor(
         serverUrl: string,
         headers: Record<string, string>,
         maxRetries: number,
         minTimeout: number,
+        proxy?: ProxyConfig,
     ) {
         this.serverUrl = serverUrl;
         this.headers = headers;
         this.maxRetries = maxRetries;
         this.minTimeout = minTimeout;
+        this.proxy = proxy;
     }
 
     prepareRequest(
@@ -133,6 +137,7 @@ export class HttpClient {
                 axiosRequestConfig.data = options.data;
             }
         }
+        axiosRequestConfig.proxy = this.proxy;
         return axiosRequestConfig;
     }
 

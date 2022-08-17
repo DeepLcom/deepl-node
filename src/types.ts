@@ -3,6 +3,20 @@
 // license that can be found in the LICENSE file.
 
 /**
+ * Optional proxy configuration, may be specified as proxy in TranslatorOptions.
+ * @see TranslatorOptions.proxy
+ */
+export interface ProxyConfig {
+    host: string;
+    port: number;
+    auth?: {
+        username: string;
+        password: string;
+    };
+    protocol?: string;
+}
+
+/**
  * Options that can be specified when constructing a Translator.
  */
 export interface TranslatorOptions {
@@ -30,6 +44,11 @@ export interface TranslatorOptions {
      * if this value is unspecified is 10 seconds (10000).
      */
     minTimeout?: number;
+
+    /**
+     * Define the host, port and protocol of the proxy server.
+     */
+    proxy?: ProxyConfig;
 }
 
 export type Formality = 'less' | 'more' | 'default';

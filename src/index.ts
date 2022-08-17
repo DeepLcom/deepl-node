@@ -478,7 +478,13 @@ export class Translator {
 
         const maxRetries = options?.maxRetries !== undefined ? options.maxRetries : 5;
         const minTimeout = options?.minTimeout !== undefined ? options.minTimeout : 5000;
-        this.httpClient = new HttpClient(serverUrl, headers, maxRetries, minTimeout);
+        this.httpClient = new HttpClient(
+            serverUrl,
+            headers,
+            maxRetries,
+            minTimeout,
+            options?.proxy,
+        );
     }
 
     /**

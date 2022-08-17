@@ -385,6 +385,9 @@ The available options are:
 -   `headers`: extra HTTP headers attached to every HTTP request. By default, no
     extra headers are used. Note that Authorization and User-Agent headers are
     added automatically but may be overridden by this option.
+-   `proxy`: define the hostname, and port of the proxy server, and optionally
+    the protocol, and authorization (as an auth object with username and
+    password fields).
 
 #### Logging
 
@@ -400,6 +403,19 @@ log.getLogger('deepl').setLevel('debug'); // Or 'info'
 
 The `loglevel` package also supports plugins, see
 [the documentation](https://www.npmjs.com/package/loglevel#plugins).
+
+#### Proxy configuration
+
+You can configure a proxy by specifying the `proxy` argument when constructing a
+`deepl.Translator`:
+
+```javascript
+const proxy = {host: 'localhost', port: 3000};
+const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
+```
+
+The proxy argument is passed to the underlying `axios` request, see the
+[documentation for axios][axios-proxy-docs].
 
 ### Request retries
 
@@ -440,6 +456,7 @@ environment variables defined referring to the mock-server.
 
 [api-docs]: https://www.deepl.com/docs-api?utm_source=github&utm_medium=github-nodejs-readme
 [api-docs-csv-format]: https://www.deepl.com/docs-api/managing-glossaries/supported-glossary-formats/?utm_source=github&utm_medium=github-nodejs-readme
+[axios-proxy-docs]: https://axios-http.com/docs/req_config
 [create-account]: https://www.deepl.com/pro?utm_source=github&utm_medium=github-nodejs-readme#developer
 [deepl-mock]: https://www.github.com/DeepLcom/deepl-mock
 [issues]: https://www.github.com/DeepLcom/deepl-node/issues

@@ -44,6 +44,8 @@ const internalExampleText: Record<string, string> = {
 };
 
 const usingMockServer = process.env.DEEPL_MOCK_SERVER_PORT !== undefined;
+const usingMockProxyServer =
+    usingMockServer && process.env.DEEPL_MOCK_PROXY_SERVER_PORT !== undefined;
 
 /**
  * Creates a random authKey for testing purposes. Only valid if using mock-server.
@@ -84,6 +86,7 @@ export interface TestTranslatorOptions {
     randomAuthKey?: boolean;
     maxRetries?: number;
     minTimeout?: number;
+    proxy?: deepl.ProxyConfig;
 
     mockServerNoResponseTimes?: number;
     mockServer429ResponseTimes?: number;
@@ -161,13 +164,23 @@ export function makeTranslator(options?: TestTranslatorOptions) {
         headers: sessionHeaders,
         minTimeout: options?.minTimeout,
         maxRetries: options?.maxRetries,
+        proxy: options?.proxy,
     });
 }
 
 // Use instead of it(...) for tests that require a mock-server
 export const withMockServer = usingMockServer ? it : it.skip;
+// Use instead of it(...) for tests that require a mock-server with proxy
+export const withMockProxyServer = usingMockProxyServer ? it : it.skip;
 // Use instead of it(...) for tests that cannot run using mock-server
 export const withRealServer = usingMockServer ? it.skip : it;
+
+const proxyUrlString = process.env.DEEPL_PROXY_URL;
+const proxyUrl = proxyUrlString ? new URL(proxyUrlString) : undefined;
+const proxyConfigHost = proxyUrl ? proxyUrl.hostname : '';
+const proxyConfigPort = parseInt(process.env.DEEPL_MOCK_PROXY_SERVER_PORT || '');
+
+export const proxyConfig: deepl.ProxyConfig = { host: proxyConfigHost, port: proxyConfigPort };
 
 // Wrap setTimeout() with Promise
 export const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -180,7 +193,9 @@ module.exports = {
     exampleLargeDocumentOutput,
     tempFiles,
     withMockServer,
+    withMockProxyServer,
     withRealServer,
     makeTranslator,
     timeout,
+    proxyConfig,
 };

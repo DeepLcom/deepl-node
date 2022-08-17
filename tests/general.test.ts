@@ -6,7 +6,14 @@ import * as deepl from 'deepl-node';
 
 import fs from 'fs';
 
-import { exampleText, tempFiles, withMockServer, makeTranslator } from './core';
+import {
+    exampleText,
+    tempFiles,
+    withMockServer,
+    withMockProxyServer,
+    makeTranslator,
+    proxyConfig,
+} from './core';
 
 const serverUrl = process.env.DEEPL_SERVER_URL;
 
@@ -92,6 +99,21 @@ describe('general', () => {
     it('should determine API free accounts using auth key', () => {
         expect(deepl.isFreeAccountAuthKey('0000:fx')).toBe(true);
         expect(deepl.isFreeAccountAuthKey('0000')).toBe(false);
+    });
+
+    withMockProxyServer('should support proxy usage', async () => {
+        const translator = makeTranslator({
+            mockServerExpectProxy: true,
+            randomAuthKey: true,
+        });
+        const translatorWithProxy = makeTranslator({
+            mockServerExpectProxy: true,
+            randomAuthKey: true,
+            proxy: proxyConfig,
+        });
+
+        await expect(translator.getUsage()).rejects.toThrowError(deepl.DeepLError);
+        await translatorWithProxy.getUsage();
     });
 
     withMockServer('should throw ConnectionError with timed-out responses', async () => {
