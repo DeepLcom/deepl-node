@@ -161,6 +161,7 @@ type CommonLanguageCode =
     | 'sl'
     | 'sv'
     | 'tr'
+    | 'uk'
     | 'zh';
 
 /**

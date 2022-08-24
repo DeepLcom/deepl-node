@@ -40,6 +40,7 @@ const internalExampleText: Record<string, string> = {
     sl: 'protonski žarek',
     sv: 'protonstråle',
     tr: 'proton ışını',
+    uk: 'протонний пучок',
     zh: '质子束',
 };
 
