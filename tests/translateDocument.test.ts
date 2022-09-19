@@ -229,11 +229,6 @@ describe('translate document', () => {
         expect(status.ok()).toBe(true);
         expect(status.done()).toBe(false);
 
-        // Calling downloadDocument() before document is ready will fail
-        await expect(translator.downloadDocument(handle, outputDocumentPath)).rejects.toThrow(
-            'Document not ready',
-        );
-
         const { handle: handleResult, status: statusResult } =
             await translator.isDocumentTranslationComplete(handle);
         expect(handle.documentId).toBe(handleResult.documentId);

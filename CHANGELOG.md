@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 * Add formality options `'prefer_less'` and `'prefer_more'`.
+### Changed
+* Requests resulting in `503 Service Unavailable` errors are now retried.
+  Attempting to download a document before translation is completed will now
+  wait and retry (up to 5 times by default), rather than rejecting.
 
 
 ## [1.6.0] - 2022-09-09
