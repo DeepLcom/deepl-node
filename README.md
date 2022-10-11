@@ -29,7 +29,7 @@ you can translate up to 500,000 characters/month for free.
 
 ### Requirements
 
-The package officially supports Node.js version 12, 14, 16, and 17.
+The package officially supports Node.js version 12, 14, 16, 17, and 18.
 
 ## Usage
 

@@ -60,7 +60,7 @@ test:
     extends: .test
     parallel:
         matrix:
-            - DOCKER_IMAGE: 'node:17'
+            - DOCKER_IMAGE: 'node:18'
             - DOCKER_IMAGE: 'node:12'
               USE_MOCK_SERVER: 'use mock server'
             - DOCKER_IMAGE: 'node:14'
@@ -68,6 +68,8 @@ test:
             - DOCKER_IMAGE: 'node:16'
               USE_MOCK_SERVER: 'use mock server'
             - DOCKER_IMAGE: 'node:17'
+              USE_MOCK_SERVER: 'use mock server'
+            - DOCKER_IMAGE: 'node:18'
               USE_MOCK_SERVER: 'use mock server'
     image: ${DOCKER_IMAGE}
     script:
@@ -98,6 +100,7 @@ examples:
             - DOCKER_IMAGE: 'node:14'
             - DOCKER_IMAGE: 'node:16'
             - DOCKER_IMAGE: 'node:17'
+            - DOCKER_IMAGE: 'node:18'
     image: ${DOCKER_IMAGE}
     before_script: # Note: replaces global before_script
         - npm install --production

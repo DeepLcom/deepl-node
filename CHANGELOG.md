@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   prototype has been modified.
   * Issue [#10](https://github.com/DeepLcom/deepl-node/issues/10) thanks to
     [LorenzoJokhan](https://github.com/LorenzoJokhan)
+* Node 18 is supported, this is now explicitly documented.
 
 
 ## [1.7.0] - 2022-09-30
