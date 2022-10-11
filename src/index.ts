@@ -329,7 +329,7 @@ function appendTextsAndReturnIsSingular(data: URLSearchParams, texts: string | s
         for (const text of texts) {
             if (!isString(text) || text.length === 0) {
                 throw new DeepLError(
-                    'texts parameter must not be a non-empty string or array of non-empty strings',
+                    'texts parameter must be a non-empty string or array of non-empty strings',
                 );
             }
             data.append('text', text);
