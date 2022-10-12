@@ -127,8 +127,7 @@ describe('translate using glossaries', () => {
             ).rejects.toThrowError(deepl.DeepLError);
         } finally {
             const glossaries = await translator.listGlossaries();
-            for (const glossaryKey in glossaries) {
-                const glossaryInfo = glossaries[glossaryKey];
+            for (const glossaryInfo of glossaries) {
                 if (glossaryInfo.name === glossaryName) {
                     await translator.deleteGlossary(glossaryInfo);
                 }

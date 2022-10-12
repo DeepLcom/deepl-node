@@ -61,8 +61,7 @@ describe('general', () => {
         const sourceLanguages = await translator.getSourceLanguages();
         const targetLanguages = await translator.getTargetLanguages();
 
-        for (const languagesKey in sourceLanguages) {
-            const language = sourceLanguages[languagesKey];
+        for (const language of sourceLanguages) {
             if (language.code === 'en') {
                 expect(language.name).toBe('English');
             }
@@ -70,8 +69,7 @@ describe('general', () => {
         }
         expect(sourceLanguages.filter((language) => language.code === 'en').length).toBe(1);
 
-        for (const languagesKey in targetLanguages) {
-            const language = targetLanguages[languagesKey];
+        for (const language of targetLanguages) {
             if (language.code === 'de') {
                 expect(language.supportsFormality).toBe(true);
                 expect(language.name).toBe('German');
@@ -88,8 +86,7 @@ describe('general', () => {
             .then((languagePairs: readonly deepl.GlossaryLanguagePair[]) => {
                 expect(languagePairs.length).toBeGreaterThan(0);
                 // eslint-disable-next-line promise/always-return
-                for (const languagePairsKey in languagePairs) {
-                    const languagePair = languagePairs[languagePairsKey];
+                for (const languagePair of languagePairs) {
                     expect(languagePair.sourceLang.length).toBeGreaterThan(0);
                     expect(languagePair.targetLang.length).toBeGreaterThan(0);
                 }
