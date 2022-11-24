@@ -3,6 +3,7 @@
     "description": "Example for deepl-node using TypeScript",
     "type": "module",
     "dependencies": {
+        "@types/node": "^18.11.9",
         "deepl-node": "file:../.."
     },
     "main": "index.ts",
