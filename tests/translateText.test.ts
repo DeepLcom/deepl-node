@@ -4,7 +4,7 @@
 
 import * as deepl from 'deepl-node';
 
-import { exampleText, makeTranslator, withMockServer, withRealServer } from './core';
+import { exampleText, makeTranslator, testTimeout, withMockServer, withRealServer } from './core';
 
 describe('translate text', () => {
     it('should translate a single text', async () => {
@@ -79,51 +79,59 @@ describe('translate text', () => {
         expect(timeAfter - timeBefore).toBeGreaterThan(1000);
     });
 
-    withRealServer('should translate with formality', async () => {
-        const translator = makeTranslator();
-        const input = 'How are you?';
-        const formal = 'Wie geht es Ihnen?';
-        const informal = 'Wie geht es dir?';
-        expect((await translator.translateText(input, null, 'de')).text).toBe(formal);
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: 'less' })).text,
-        ).toBe(informal);
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: 'default' })).text,
-        ).toBe(formal);
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: 'more' })).text,
-        ).toBe(formal);
+    withRealServer(
+        'should translate with formality',
+        async () => {
+            const translator = makeTranslator();
+            const input = 'How are you?';
+            const formal = 'Wie geht es Ihnen?';
+            const informal = 'Wie geht es dir?';
+            expect((await translator.translateText(input, null, 'de')).text).toBe(formal);
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: 'less' })).text,
+            ).toBe(informal);
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: 'default' })).text,
+            ).toBe(formal);
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: 'more' })).text,
+            ).toBe(formal);
 
-        const formalityLess = <deepl.Formality>'LESS'; // Type cast to silence type-checks
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: formalityLess })).text,
-        ).toBe(informal);
+            const formalityLess = <deepl.Formality>'LESS'; // Type cast to silence type-checks
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: formalityLess }))
+                    .text,
+            ).toBe(informal);
 
-        const formalityDefault = <deepl.Formality>'DEFAULT'; // Type cast to silence type-checks
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: formalityDefault }))
-                .text,
-        ).toBe(formal);
+            const formalityDefault = <deepl.Formality>'DEFAULT'; // Type cast to silence type-checks
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: formalityDefault }))
+                    .text,
+            ).toBe(formal);
 
-        const formalityMore = <deepl.Formality>'MORE'; // Type cast to silence type-checks
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: formalityMore })).text,
-        ).toBe(formal);
+            const formalityMore = <deepl.Formality>'MORE'; // Type cast to silence type-checks
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: formalityMore }))
+                    .text,
+            ).toBe(formal);
 
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: 'prefer_less' })).text,
-        ).toBe(informal);
-        expect(
-            (await translator.translateText(input, null, 'de', { formality: 'prefer_more' })).text,
-        ).toBe(formal);
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: 'prefer_less' }))
+                    .text,
+            ).toBe(informal);
+            expect(
+                (await translator.translateText(input, null, 'de', { formality: 'prefer_more' }))
+                    .text,
+            ).toBe(formal);
 
-        // Using prefer_* with a language that does not support formality is not an error
-        await translator.translateText(input, null, 'tr', { formality: 'prefer_more' });
-        await expect(
-            translator.translateText(input, null, 'tr', { formality: 'more' }),
-        ).rejects.toThrow('formality');
-    });
+            // Using prefer_* with a language that does not support formality is not an error
+            await translator.translateText(input, null, 'tr', { formality: 'prefer_more' });
+            await expect(
+                translator.translateText(input, null, 'tr', { formality: 'more' }),
+            ).rejects.toThrow('formality');
+        },
+        testTimeout,
+    );
 
     it('should reject invalid formality', async () => {
         const translator = makeTranslator();

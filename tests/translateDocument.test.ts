@@ -14,13 +14,11 @@ import {
     exampleText,
     makeTranslator,
     tempFiles,
+    testTimeout,
     timeout,
     withMockServer,
     withRealServer,
 } from './core';
-
-// Increased timeout limit is needed for some test cases involving document translation
-const testTimeout = 20000;
 
 describe('translate document', () => {
     it(

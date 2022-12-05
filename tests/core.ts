@@ -186,6 +186,9 @@ export const proxyConfig: deepl.ProxyConfig = { host: proxyConfigHost, port: pro
 // Wrap setTimeout() with Promise
 export const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Increased timeout limit is needed for some test cases
+export const testTimeout = 60000;
+
 module.exports = {
     exampleText,
     exampleDocumentInput,
@@ -197,6 +200,7 @@ module.exports = {
     withMockProxyServer,
     withRealServer,
     makeTranslator,
+    testTimeout,
     timeout,
     proxyConfig,
 };

@@ -5,7 +5,7 @@
 import * as deepl from 'deepl-node';
 
 import fs from 'fs';
-import { makeTranslator, tempFiles, withRealServer } from './core';
+import { makeTranslator, tempFiles, withRealServer, testTimeout } from './core';
 import { v4 as randomUUID } from 'uuid';
 
 const invalidGlossaryId = 'invalid_glossary_id';
@@ -308,67 +308,75 @@ describe('translate using glossaries', () => {
         }
     });
 
-    it('should translate documents using glossaries', async () => {
-        const [exampleDocumentPath, , outputDocumentPath] = tempFiles();
-        const inputText = 'artist\nprize';
-        const expectedOutputText = 'Maler\nGewinn';
-        fs.writeFileSync(exampleDocumentPath, inputText);
-        const translator = makeTranslator();
-        const [glossary, cleanupGlossary] = await createManagedGlossary(translator, {
-            sourceLang: 'en',
-            targetLang: 'de',
-            entries: new deepl.GlossaryEntries({
-                entries: {
-                    artist: 'Maler',
-                    prize: 'Gewinn',
-                },
-            }),
-        });
+    it(
+        'should translate documents using glossaries',
+        async () => {
+            const [exampleDocumentPath, , outputDocumentPath] = tempFiles();
+            const inputText = 'artist\nprize';
+            const expectedOutputText = 'Maler\nGewinn';
+            fs.writeFileSync(exampleDocumentPath, inputText);
+            const translator = makeTranslator();
+            const [glossary, cleanupGlossary] = await createManagedGlossary(translator, {
+                sourceLang: 'en',
+                targetLang: 'de',
+                entries: new deepl.GlossaryEntries({
+                    entries: {
+                        artist: 'Maler',
+                        prize: 'Gewinn',
+                    },
+                }),
+            });
 
-        try {
-            await translator.translateDocument(
-                exampleDocumentPath,
-                outputDocumentPath,
-                'en',
-                'de',
-                { glossary },
-            );
-            expect(fs.readFileSync(outputDocumentPath).toString()).toBe(expectedOutputText);
-        } finally {
-            await cleanupGlossary();
-        }
-    }, 20000); // Increased timeout for test involving document translation
+            try {
+                await translator.translateDocument(
+                    exampleDocumentPath,
+                    outputDocumentPath,
+                    'en',
+                    'de',
+                    { glossary },
+                );
+                expect(fs.readFileSync(outputDocumentPath).toString()).toBe(expectedOutputText);
+            } finally {
+                await cleanupGlossary();
+            }
+        },
+        testTimeout,
+    ); // Increased timeout for test involving translation
 
-    it('should reject translating invalid text with glossaries', async () => {
-        const text = 'Test';
-        const entries = new deepl.GlossaryEntries({ entries: { Hello: 'Hallo' } });
-        const translator = makeTranslator();
-        const [glossaryEnDe, cleanupGlossaryEnDe] = await createManagedGlossary(translator, {
-            sourceLang: 'en',
-            targetLang: 'de',
-            entries,
-            glossaryNameSuffix: '_ende',
-        });
-        const [glossaryDeEn, cleanupGlossaryDeEn] = await createManagedGlossary(translator, {
-            sourceLang: 'de',
-            targetLang: 'en',
-            entries,
-            glossaryNameSuffix: '_deen',
-        });
-        try {
-            await expect(
-                translator.translateText(text, null, 'de', { glossary: glossaryEnDe }),
-            ).rejects.toThrowError('sourceLang is required');
-            await expect(
-                translator.translateText(text, 'de', 'en-US', { glossary: glossaryEnDe }),
-            ).rejects.toThrowError('Lang must match glossary');
-            const targetLangEn = <deepl.TargetLanguageCode>'en'; // Type cast to silence type-checks
-            await expect(
-                translator.translateText(text, 'de', targetLangEn, { glossary: glossaryDeEn }),
-            ).rejects.toThrowError("targetLang='en' is deprecated");
-        } finally {
-            await cleanupGlossaryEnDe();
-            await cleanupGlossaryDeEn();
-        }
-    }, 20000);
+    it(
+        'should reject translating invalid text with glossaries',
+        async () => {
+            const text = 'Test';
+            const entries = new deepl.GlossaryEntries({ entries: { Hello: 'Hallo' } });
+            const translator = makeTranslator();
+            const [glossaryEnDe, cleanupGlossaryEnDe] = await createManagedGlossary(translator, {
+                sourceLang: 'en',
+                targetLang: 'de',
+                entries,
+                glossaryNameSuffix: '_ende',
+            });
+            const [glossaryDeEn, cleanupGlossaryDeEn] = await createManagedGlossary(translator, {
+                sourceLang: 'de',
+                targetLang: 'en',
+                entries,
+                glossaryNameSuffix: '_deen',
+            });
+            try {
+                await expect(
+                    translator.translateText(text, null, 'de', { glossary: glossaryEnDe }),
+                ).rejects.toThrowError('sourceLang is required');
+                await expect(
+                    translator.translateText(text, 'de', 'en-US', { glossary: glossaryEnDe }),
+                ).rejects.toThrowError('Lang must match glossary');
+                const targetLangEn = <deepl.TargetLanguageCode>'en'; // Type cast to silence type-checks
+                await expect(
+                    translator.translateText(text, 'de', targetLangEn, { glossary: glossaryDeEn }),
+                ).rejects.toThrowError("targetLang='en' is deprecated");
+            } finally {
+                await cleanupGlossaryEnDe();
+                await cleanupGlossaryDeEn();
+            }
+        },
+        testTimeout,
+    ); // Increased timeout for test involving translation
 });
