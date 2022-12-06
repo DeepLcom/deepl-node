@@ -129,6 +129,9 @@ export class HttpClient {
                 }
             }
             axiosRequestConfig.data = form;
+            if (axiosRequestConfig.headers === undefined) {
+                axiosRequestConfig.headers = {};
+            }
             Object.assign(axiosRequestConfig.headers, form.getHeaders());
         } else if (options.data) {
             if (method === 'GET') {
