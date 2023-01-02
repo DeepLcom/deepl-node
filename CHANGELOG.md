@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Added
+* New languages available: Korean (`'ko'`) and Norwegian (bokmål) (`'nb'`). Add
+  language code constants and tests.
+
+  Note: older library versions also support the new languages, this update only
+  adds new code constants.
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+
 ## [1.7.5] - 2023-01-25
 ### Fixed
 * Also send options in API requests even if they are default values.
@@ -155,6 +169,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.7.5...HEAD
 [1.7.5]: https://github.com/DeepLcom/deepl-node/compare/v1.7.4...v1.7.5
 [1.7.4]: https://github.com/DeepLcom/deepl-node/compare/v1.7.3...v1.7.4
 [1.7.3]: https://github.com/DeepLcom/deepl-node/compare/v1.7.2...v1.7.3
