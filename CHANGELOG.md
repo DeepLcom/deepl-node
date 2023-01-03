@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Changed
+* CI: suppress `npm audit` warnings for dev dependencies, due to CVE in
+  `eslint-plugin-import > tsconfig-paths > json5`.
 ### Fixed
 * Support `axios` v1.2.1, that resolves the issue in v1.2.0.
 
