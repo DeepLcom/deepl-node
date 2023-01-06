@@ -65,7 +65,7 @@ describe('general', () => {
             if (language.code === 'en') {
                 expect(language.name).toBe('English');
             }
-            expect(language.supportsFormality).toBeUndefined();
+            expect(language).not.toHaveProperty('supportsFormality');
         }
         expect(sourceLanguages.filter((language) => language.code === 'en').length).toBe(1);
 

@@ -323,11 +323,15 @@ export function parseTextResultArray(json: string): TextResult[] {
  */
 function parseLanguage(lang: LanguageApiResponse): Language {
     try {
-        return {
+        const result = {
             name: lang.name,
             code: standardizeLanguageCode(lang.language),
             supportsFormality: lang.supports_formality,
         };
+        if (result.supportsFormality === undefined) {
+            delete result.supportsFormality;
+        }
+        return result;
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }
