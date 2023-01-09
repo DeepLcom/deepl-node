@@ -35,13 +35,7 @@ eslint:
 audit:
     stage: check
     script:
-        - npm audit --omit dev
-        # Suppressing NPM audit failures on dev dependencies due to CVE-2022-46175
-        #   in eslint-plugin-import > tsconfig-paths > json5
-        # See: https://github.com/import-js/eslint-plugin-import/issues/2642
-        # Currently npm audit fix cannot resolve this issue. Possibly it will be resolved when this
-        # PR is merged https://github.com/github/advisory-database/pull/1541
-        - npm audit || echo "Suppressing npm audit failures for dev dependencies"
+        - npm audit
 
 format:
     stage: check
