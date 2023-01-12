@@ -39,7 +39,7 @@ import {
     TranslateTextOptions,
     TranslatorOptions,
 } from './types';
-import { isString, logInfo, streamToBuffer, streamToString, timeout } from './utils';
+import { isString, logInfo, streamToBuffer, streamToString, timeout, toBoolString } from './utils';
 
 import * as fs from 'fs';
 import { IncomingMessage, STATUS_CODES } from 'http';
@@ -290,9 +290,7 @@ function buildURLSearchParams(
     }
     if (formality !== undefined) {
         const formalityStr = String(formality).toLowerCase();
-        if (formalityStr !== 'default') {
-            searchParams.append('formality', formalityStr);
-        }
+        searchParams.append('formality', formalityStr);
     }
     if (glossary !== undefined) {
         if (!isString(glossary)) {
@@ -350,7 +348,7 @@ function validateAndAppendTextOptions(data: URLSearchParams, options?: Translate
     if (!options) {
         return;
     }
-    if (options.splitSentences) {
+    if (options.splitSentences !== undefined) {
         options.splitSentences = options.splitSentences.toLowerCase() as SentenceSplittingMode;
         if (options.splitSentences === 'on' || options.splitSentences === 'default') {
             data.append('split_sentences', '1');
@@ -360,22 +358,22 @@ function validateAndAppendTextOptions(data: URLSearchParams, options?: Translate
             data.append('split_sentences', options.splitSentences);
         }
     }
-    if (options.preserveFormatting) {
-        data.append('preserve_formatting', '1');
+    if (options.preserveFormatting !== undefined) {
+        data.append('preserve_formatting', toBoolString(options.preserveFormatting));
     }
-    if (options.tagHandling) {
+    if (options.tagHandling !== undefined) {
         data.append('tag_handling', options.tagHandling);
     }
-    if (options.outlineDetection === false) {
-        data.append('outline_detection', '0');
+    if (options.outlineDetection !== undefined) {
+        data.append('outline_detection', toBoolString(options.outlineDetection));
     }
-    if (options.nonSplittingTags) {
+    if (options.nonSplittingTags !== undefined) {
         data.append('non_splitting_tags', joinTagList(options.nonSplittingTags));
     }
-    if (options.splittingTags) {
+    if (options.splittingTags !== undefined) {
         data.append('splitting_tags', joinTagList(options.splittingTags));
     }
-    if (options.ignoreTags) {
+    if (options.ignoreTags !== undefined) {
         data.append('ignore_tags', joinTagList(options.ignoreTags));
     }
 }

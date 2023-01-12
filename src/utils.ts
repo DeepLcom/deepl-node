@@ -56,3 +56,11 @@ export const timeout = (ms: number) => new Promise((resolve) => setTimeout(resol
 export function isString(arg: any): arg is string {
     return typeof arg === 'string';
 }
+
+/**
+ * Returns '1' if the given arg is truthy, '0' otherwise.
+ * @param arg Argument to check.
+ */
+export function toBoolString(arg: any): string {
+    return arg ? '1' : '0';
+}
