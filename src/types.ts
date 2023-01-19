@@ -17,6 +17,16 @@ export interface ProxyConfig {
 }
 
 /**
+ * Optional identifier for the app that is using this library, may be specified
+ * as appInfo in TranslatorOptions.
+ * @see TranslatorOptions.appInfo
+ */
+export interface AppInfo {
+    appName: string;
+    appVersion: string;
+}
+
+/**
  * Options that can be specified when constructing a Translator.
  */
 export interface TranslatorOptions {
@@ -49,6 +59,18 @@ export interface TranslatorOptions {
      * Define the host, port and protocol of the proxy server.
      */
     proxy?: ProxyConfig;
+
+    /**
+     * Define if the library is allowed to send more detailed information about which platform
+     * it is running on with each API call. Defaults to true if undefined. Overriden by
+     * the `customUserAgent` option.
+     */
+    sendPlatformInfo?: boolean;
+
+    /**
+     * Identifies the application using this client library, will be sent in the `User-Agent` header
+     */
+    appInfo?: AppInfo;
 }
 
 export type Formality = 'less' | 'more' | 'default' | 'prefer_less' | 'prefer_more';

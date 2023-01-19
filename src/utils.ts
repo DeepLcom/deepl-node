@@ -61,6 +61,7 @@ export function isString(arg: any): arg is string {
  * Returns '1' if the given arg is truthy, '0' otherwise.
  * @param arg Argument to check.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toBoolString(arg: any): string {
     return arg ? '1' : '0';
 }

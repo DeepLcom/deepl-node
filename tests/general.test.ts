@@ -6,6 +6,8 @@ import * as deepl from 'deepl-node';
 
 import fs from 'fs';
 
+import nock from 'nock';
+
 import {
     exampleText,
     tempFiles,
@@ -16,6 +18,7 @@ import {
 } from './core';
 
 const serverUrl = process.env.DEEPL_SERVER_URL;
+const urlToMockRegexp = /(https?:\/\/api.*\.deepl\.com)|(deepl-mock:\d+)/;
 
 describe('general', () => {
     it('rejects empty authKey', () => {
@@ -48,6 +51,112 @@ describe('general', () => {
     it('throws AuthorizationError with an invalid auth key', async () => {
         const translator = makeTranslator({ authKey: 'invalid' });
         await expect(translator.getUsage()).rejects.toThrowError(deepl.AuthorizationError);
+    });
+
+    describe('user-agent tests', () => {
+        beforeAll(() => {
+            nock.disableNetConnect();
+        });
+
+        it('makes requests with the correct default user-agent header', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/usage')
+                .reply(function () {
+                    const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
+                    expect(userAgentHeader).toContain('deepl-node/');
+                    expect(userAgentHeader).toContain('(');
+                    expect(userAgentHeader).toContain(' node/');
+                    return [200, '{"character_count": 180118,"character_limit": 1250000}', {}];
+                });
+            const translator = makeTranslator();
+            await translator.getUsage();
+        });
+
+        it('makes requests with the correct opt-in user-agent header', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/usage')
+                .reply(function () {
+                    const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
+                    expect(userAgentHeader).toContain('deepl-node/');
+                    expect(userAgentHeader).toContain('(');
+                    expect(userAgentHeader).toContain(' node/');
+                    return [200, '{"character_count": 180118,"character_limit": 1250000}', {}];
+                });
+            const translator = makeTranslator({ sendPlatformInfo: true });
+            await translator.getUsage();
+        });
+
+        it('makes requests with the correct opt-out user-agent header', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/usage')
+                .reply(function () {
+                    const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
+                    expect(userAgentHeader).toContain('deepl-node/');
+                    expect(userAgentHeader).not.toContain('(');
+                    expect(userAgentHeader).not.toContain(' node/');
+                    return [200, '{"character_count": 180118,"character_limit": 1250000}', {}];
+                });
+            const translator = makeTranslator({ sendPlatformInfo: false });
+            await translator.getUsage();
+        });
+
+        it('makes requests with the correct default user-agent header and appInfo', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/usage')
+                .reply(function () {
+                    const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
+                    expect(userAgentHeader).toContain('deepl-node/');
+                    expect(userAgentHeader).toContain('(');
+                    expect(userAgentHeader).toContain(' node/');
+                    expect(userAgentHeader).toContain(' sampleCSApp/1.2.3');
+                    return [200, '{"character_count": 180118,"character_limit": 1250000}', {}];
+                });
+            const translator = makeTranslator({
+                appInfo: { appName: 'sampleCSApp', appVersion: '1.2.3' },
+            });
+            await translator.getUsage();
+        });
+
+        it('makes requests with the correct opt-in user-agent header and appInfo', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/usage')
+                .reply(function () {
+                    const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
+                    expect(userAgentHeader).toContain('deepl-node/');
+                    expect(userAgentHeader).toContain('(');
+                    expect(userAgentHeader).toContain(' node/');
+                    expect(userAgentHeader).toContain(' sampleCSApp/1.2.3');
+                    return [200, '{"character_count": 180118,"character_limit": 1250000}', {}];
+                });
+            const translator = makeTranslator({
+                sendPlatformInfo: true,
+                appInfo: { appName: 'sampleCSApp', appVersion: '1.2.3' },
+            });
+            await translator.getUsage();
+        });
+
+        it('makes requests with the correct opt-out user-agent header and appInfo', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/usage')
+                .reply(function () {
+                    const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
+                    expect(userAgentHeader).toContain('deepl-node/');
+                    expect(userAgentHeader).not.toContain('(');
+                    expect(userAgentHeader).not.toContain(' node/');
+                    expect(userAgentHeader).toContain(' sampleCSApp/1.2.3');
+                    return [200, '{"character_count": 180118,"character_limit": 1250000}', {}];
+                });
+            const translator = makeTranslator({
+                sendPlatformInfo: false,
+                appInfo: { appName: 'sampleCSApp', appVersion: '1.2.3' },
+            });
+            await translator.getUsage();
+        });
+
+        afterAll(() => {
+            nock.cleanAll();
+            nock.enableNetConnect();
+        });
     });
 
     it('outputs usage', async () => {

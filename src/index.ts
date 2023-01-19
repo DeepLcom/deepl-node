@@ -24,6 +24,7 @@ import {
     parseUsage,
 } from './parsing';
 import {
+    AppInfo,
     DocumentTranslateOptions,
     Formality,
     GlossaryId,
@@ -44,6 +45,7 @@ import { isString, logInfo, streamToBuffer, streamToString, timeout, toBoolStrin
 import * as fs from 'fs';
 import { IncomingMessage, STATUS_CODES } from 'http';
 import path from 'path';
+import * as os from 'os';
 import { URLSearchParams } from 'url';
 import * as util from 'util';
 
@@ -469,7 +471,10 @@ export class Translator {
         }
         const headers = {
             Authorization: `DeepL-Auth-Key ${authKey}`,
-            'User-Agent': 'deepl-node/1.8.0',
+            'User-Agent': this.constructUserAgentString(
+                options?.sendPlatformInfo === false ? false : true,
+                options?.appInfo,
+            ),
             ...(options?.headers ?? {}),
         };
 
@@ -979,6 +984,23 @@ export class Translator {
         );
         await checkStatusCode(statusCode, content, true);
         return parseGlossaryInfo(content);
+    }
+
+    private constructUserAgentString(
+        sendPlatformInfo: boolean,
+        appInfo: AppInfo | undefined,
+    ): string {
+        let libraryInfoString = 'deepl-node/1.8.0';
+        if (sendPlatformInfo) {
+            const systemType = os.type();
+            const systemVersion = os.version();
+            const nodeVersion = process.version.substring(1); // Drop the v in the version number
+            libraryInfoString += ` (${systemType} ${systemVersion}) node/${nodeVersion}`;
+        }
+        if (appInfo) {
+            libraryInfoString += ` ${appInfo.appName}/${appInfo.appVersion}`;
+        }
+        return libraryInfoString;
     }
 
     /**

@@ -90,6 +90,8 @@ export interface TestTranslatorOptions {
     maxRetries?: number;
     minTimeout?: number;
     proxy?: deepl.ProxyConfig;
+    sendPlatformInfo?: boolean;
+    appInfo?: deepl.AppInfo;
 
     mockServerNoResponseTimes?: number;
     mockServer429ResponseTimes?: number;
@@ -108,7 +110,7 @@ export interface TestTranslatorOptions {
  * session settings.
  * @param options Options controlling Translator behaviour and mock-server sessions settings.
  */
-export function makeTranslator(options?: TestTranslatorOptions) {
+export function makeTranslator(options?: TestTranslatorOptions): deepl.Translator {
     if (!usingMockServer && process.env.DEEPL_AUTH_KEY === undefined) {
         throw Error('DEEPL_AUTH_KEY environment variable must be defined unless using mock-server');
     }
@@ -168,6 +170,8 @@ export function makeTranslator(options?: TestTranslatorOptions) {
         minTimeout: options?.minTimeout,
         maxRetries: options?.maxRetries,
         proxy: options?.proxy,
+        sendPlatformInfo: options?.sendPlatformInfo,
+        appInfo: options?.appInfo,
     });
 }
 

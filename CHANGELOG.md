@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Added
+* Added platform and node version information to the user-agent string that is sent with API calls, along with an opt-out.
+* Added method for applications that use this library to identify themselves in API requests they make.
 ### Fixed
 * Fixed proxy example code in README
 
