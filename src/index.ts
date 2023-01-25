@@ -469,7 +469,7 @@ export class Translator {
         }
         const headers = {
             Authorization: `DeepL-Auth-Key ${authKey}`,
-            'User-Agent': 'deepl-node/1.7.4',
+            'User-Agent': 'deepl-node/1.7.5',
             ...(options?.headers ?? {}),
         };
 
