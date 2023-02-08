@@ -415,7 +415,7 @@ You can configure a proxy by specifying the `proxy` argument when constructing a
 `deepl.Translator`:
 
 ```javascript
-const proxy = {host: 'localhost', port: 3000};
+const options = {proxy: {host: 'localhost', port: 3000}};
 const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
 ```
 
