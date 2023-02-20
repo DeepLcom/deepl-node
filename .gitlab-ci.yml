@@ -6,7 +6,14 @@ include:
 
 # Global --------------------------
 
-image: node:latest
+# Use Active LTS (18)
+image: ${CI_REGISTRY_IMAGE}/node:18-alpine
+
+workflow:
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+        - if: $CI_COMMIT_TAG
+        - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
 
 cache:
     key:
@@ -27,20 +34,53 @@ before_script:
 
 # stage: check ----------------------
 
-eslint:
+.eslint_base:
     stage: check
     script:
         - npm run lint
 
-audit:
+eslint_scheduled:
+    extends: .eslint_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+    retry: 2
+
+eslint_manual:
+    extends: .eslint_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE != "schedule"
+
+.audit_base:
     stage: check
     script:
         - npm audit
 
-format:
+audit_scheduled:
+    extends: .audit_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+    retry: 2
+
+audit_manual:
+    extends: .audit_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE != "schedule"
+
+.format_base:
     stage: check
     script:
         - npm run format
+
+format_scheduled:
+    extends: .format_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+    retry: 2
+
+format_manual:
+    extends: .format_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE != "schedule"
 
 # stage: build ----------------------
 
@@ -55,24 +95,24 @@ build:
 
 # stage: test ----------------------
 
-test:
+.test_base:
     stage: test
     extends: .test
     retry: 1
     parallel:
         matrix:
-            - DOCKER_IMAGE: 'node:18'
-            - DOCKER_IMAGE: 'node:12'
+            - DOCKER_IMAGE: 'node:18-alpine'
+            - DOCKER_IMAGE: 'node:12-alpine'
               USE_MOCK_SERVER: 'use mock server'
-            - DOCKER_IMAGE: 'node:14'
+            - DOCKER_IMAGE: 'node:14-alpine'
               USE_MOCK_SERVER: 'use mock server'
-            - DOCKER_IMAGE: 'node:16'
+            - DOCKER_IMAGE: 'node:16-alpine'
               USE_MOCK_SERVER: 'use mock server'
-            - DOCKER_IMAGE: 'node:17'
+            - DOCKER_IMAGE: 'node:17-alpine'
               USE_MOCK_SERVER: 'use mock server'
-            - DOCKER_IMAGE: 'node:18'
+            - DOCKER_IMAGE: 'node:18-alpine'
               USE_MOCK_SERVER: 'use mock server'
-    image: ${DOCKER_IMAGE}
+    image: ${CI_REGISTRY_IMAGE}/${DOCKER_IMAGE}
     script:
         - >
             if [[ ! -z "${USE_MOCK_SERVER}" ]]; then
@@ -92,17 +132,28 @@ test:
                 - junit.xml
         when: always
 
-examples:
+test_scheduled:
+    extends: .test_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+    retry: 2
+
+test_manual:
+    extends: .test_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE != "schedule"
+
+.examples_base:
     stage: test
     extends: .test
     parallel:
         matrix:
-            - DOCKER_IMAGE: 'node:12'
-            - DOCKER_IMAGE: 'node:14'
-            - DOCKER_IMAGE: 'node:16'
-            - DOCKER_IMAGE: 'node:17'
-            - DOCKER_IMAGE: 'node:18'
-    image: ${DOCKER_IMAGE}
+            - DOCKER_IMAGE: 'node:12-alpine'
+            - DOCKER_IMAGE: 'node:14-alpine'
+            - DOCKER_IMAGE: 'node:16-alpine'
+            - DOCKER_IMAGE: 'node:17-alpine'
+            - DOCKER_IMAGE: 'node:18-alpine'
+    image: ${CI_REGISTRY_IMAGE}/${DOCKER_IMAGE}
     before_script: # Note: replaces global before_script
         - npm install --production
     script:
@@ -121,6 +172,17 @@ examples:
         - npm install
         - npm run build
         - node index.js
+
+examples_scheduled:
+    extends: .examples_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "schedule"
+    retry: 2
+
+examples_manual:
+    extends: .examples_base
+    rules:
+        - if: $CI_PIPELINE_SOURCE != "schedule"
 
 # stage: publish ----------------------
 
