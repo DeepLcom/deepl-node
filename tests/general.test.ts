@@ -60,7 +60,7 @@ describe('general', () => {
 
         it('makes requests with the correct default user-agent header', async () => {
             nock(urlToMockRegexp)
-                .post('/v2/usage')
+                .get('/v2/usage')
                 .reply(function () {
                     const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
                     expect(userAgentHeader).toContain('deepl-node/');
@@ -74,7 +74,7 @@ describe('general', () => {
 
         it('makes requests with the correct opt-in user-agent header', async () => {
             nock(urlToMockRegexp)
-                .post('/v2/usage')
+                .get('/v2/usage')
                 .reply(function () {
                     const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
                     expect(userAgentHeader).toContain('deepl-node/');
@@ -88,7 +88,7 @@ describe('general', () => {
 
         it('makes requests with the correct opt-out user-agent header', async () => {
             nock(urlToMockRegexp)
-                .post('/v2/usage')
+                .get('/v2/usage')
                 .reply(function () {
                     const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
                     expect(userAgentHeader).toContain('deepl-node/');
@@ -102,7 +102,7 @@ describe('general', () => {
 
         it('makes requests with the correct default user-agent header and appInfo', async () => {
             nock(urlToMockRegexp)
-                .post('/v2/usage')
+                .get('/v2/usage')
                 .reply(function () {
                     const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
                     expect(userAgentHeader).toContain('deepl-node/');
@@ -119,7 +119,7 @@ describe('general', () => {
 
         it('makes requests with the correct opt-in user-agent header and appInfo', async () => {
             nock(urlToMockRegexp)
-                .post('/v2/usage')
+                .get('/v2/usage')
                 .reply(function () {
                     const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
                     expect(userAgentHeader).toContain('deepl-node/');
@@ -137,7 +137,7 @@ describe('general', () => {
 
         it('makes requests with the correct opt-out user-agent header and appInfo', async () => {
             nock(urlToMockRegexp)
-                .post('/v2/usage')
+                .get('/v2/usage')
                 .reply(function () {
                     const userAgentHeader = this.req.headers['user-agent']; // nock lowercases headers
                     expect(userAgentHeader).toContain('deepl-node/');

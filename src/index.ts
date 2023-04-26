@@ -495,7 +495,7 @@ export class Translator {
      */
     public async getUsage(): Promise<Usage> {
         const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
-            'POST',
+            'GET',
             '/v2/usage',
         );
         await checkStatusCode(statusCode, content);
