@@ -771,9 +771,8 @@ export class Translator {
     ): Promise<{ handle: DocumentHandle; status: DocumentStatus }> {
         let status = await this.getDocumentStatus(handle);
         while (!status.done() && status.ok()) {
-            // Wait for half of remaining time, limited between 1 and 60 seconds
-            let secs = (status.secondsRemaining || 0) / 2.0 + 1.0;
-            secs = Math.max(1.0, Math.min(secs, 60.0));
+            // status.secondsRemaining is currently unreliable, so just poll equidistantly
+            const secs = 5.0;
             await timeout(secs * 1000);
             logInfo(`Rechecking document translation status after sleeping for ${secs} seconds.`);
             status = await this.getDocumentStatus(handle);

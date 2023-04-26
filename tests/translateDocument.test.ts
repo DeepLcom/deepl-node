@@ -9,6 +9,7 @@ import path from 'path';
 import util from 'util';
 
 import {
+    documentTranslationTestTimeout,
     exampleDocumentInput,
     exampleDocumentOutput,
     exampleText,
@@ -111,15 +112,19 @@ describe('translate document', () => {
         expect(fs.readFileSync(outputDocumentPath).toString()).toBe(exampleDocumentOutput);
     });
 
-    withMockServer('should translate with waiting', async () => {
-        const translator = makeTranslator({
-            mockServerDocQueueTime: 2000,
-            mockServerDocTranslateTime: 2000,
-        });
-        const [exampleDocument, , outputDocumentPath] = tempFiles();
-        await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de');
-        expect(fs.readFileSync(outputDocumentPath).toString()).toBe(exampleDocumentOutput);
-    });
+    withMockServer(
+        'should translate with waiting',
+        async () => {
+            const translator = makeTranslator({
+                mockServerDocQueueTime: 2000,
+                mockServerDocTranslateTime: 2000,
+            });
+            const [exampleDocument, , outputDocumentPath] = tempFiles();
+            await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de');
+            expect(fs.readFileSync(outputDocumentPath).toString()).toBe(exampleDocumentOutput);
+        },
+        documentTranslationTestTimeout,
+    );
 
     withRealServer(
         'should translate using formality',
@@ -160,19 +165,23 @@ describe('translate document', () => {
         ).rejects.toThrow('formality');
     });
 
-    it('should handle document failure', async () => {
-        const translator = makeTranslator();
-        const [exampleDocument, , outputDocumentPath] = tempFiles();
-        fs.writeFileSync(exampleDocument, exampleText.de);
-        // Translating text from DE to DE will trigger error
-        const promise = translator.translateDocument(
-            exampleDocument,
-            outputDocumentPath,
-            null,
-            'de',
-        );
-        await expect(promise).rejects.toThrow(/Source and target language/);
-    });
+    it(
+        'should handle document failure',
+        async () => {
+            const translator = makeTranslator();
+            const [exampleDocument, , outputDocumentPath] = tempFiles();
+            fs.writeFileSync(exampleDocument, exampleText.de);
+            // Translating text from DE to DE will trigger error
+            const promise = translator.translateDocument(
+                exampleDocument,
+                outputDocumentPath,
+                null,
+                'de',
+            );
+            await expect(promise).rejects.toThrow(/Source and target language/);
+        },
+        documentTranslationTestTimeout,
+    );
 
     it('should reject invalid document', async () => {
         const translator = makeTranslator();
@@ -214,34 +223,38 @@ describe('translate document', () => {
         testTimeout,
     );
 
-    withMockServer('should provide billed characters in document status', async () => {
-        const translator = makeTranslator({
-            mockServerDocQueueTime: 2000,
-            mockServerDocTranslateTime: 2000,
-        });
-        const [exampleDocument, , outputDocumentPath] = tempFiles();
+    withMockServer(
+        'should provide billed characters in document status',
+        async () => {
+            const translator = makeTranslator({
+                mockServerDocQueueTime: 2000,
+                mockServerDocTranslateTime: 2000,
+            });
+            const [exampleDocument, , outputDocumentPath] = tempFiles();
 
-        const timeBefore = Date.now();
-        const handle = await translator.uploadDocument(exampleDocument, null, 'de');
-        const status = await translator.getDocumentStatus(handle);
-        expect(status.ok()).toBe(true);
-        expect(status.done()).toBe(false);
+            const timeBefore = Date.now();
+            const handle = await translator.uploadDocument(exampleDocument, null, 'de');
+            const status = await translator.getDocumentStatus(handle);
+            expect(status.ok()).toBe(true);
+            expect(status.done()).toBe(false);
 
-        const { handle: handleResult, status: statusResult } =
-            await translator.isDocumentTranslationComplete(handle);
-        expect(handle.documentId).toBe(handleResult.documentId);
-        expect(handle.documentKey).toBe(handleResult.documentKey);
+            const { handle: handleResult, status: statusResult } =
+                await translator.isDocumentTranslationComplete(handle);
+            expect(handle.documentId).toBe(handleResult.documentId);
+            expect(handle.documentKey).toBe(handleResult.documentKey);
 
-        expect(statusResult.ok()).toBe(true);
-        expect(statusResult.done()).toBe(true);
-        await translator.downloadDocument(handle, outputDocumentPath);
-        const timeAfter = Date.now();
+            expect(statusResult.ok()).toBe(true);
+            expect(statusResult.done()).toBe(true);
+            await translator.downloadDocument(handle, outputDocumentPath);
+            const timeAfter = Date.now();
 
-        // Elapsed time should be at least 4 seconds
-        expect(timeAfter - timeBefore).toBeGreaterThan(4000);
-        expect(fs.readFileSync(outputDocumentPath).toString()).toBe(exampleDocumentOutput);
-        expect(statusResult.billedCharacters).toBe(exampleDocumentInput.length);
-    });
+            // Elapsed time should be at least 4 seconds
+            expect(timeAfter - timeBefore).toBeGreaterThan(4000);
+            expect(fs.readFileSync(outputDocumentPath).toString()).toBe(exampleDocumentOutput);
+            expect(statusResult.billedCharacters).toBe(exampleDocumentInput.length);
+        },
+        documentTranslationTestTimeout,
+    );
 
     it('should reject not found document handles', async () => {
         const handle = { documentId: '1234'.repeat(8), documentKey: '5678'.repeat(16) };
