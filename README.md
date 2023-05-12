@@ -230,6 +230,30 @@ directly:
 -   `getDocumentStatus()` (or `isDocumentTranslationComplete()`), and
 -   `downloadDocument()`
 
+#### Translating webpages
+
+Webpages can be translated as well by calling `translateWebpage()`. It has the same signature as `translateDocument` except for the
+first parameter, which is the URL for the webpage you would like translated.
+
+```javascript
+// Translate the English DeepL wikipedia page into German:
+await translator.translateWebpage(
+    'https://en.wikipedia.org/wiki/DeepL_Translator',
+    'DeepLWiki.html',
+    'en',
+    'de'
+);
+```
+
+Like `translateDocument()`, `translateWebpage()` wraps multiple API calls: uploading, polling status until
+the translation is complete, and downloading. If your application needs to
+execute these steps individually, you can instead use the following functions
+directly:
+
+-   `uploadWebpage()`,
+-   `getDocumentStatus()` (or `isDocumentTranslationComplete()`), and
+-   `downloadDocument()`
+
 #### Document translation options
 
 -   `formality`: same as in [Text translation options](#text-translation-options).

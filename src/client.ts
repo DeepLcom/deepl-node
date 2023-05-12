@@ -106,14 +106,16 @@ export class HttpClient {
         url: string,
         timeoutMs: number,
         responseAsStream: boolean,
+        isDeepL: boolean,
         options: SendRequestOptions,
     ): AxiosRequestConfig {
         const headers = Object.assign({}, this.headers, options.headers);
+        logDebug(`isDeepL: ${isDeepL}`);
 
         const axiosRequestConfig: AxiosRequestConfig = {
             url,
             method,
-            baseURL: this.serverUrl,
+            baseURL: isDeepL ? this.serverUrl : undefined,
             headers,
             responseType: responseAsStream ? 'stream' : 'text',
             timeout: timeoutMs,
@@ -147,19 +149,26 @@ export class HttpClient {
     /**
      * Makes API request retrying if necessary, and returns (as Promise) response.
      * @param method HTTP method, for example 'GET'
-     * @param url Path to endpoint, excluding base server URL.
+     * @param url Path to endpoint, excluding base server URL if DeepL API request, including base server URL if a webpage.
      * @param options Additional options controlling request.
      * @param responseAsStream Set to true if the return type is IncomingMessage.
-     * @return Fulfills with status code and response (as text or stream).
+     * @return Fulfills with status code, content type, and response (as text or stream).
      */
     async sendRequestWithBackoff<TContent extends string | IncomingMessage>(
         method: HttpMethod,
         url: string,
         options?: SendRequestOptions,
         responseAsStream = false,
-    ): Promise<{ statusCode: number; content: TContent }> {
+    ): Promise<{ statusCode: number; content: TContent; contentType?: string }> {
+        let isDeepLUrl: boolean;
+        try {
+            isDeepLUrl = !!new URL(url);
+        } catch {
+            isDeepLUrl = true;
+        }
+
         options = options === undefined ? {} : options;
-        logInfo(`Request to DeepL API ${method} ${url}`);
+        logInfo(`${isDeepLUrl ? 'Request to DeepL API' : 'Request to webpage'} ${method} ${url}`);
         logDebug(`Request details: ${options.data}`);
         const backoff = new BackoffTimer();
         let response, error;
@@ -170,8 +179,14 @@ export class HttpClient {
                 url,
                 timeoutMs,
                 responseAsStream,
+                isDeepLUrl,
                 options,
             );
+
+            if (!isDeepLUrl && axiosRequestConfig.headers) {
+                delete axiosRequestConfig.headers.Authorization;
+            }
+
             try {
                 response = await HttpClient.sendAxiosRequest<TContent>(axiosRequestConfig);
                 error = undefined;
@@ -199,8 +214,12 @@ export class HttpClient {
         }
 
         if (response !== undefined) {
-            const { statusCode, content } = response;
-            logInfo(`DeepL API response ${method} ${url} ${statusCode}`);
+            const { statusCode, content, contentType } = response;
+            logInfo(
+                `${
+                    isDeepLUrl ? 'DeepL API response' : 'Webpage response'
+                } ${method} ${url} ${statusCode}${!isDeepLUrl ? ` ${contentType}` : ''}`,
+            );
             if (!responseAsStream) {
                 logDebug('Response details:', { content: content });
             }
@@ -217,7 +236,7 @@ export class HttpClient {
      */
     private static async sendAxiosRequest<TContent extends string | IncomingMessage>(
         axiosRequestConfig: AxiosRequestConfig,
-    ): Promise<{ statusCode: number; content: TContent }> {
+    ): Promise<{ statusCode: number; content: TContent; contentType?: string }> {
         try {
             const response = await axios.request(axiosRequestConfig);
 
@@ -227,7 +246,12 @@ export class HttpClient {
                     response.data = JSON.stringify(response.data);
                 }
             }
-            return { statusCode: response.status, content: response.data };
+
+            return {
+                statusCode: response.status,
+                content: response.data,
+                contentType: response.headers['content-type'],
+            };
         } catch (axios_error_raw) {
             const axiosError = axios_error_raw as AxiosError;
             const message: string = axiosError.message || '';
