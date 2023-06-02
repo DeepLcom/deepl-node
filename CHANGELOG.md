@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.10.1] - 2023-06-02
+### Fixed
+* Limit example typescript version to 5.0 due to Node 12 incompatibility
+
 ## [1.10.0] - 2023-06-01
 ### Fixed
 * Changed document translation to poll the server every 5 seconds. This should greatly reduce observed document translation processing time.
@@ -181,7 +185,8 @@ client library took over this package name. Thanks to
 ownership.
 
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.10.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.10.1...HEAD
+[1.10.1]: https://github.com/DeepLcom/deepl-node/compare/v1.9.0...v1.10.1
 [1.10.0]: https://github.com/DeepLcom/deepl-node/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/DeepLcom/deepl-node/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/DeepLcom/deepl-node/compare/v1.7.5...v1.8.0
