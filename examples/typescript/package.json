@@ -11,6 +11,6 @@
         "build": "tsc -p tsconfig.json"
     },
     "devDependencies": {
-        "typescript": ">=3.0"
+        "typescript": ">=3.0 && <5.1"
     }
 }
