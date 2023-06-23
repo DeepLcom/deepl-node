@@ -53,7 +53,12 @@ eslint_manual:
 .audit_base:
     stage: check
     script:
-        - npm audit
+        - npm audit --production
+        # Suppressing NPM audit failures on dev dependencies due to CVE-2022-25883
+        #   in semver <7.5.2, used by test dependencies.
+        # See: https://github.com/npm/node-semver/pull/564
+        # Currently npm audit fix cannot resolve this issue.
+        - npm audit || echo "Suppressing npm audit failures for dev dependencies"
 
 audit_scheduled:
     extends: .audit_base

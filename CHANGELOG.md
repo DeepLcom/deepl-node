@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Fixed
+* CI: silence npm audit warnings in non-production dependencies due to 
+  currently-unresolvable [vulnerability in semver <7.5.2](https://github.com/npm/node-semver/pull/564). 
 
 
 ## [1.10.2] - 2023-06-02
