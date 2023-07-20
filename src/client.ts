@@ -10,8 +10,15 @@ import { URLSearchParams } from 'url';
 import FormData from 'form-data';
 import { IncomingMessage } from 'http';
 import { ProxyConfig } from './types';
+import * as https from 'https';
+import * as http from 'http';
 
 type HttpMethod = 'GET' | 'DELETE' | 'POST';
+
+const axiosInstance = axios.create({
+    httpAgent: new http.Agent({ keepAlive: true }),
+    httpsAgent: new https.Agent({ keepAlive: true }),
+});
 
 /**
  * Options for sending HTTP requests.
@@ -219,7 +226,7 @@ export class HttpClient {
         axiosRequestConfig: AxiosRequestConfig,
     ): Promise<{ statusCode: number; content: TContent }> {
         try {
-            const response = await axios.request(axiosRequestConfig);
+            const response = await axiosInstance.request(axiosRequestConfig);
 
             if (axiosRequestConfig.responseType === 'text') {
                 // Workaround for axios-bug: https://github.com/axios/axios/issues/907

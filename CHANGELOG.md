@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Changed
+* Keep-Alive is now used by HTTP(S) agent, to reduce latency for subsequent API requests.
 ### Fixed
 * CI: silence npm audit warnings in non-production dependencies due to 
   currently-unresolvable [vulnerability in semver <7.5.2](https://github.com/npm/node-semver/pull/564). 
