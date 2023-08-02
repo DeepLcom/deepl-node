@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * CI: silence npm audit warnings in non-production dependencies due to 
   currently-unresolvable [vulnerability in semver <7.5.2](https://github.com/npm/node-semver/pull/564). 
 * Increase axios dependency to >=1.2.2, due to [bug in axios v1.2.1](https://github.com/axios/axios/issues/5346).
+* Added supported glossary languages: Italian (it), Dutch (nl), Polish (pl),
+  Portuguese (pt), Russian (ru) and Chinese (zh). The corresponding glossary
+  language code TypeScript types are extended.
+
+  Note: older library versions also support the new glossary language pairs,
+  this update only adds new types.
 
 
 ## [1.10.2] - 2023-06-02

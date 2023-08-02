@@ -220,7 +220,18 @@ export type NonRegionalLanguageCode = CommonLanguageCode | 'en' | 'pt';
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type SourceGlossaryLanguageCode = 'de' | 'en' | 'es' | 'fr' | 'ja';
+export type SourceGlossaryLanguageCode =
+    | 'de'
+    | 'en'
+    | 'es'
+    | 'fr'
+    | 'it'
+    | 'ja'
+    | 'nl'
+    | 'pl'
+    | 'pt'
+    | 'ru'
+    | 'zh';
 
 /**
  * Language codes that may be used as a target language for glossaries.
