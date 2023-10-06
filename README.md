@@ -31,6 +31,11 @@ you can translate up to 500,000 characters/month for free.
 
 The package officially supports Node.js version 12, 14, 16, 17, and 18.
 
+Starting in 2024, we will drop support for older Node versions that have reached
+official end-of-life. You can find the Node versions and support timelines
+[here][node-version-list].
+To continue using this library, you should update to Node 18+.
+
 ## Usage
 
 Import the package and construct a `Translator`. The first argument is a string
@@ -492,4 +497,5 @@ environment variables defined referring to the mock-server.
 [create-account]: https://www.deepl.com/pro?utm_source=github&utm_medium=github-nodejs-readme#developer
 [deepl-mock]: https://www.github.com/DeepLcom/deepl-mock
 [issues]: https://www.github.com/DeepLcom/deepl-node/issues
+[node-version-list]: https://nodejs.dev/en/about/releases/
 [pro-account]: https://www.deepl.com/pro-account/?utm_source=github&utm_medium=github-nodejs-readme

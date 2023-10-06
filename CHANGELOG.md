@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+* Added notice in Readme that starting in 2024 the library will drop support for
+  Node versions that are officially end-of-life.
 * Keep-Alive is now used by HTTP(S) agent, to reduce latency for subsequent API requests.
 ### Fixed
 * CI: silence npm audit warnings in non-production dependencies due to 
