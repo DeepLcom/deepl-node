@@ -260,13 +260,13 @@ const glossaryEnToDe = await translator.createGlossary('My glossary', 'en', 'de'
 ```
 
 You can also upload a glossary downloaded from the DeepL website using
-`createGlossaryFromCsv()`. Instead of supplying the entries as a dictionary,
+`createGlossaryWithCsv()`. Instead of supplying the entries as a dictionary,
 provide the CSV file as a string containing the file path, or a Stream, Buffer,
 or FileHandle containing the CSV file content:
 
 ```javascript
 const csvFilePath = '/path/to/glossary_file.csv';
-const glossaryEnToDe = await translator.createGlossaryFromCsv(
+const glossaryEnToDe = await translator.createGlossaryWithCsv(
     'My glossary',
     'en',
     'de',

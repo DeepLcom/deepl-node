@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Note: older library versions also support the new glossary language pairs,
   this update only adds new types.
+* Fixed typo in readme: `createGlossaryWithCsv` not `createGlossaryFromCsv`
+  * Issue [#36](https://github.com/DeepLcom/deepl-node/issues/36) thanks to
+    [phenomen](https://github.com/phenomen). 
 
 
 ## [1.10.2] - 2023-06-02
