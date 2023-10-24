@@ -7,7 +7,7 @@ include:
 # Global --------------------------
 
 # Use Active LTS (18)
-image: ${CI_REGISTRY_IMAGE}/node:18-alpine
+image: node:18-alpine
 
 workflow:
     rules:
@@ -117,7 +117,7 @@ build:
               USE_MOCK_SERVER: 'use mock server'
             - DOCKER_IMAGE: 'node:18-alpine'
               USE_MOCK_SERVER: 'use mock server'
-    image: ${CI_REGISTRY_IMAGE}/${DOCKER_IMAGE}
+    image: ${DOCKER_IMAGE}
     script:
         - >
             if [[ ! -z "${USE_MOCK_SERVER}" ]]; then
@@ -158,7 +158,7 @@ test_manual:
             - DOCKER_IMAGE: 'node:16-alpine'
             - DOCKER_IMAGE: 'node:17-alpine'
             - DOCKER_IMAGE: 'node:18-alpine'
-    image: ${CI_REGISTRY_IMAGE}/${DOCKER_IMAGE}
+    image: ${DOCKER_IMAGE}
     before_script: # Note: replaces global before_script
         - npm install --production
     script:
