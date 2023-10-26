@@ -104,6 +104,8 @@ build:
     stage: test
     extends: .test
     retry: 1
+    variables:
+        KUBERNETES_MEMORY_LIMIT: 8Gi
     parallel:
         matrix:
             - DOCKER_IMAGE: 'node:18-alpine'
