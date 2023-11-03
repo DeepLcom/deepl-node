@@ -369,6 +369,9 @@ function validateAndAppendTextOptions(data: URLSearchParams, options?: Translate
     if (options.outlineDetection !== undefined) {
         data.append('outline_detection', toBoolString(options.outlineDetection));
     }
+    if (options.context !== undefined) {
+        data.append('context', options.context);
+    }
     if (options.nonSplittingTags !== undefined) {
         data.append('non_splitting_tags', joinTagList(options.nonSplittingTags));
     }

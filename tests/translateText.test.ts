@@ -179,6 +179,18 @@ describe('translate text', () => {
         await translator.translateText(text, null, 'de', { tagHandling: 'html' });
     });
 
+    it('should translate with context option', async () => {
+        const translator = makeTranslator();
+        const text = 'Das ist scharf!';
+        // In German, "scharf" can mean:
+        // - spicy/hot when referring to food, or
+        // - sharp when referring to other objects such as a knife (Messer).
+        await translator.translateText(text, null, 'en-US');
+        // Result: "That is hot!"
+        await translator.translateText(text, null, 'en-US', { context: 'Das ist ein Messer' });
+        // Result: "That is sharp!"
+    });
+
     withRealServer('should translate using specified XML tags', async () => {
         const translator = makeTranslator();
         const text =

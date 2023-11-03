@@ -172,6 +172,11 @@ console.log(await translator.translateText('How are you?', null, 'de', { formali
 -   `glossary`: specifies a glossary to use with translation, either as a string
     containing the glossary ID, or a `GlossaryInfo` as returned by
     `getGlossary()`.
+-   `context`: specifies additional context to influence translations, that is not
+    translated itself. Note this is an **alpha feature**: it may be deprecated at
+    any time, or incur charges if it becomes generally available.
+    See the [API documentation][api-docs-context-param] for more information and
+    example usage.
 -   `tagHandling`: type of tags to parse before translation, options are `'html'`
     and `'xml'`.
 
@@ -492,6 +497,7 @@ tests using `npm test` with the `DEEPL_MOCK_SERVER_PORT` and `DEEPL_SERVER_URL`
 environment variables defined referring to the mock-server.
 
 [api-docs]: https://www.deepl.com/docs-api?utm_source=github&utm_medium=github-nodejs-readme
+[api-docs-context-param]: https://www.deepl.com/docs-api/translating-text/?utm_source=github&utm_medium=github-nodejs-readme
 [api-docs-csv-format]: https://www.deepl.com/docs-api/managing-glossaries/supported-glossary-formats/?utm_source=github&utm_medium=github-nodejs-readme
 [axios-proxy-docs]: https://axios-http.com/docs/req_config
 [create-account]: https://www.deepl.com/pro?utm_source=github&utm_medium=github-nodejs-readme#developer

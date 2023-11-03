@@ -130,6 +130,12 @@ export interface TranslateTextOptions {
     /** Set to false to disable automatic tag detection, default is true. */
     outlineDetection?: boolean;
 
+    /** Specifies additional context to influence translations, that is not
+     * translated itself. Note this is an **alpha feature**: it may be deprecated at
+     * any time, or incur charges if it becomes generally available.
+     * See the API documentation for more information and example usage. */
+    context?: string;
+
     /** List of XML tags that should be used to split text into sentences. */
     splittingTags?: TagList;
 
