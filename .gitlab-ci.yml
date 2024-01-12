@@ -3,6 +3,9 @@ include:
     - project: '${CI_PROJECT_NAMESPACE}/ci-libs-for-client-libraries'
       file:
           - '/${CI_PROJECT_NAME}/.gitlab-ci.yml'
+    - project: 'deepl/ops/ci-cd-infrastructure/gitlab-ci-lib'
+      file:
+          - '/templates/.secret-detection.yml'
 
 # Global --------------------------
 
@@ -86,6 +89,15 @@ format_manual:
     extends: .format_base
     rules:
         - if: $CI_PIPELINE_SOURCE != "schedule"
+
+secret_detection:
+    extends: .secret-detection
+    stage: check
+    image: !reference [.secret-detection, image]
+    before_script:
+        - echo "overriding default before_script..."
+    rules:
+        - if: $CI_MERGE_REQUEST_ID
 
 # stage: build ----------------------
 
