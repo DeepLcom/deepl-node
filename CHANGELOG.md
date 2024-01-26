@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## Unreleased
+## [Unreleased]
 ### Fixed
 * Dependencies: Update `follow-redirects` due to security vulnerability
+### Security
+* Increase `axios` requirement to `^1.6.4` to avoid 
+  [vulnerability in follow-redirects <1.15.4](https://github.com/advisories/GHSA-jchw-25xp-jwwc)
 
 
 ## [1.11.0] - 2023-11-03
