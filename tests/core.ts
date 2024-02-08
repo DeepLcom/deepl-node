@@ -11,6 +11,7 @@ import { v4 as randomUUID } from 'uuid';
 
 // Note: this constant cannot be exported immediately, because exports are locally undefined
 const internalExampleText: Record<string, string> = {
+    ar: 'شعاع البروتون',
     bg: 'протонен лъч',
     cs: 'protonový paprsek',
     da: 'protonstråle',

@@ -166,6 +166,7 @@ export interface DocumentTranslateOptions {
  * API accept case-insensitive language codes.
  */
 type CommonLanguageCode =
+    | 'ar'
     | 'bg'
     | 'cs'
     | 'da'
