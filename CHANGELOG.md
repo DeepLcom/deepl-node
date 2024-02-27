@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [1.12.0] - 2024-02-27
 ### Added
 * New language available: Arabic (`'ar'`). Add language code constants and tests.
   Arabic is currently supported only for text translation; document translation
@@ -226,7 +226,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.11.1...HEAD
+[1.12.0]: https://github.com/DeepLcom/deepl-node/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/DeepLcom/deepl-node/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/DeepLcom/deepl-node/compare/v1.10.2...v1.11.0
 [1.10.2]: https://github.com/DeepLcom/deepl-node/compare/v1.9.0...v1.10.2
