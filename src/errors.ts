@@ -41,3 +41,5 @@ export class DocumentTranslationError extends DeepLError {
 export class GlossaryNotFoundError extends DeepLError {}
 
 export class DocumentNotReadyError extends DeepLError {}
+
+export class WebsiteDownloadError extends DeepLError {}
