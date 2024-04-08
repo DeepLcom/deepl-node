@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Security
+* Increase `follow-redirects` locked-version due to security 
+  [vulnerability in follow-redirects <1.15.5](https://github.com/advisories/GHSA-cxjh-pqwp-8mfp) 
+
+
 ## [1.12.0] - 2024-02-27
 ### Added
 * New language available: Arabic (`'ar'`). Add language code constants and tests.
@@ -226,6 +232,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.12.0...HEAD
 [1.12.0]: https://github.com/DeepLcom/deepl-node/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/DeepLcom/deepl-node/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/DeepLcom/deepl-node/compare/v1.10.2...v1.11.0
