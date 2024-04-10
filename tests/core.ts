@@ -201,7 +201,7 @@ export const testTimeout = 60000;
 
 // Base URL for mocking out HTTP client
 export const urlToMockRegexp =
-  /(https?:\/\/api.*\.deepl\.com)|(deepl-mock:\d+)|(https?:\/\/localhost:\d+)/;
+    /(https?:\/\/api.*\.deepl\.com)|(deepl-mock:\d+)|(https?:\/\/localhost:\d+)/;
 
 module.exports = {
     exampleText,

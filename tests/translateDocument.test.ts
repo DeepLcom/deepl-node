@@ -4,6 +4,8 @@
 
 import * as deepl from 'deepl-node';
 
+import nock from 'nock';
+
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
@@ -17,9 +19,11 @@ import {
     tempFiles,
     testTimeout,
     timeout,
+    urlToMockRegexp,
     withMockServer,
     withRealServer,
 } from './core';
+import { DocumentTranslateOptions, QuotaExceededError } from 'deepl-node';
 
 describe('translate document', () => {
     it(
@@ -260,5 +264,34 @@ describe('translate document', () => {
         const handle = { documentId: '1234'.repeat(8), documentKey: '5678'.repeat(16) };
         const translator = makeTranslator();
         await expect(translator.getDocumentStatus(handle)).rejects.toThrow('Not found');
+    });
+
+    describe('request parameter tests', () => {
+        beforeAll(() => {
+            nock.disableNetConnect();
+        });
+
+        it('sends extra request parameters', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/document', function (body) {
+                    // Nock unfortunately does not support proper form data matching
+                    // See https://github.com/nock/nock/issues/887
+                    // And https://github.com/nock/nock/issues/191
+                    expect(body).toContain('form-data');
+                    expect(body).toContain('my-extra-parameter');
+                    expect(body).toContain('my-extra-value');
+                    return true;
+                })
+                .reply(456);
+            const translator = makeTranslator();
+            const dataBuf = Buffer.from('Example file contents', 'utf8');
+            const options: DocumentTranslateOptions = {
+                filename: 'example.txt',
+                extraRequestParameters: { 'my-extra-parameter': 'my-extra-value' },
+            };
+            await expect(translator.uploadDocument(dataBuf, null, 'de', options)).rejects.toThrow(
+                QuotaExceededError,
+            );
+        });
     });
 });

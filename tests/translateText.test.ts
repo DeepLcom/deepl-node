@@ -4,7 +4,17 @@
 
 import * as deepl from 'deepl-node';
 
-import { exampleText, makeTranslator, testTimeout, withMockServer, withRealServer } from './core';
+import nock from 'nock';
+
+import {
+    exampleText,
+    makeTranslator,
+    testTimeout,
+    urlToMockRegexp,
+    withMockServer,
+    withRealServer,
+} from './core';
+import { QuotaExceededError, TranslateTextOptions } from 'deepl-node';
 
 describe('translate text', () => {
     it('should translate a single text', async () => {
@@ -234,5 +244,27 @@ describe('translate text', () => {
 
         expect(result.text).toContain('<h1>Meine erste Überschrift</h1>');
         expect(result.text).toContain('<p translate="no">My first paragraph.</p>');
+    });
+
+    describe('request parameter tests', () => {
+        beforeAll(() => {
+            nock.disableNetConnect();
+        });
+
+        it('sends extra request parameters', async () => {
+            nock(urlToMockRegexp)
+                .post('/v2/translate', function (body) {
+                    expect(body['my-extra-parameter']).toBe('my-extra-value');
+                    return true;
+                })
+                .reply(456);
+            const translator = makeTranslator();
+            const options: TranslateTextOptions = {
+                extraRequestParameters: { 'my-extra-parameter': 'my-extra-value' },
+            };
+            await expect(translator.translateText('test', null, 'de', options)).rejects.toThrow(
+                QuotaExceededError,
+            );
+        });
     });
 });
