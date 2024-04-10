@@ -31,6 +31,7 @@ import {
     GlossaryInfo,
     LanguageCode,
     NonRegionalLanguageCode,
+    RequestParameters,
     SentenceSplittingMode,
     SourceGlossaryLanguageCode,
     SourceLanguageCode,
@@ -255,6 +256,7 @@ function buildURLSearchParams(
     targetLang: LanguageCode,
     formality: Formality | undefined,
     glossary: GlossaryId | GlossaryInfo | undefined,
+    extraRequestParameters: RequestParameters | undefined,
 ): URLSearchParams {
     targetLang = standardizeLanguageCode(targetLang);
     if (sourceLang !== null) {
@@ -304,6 +306,11 @@ function buildURLSearchParams(
             glossary = glossary.glossaryId;
         }
         searchParams.append('glossary_id', glossary);
+    }
+    if (extraRequestParameters !== undefined) {
+        for (const paramName in extraRequestParameters) {
+            searchParams.append(paramName, extraRequestParameters[paramName]);
+        }
     }
     return searchParams;
 }
@@ -567,6 +574,7 @@ export class Translator {
             targetLang,
             options?.formality,
             options?.glossary,
+            options?.extraRequestParameters,
         );
         const singular = appendTextsAndReturnIsSingular(data, texts);
         validateAndAppendTextOptions(data, options);
@@ -913,6 +921,7 @@ export class Translator {
             targetLang,
             options?.formality,
             options?.glossary,
+            options?.extraRequestParameters,
         );
         const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
             'POST',

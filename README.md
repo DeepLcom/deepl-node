@@ -192,6 +192,10 @@ The following options are only used if `tagHandling` is `'xml'`:
     into sentences. Format and default are the same as for `splittingTags`.
 -   `ignoreTags`: list of XML tags that containing content that should not be
     translated. Format and default are the same as for `splittingTags`.
+-   `extraRequestParameters`: Extra body parameters to be passed along with the 
+    HTTP request. Only string values are permitted.
+    For example: `{'param': 'value', 'param2': 'value2'}`
+
 
 ### Translating documents
 
@@ -246,6 +250,7 @@ directly:
 -   `glossary`: same as in [Text translation options](#text-translation-options).
 -   `filename`: if the input file is not provided as file path, this option is
     needed to specify the file extension.
+-   `extraRequestParameters`: same as in [Text translation options](#text-translation-options).
 
 ### Glossaries
 

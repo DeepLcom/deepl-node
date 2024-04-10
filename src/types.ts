@@ -144,6 +144,9 @@ export interface TranslateTextOptions {
 
     /** List of XML tags containing content that should not be translated. */
     ignoreTags?: TagList;
+
+    /** Extra parameters to be added to a text translation request. */
+    extraRequestParameters?: RequestParameters;
 }
 
 /**
@@ -158,6 +161,9 @@ export interface DocumentTranslateOptions {
 
     /** Filename including extension, only required when translating documents as streams. */
     filename?: string;
+
+    /** Extra parameters to be added to a text translation request. */
+    extraRequestParameters?: RequestParameters;
 }
 
 /**
@@ -246,3 +252,9 @@ export type SourceGlossaryLanguageCode =
  * API accept case-insensitive language codes.
  */
 export type TargetGlossaryLanguageCode = SourceGlossaryLanguageCode;
+
+/**
+ * Extra request parameters to be passed with translation requests.
+ * They are stored as an object where each field represents a request parameter.
+ */
+export type RequestParameters = Record<string, string>;

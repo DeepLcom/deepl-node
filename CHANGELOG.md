@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+### Added
+* Add possibility to add extra parameters to a translation request (both text and document).
+  DeepL engineers use this to test features in the API before they are released. Library users
+  who cannot update their DeepL library dependency could use these extra parameters to access
+  features in the API that are released in the future.
 ### Security
 * Increase `follow-redirects` locked-version due to security 
   [vulnerability in follow-redirects <1.15.5](https://github.com/advisories/GHSA-cxjh-pqwp-8mfp) 
