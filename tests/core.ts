@@ -199,6 +199,10 @@ export const documentTranslationTestTimeout = 10000;
 // E2E tests need a significantly higher timeout limit
 export const testTimeout = 60000;
 
+// Base URL for mocking out HTTP client
+export const urlToMockRegexp =
+  /(https?:\/\/api.*\.deepl\.com)|(deepl-mock:\d+)|(https?:\/\/localhost:\d+)/;
+
 module.exports = {
     exampleText,
     exampleDocumentInput,
@@ -213,5 +217,6 @@ module.exports = {
     documentTranslationTestTimeout,
     testTimeout,
     timeout,
+    urlToMockRegexp,
     proxyConfig,
 };

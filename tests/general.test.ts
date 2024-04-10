@@ -15,11 +15,10 @@ import {
     withMockProxyServer,
     makeTranslator,
     proxyConfig,
+    urlToMockRegexp,
 } from './core';
 
 const serverUrl = process.env.DEEPL_SERVER_URL;
-const urlToMockRegexp =
-    /(https?:\/\/api.*\.deepl\.com)|(deepl-mock:\d+)|(https?:\/\/localhost:\d+)/;
 
 describe('general', () => {
     it('rejects empty authKey', () => {
