@@ -1,0 +1,17 @@
+{
+    "name": "multiple-target-languages",
+    "description": "Example for deepl-node using CommonJS",
+    "type": "module",
+    "dependencies": {
+        "@types/node": "^18.11.9",
+        "deepl-node": "file:../..",
+        "dotenv": "^16.4.5"
+    },
+    "main": "MultipleLanguagesIterator.js",
+    "version": "1.0.0",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+}
