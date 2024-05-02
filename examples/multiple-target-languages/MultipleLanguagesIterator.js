@@ -8,7 +8,7 @@ var translatedWebpages =[];
 
 
 
-//looping through all the languages
+//looping through all the languages codes
 for(var i=0; i<languageCodes.length; i++){
     var languageCode = languageCodes[i];
 
