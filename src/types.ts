@@ -234,6 +234,7 @@ export type NonRegionalLanguageCode = CommonLanguageCode | 'en' | 'pt';
  * API accept case-insensitive language codes.
  */
 export type SourceGlossaryLanguageCode =
+    | 'da'
     | 'de'
     | 'en'
     | 'es'
@@ -241,9 +242,11 @@ export type SourceGlossaryLanguageCode =
     | 'it'
     | 'ja'
     | 'nl'
+    | 'nb'
     | 'pl'
     | 'pt'
     | 'ru'
+    | 'sv'
     | 'zh';
 
 /**

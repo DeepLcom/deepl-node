@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Added
+* Added supported glossary languages: Danish (`'da'`), Norwegian (bokmål)
+  (`'nb'`), and Swedish (`'sv'`). The corresponding glossary language code
+  TypeScript types are extended.
+
+  Note: older library versions also support the new glossary language pairs,
+  this update only adds new types.
+
+
 ## [1.13.0] - 2024-04-12
 ### Added
 * Add possibility to add extra parameters to a translation request (both text and document).
@@ -237,6 +247,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.13.0...HEAD
 [1.13.0]: https://github.com/DeepLcom/deepl-node/compare/v1.12.0...v1.13.0
 [1.12.0]: https://github.com/DeepLcom/deepl-node/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/DeepLcom/deepl-node/compare/v1.11.0...v1.11.1
