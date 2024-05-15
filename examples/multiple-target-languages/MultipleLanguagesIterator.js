@@ -1,3 +1,4 @@
+
 import * as deepl from 'deepl-node';
 import 'dotenv/config';
 
@@ -25,4 +26,5 @@ let translateAwaitables = languageCodes.map((code) =>
         }),
 );
 await Promise.all(translateAwaitables);
+
 
