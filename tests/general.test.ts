@@ -16,7 +16,9 @@ import {
     makeTranslator,
     proxyConfig,
     urlToMockRegexp,
+    withRealServer,
 } from './core';
+import { TranslateTextOptions } from 'deepl-node';
 
 const serverUrl = process.env.DEEPL_SERVER_URL;
 
@@ -51,6 +53,31 @@ describe('general', () => {
     it('throws AuthorizationError with an invalid auth key', async () => {
         const translator = makeTranslator({ authKey: 'invalid' });
         await expect(translator.getUsage()).rejects.toThrowError(deepl.AuthorizationError);
+    });
+
+    withRealServer('handles mixed text-direction tests', async () => {
+        const translator = makeTranslator();
+        const options: TranslateTextOptions = { tagHandling: 'xml', ignoreTags: 'ignore' };
+        const arIgnorePart = '<ignore>يجب تجاهل هذا الجزء.</ignore>';
+        const enSentenceWithARIgnorePart = `<p>This is a <b>short</b> <i>sentence</i>. ${arIgnorePart} This is another sentence.`;
+        const enIgnorePart = '<ignore>This part should be ignored.</ignore>';
+        const arSentenceWithENIgnorePart = `<p>هذه <i>جملة</i> <b>قصيرة</b>. ${enIgnorePart} هذه جملة أخرى.</p>`;
+
+        const enResult = await translator.translateText(
+            enSentenceWithARIgnorePart,
+            null,
+            'en-US',
+            options,
+        );
+        expect(enResult.text).toContain(arIgnorePart);
+
+        const arResult = await translator.translateText(
+            arSentenceWithENIgnorePart,
+            null,
+            'ar',
+            options,
+        );
+        expect(arResult.text).toContain(enIgnorePart);
     });
 
     describe('user-agent tests', () => {
