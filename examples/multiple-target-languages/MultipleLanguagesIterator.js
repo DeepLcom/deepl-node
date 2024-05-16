@@ -1,30 +1,31 @@
 
+// Example of translating HTML content into multiple target languages
 import * as deepl from 'deepl-node';
 import 'dotenv/config';
 
 const authKey = process.env.AUTH_KEY;
 const translator = new deepl.Translator(authKey);
-//Enter some language codes. P is given an intentionally incorrect code for error reporting purposes
+// Enter some language codes. P is given as an intentionally incorrect code for error reporting purposes.
 var languageCodes = ['BG', 'DE', 'IT', 'ES', 'P'];
 
-//looping through all the languages codes
-let translateAwaitables = languageCodes.map((code) =>
+// Applying the translator to each language code. Using Promises to iterate through languages in parallel. Await waits for a response before conducting further logic on output.
+let translatePromises = languageCodes.map((code) =>
     translator
-        .translateText(
-            '<!DOCTYPE html> <html> <body style ="background-color: #f5f6f8; align-items: center;"> <h1 id="header_1" style="font-family:sans-serif; text-align: center; font-weight: 600; ">Hello Good Afternoon!</h1> <p id = "paragraph_1" style="font-family:sans-serif; text-align: center; font-weight: 600;margin-bottom: 0px;">Translate this page to your preferred language.</p> <p style="margin-top: 40px;"> <a href="index.html" target="_blank" style = "background-color: #0f2b46; border: 1px solid #0f2b46; color: #ffffff; border-radius: 3px; margin: 10px; padding: 12px 24px; cursor: pointer; text-decoration: none !important;">English</a> <a href="DeepLGerman.html" target="_blank" style = "background-color: #0f2b46; border: 1px solid #0f2b46; color: #ffffff; border-radius: 3px; margin: 10px; padding: 12px 24px; cursor: pointer; text-decoration: none !important;">German</a> <a href="DeepLSpanish.html" target="_blank" style = "background-color: #0f2b46; border: 1px solid #0f2b46; color: #ffffff; border-radius: 3px; margin: 10px; padding: 12px 24px; cursor: pointer; text-decoration: none !important;">Spanish</a> <a href="DeepLBulgarian.html" target="_blank" style = "background-color: #0f2b46; border: 1px solid #0f2b46; color: #ffffff; border-radius: 3px; margin: 10px; padding: 12px 24px; cursor: pointer; text-decoration: none !important;">Bulgarian</a> <a href="DeepLItalian.html" target="_blank" style = "background-color: #0f2b46; border: 1px solid #0f2b46; color: #ffffff; border-radius: 3px; margin: 10px; padding: 12px 24px; cursor: pointer; text-decoration: none !important;">Italian</a> </p> </body> </html>',
-            null,
-            code,
-            { tagHandling: 'html' },
-        )
-        .then((result) => {
-            console.log(result.text);
-        })
+        .translateDocument("index.html", "index_" + code + ".html", "en", code)
         .catch((error) => {
-            //logging the error in a case of failure
-            console.log('Following error is for Language Code: ' + code + '\n');
-            console.log(error);
+            if (error.documentHandle) {
+                const handle = error.documentHandle;
+                console.log(
+                `Document ID: ${handle.documentId}, ` +
+                    `Document key: ${handle.documentKey}` 
+                    + `For Language Code: ` + code
+                );
+            } 
+            else {
+                console.log(`For Language Code: ` + code + ` error occurred during document upload. ${error}`);
+            }
         }),
 );
-await Promise.all(translateAwaitables);
+await Promise.all(translatePromises);
 
 
