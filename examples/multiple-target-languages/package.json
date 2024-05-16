@@ -8,5 +8,4 @@
         "dotenv": "^16.4.5"
     },
     "main": "MultipleLanguagesIterator.js"
-    
 }
