@@ -5,7 +5,7 @@ import 'dotenv/config';
 const authKey = process.env.AUTH_KEY;
 const translator = new deepl.Translator(authKey);
 // Enter some language codes. P is given as an intentionally incorrect code for error reporting purposes.
-var languageCodes = ['BG', 'DE', 'IT', 'ES', 'P'];
+var languageCodes = ['bg', 'de', 'it', 'es', 'p'];
 
 // Applying the translator to each language code. Using Promises to iterate through languages in parallel. Await waits for a response before conducting further logic on output.
 let translatePromises = languageCodes.map((code) =>
@@ -17,14 +17,11 @@ let translatePromises = languageCodes.map((code) =>
                 console.log(
                     `Document ID: ${handle.documentId}, ` +
                         `Document key: ${handle.documentKey}` +
-                        `For Language Code: ` +
-                        code,
+                        `For Language Code: ${code}, error occurred during document translation: ${error}`,
                 );
             } else {
                 console.log(
-                    `For Language Code: ` +
-                        code +
-                        ` error occurred during document upload. ${error}`,
+                    `For Language Code: ${code}, error occurred during document upload: ${error}`,
                 );
             }
         }),

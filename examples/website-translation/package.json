@@ -1,6 +1,6 @@
 {
-    "name": "multiple-target-languages",
-    "description": "Example for translating into multiple target languages",
+    "name": "website-translation",
+    "description": "Example for translating a website into multiple target languages",
     "type": "module",
     "dependencies": {
         "@types/node": "^18.11.9",
