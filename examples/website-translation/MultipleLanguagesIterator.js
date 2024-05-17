@@ -2,7 +2,13 @@
 import * as deepl from 'deepl-node';
 import 'dotenv/config';
 
-const authKey = process.env.AUTH_KEY;
+const authKey = process.env.DEEPL_AUTH_KEY;
+if (authKey === undefined) {
+    console.error(
+        'You must specify your DeepL auth key as the environment variable DEEPL_AUTH_KEY',
+    );
+    process.exit(1);
+}
 const translator = new deepl.Translator(authKey);
 // Enter some language codes. P is given as an intentionally incorrect code for error reporting purposes.
 var languageCodes = ['bg', 'de', 'it', 'es', 'p'];
