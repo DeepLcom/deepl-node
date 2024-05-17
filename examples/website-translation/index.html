@@ -14,22 +14,37 @@
                 cursor: pointer;
                 text-decoration: none !important;
             }
+            p {
+                font-family: sans-serif;
+                text-align: center;
+                font-weight: 600;
+            }
         </style>
     </head>
     <body style="background-color: #f5f6f8; align-items: center">
         <h1 id="header_1" style="font-family: sans-serif; text-align: center; font-weight: 600">
             Hello Good Afternoon!
         </h1>
-        <p
-            id="paragraph_1"
-            style="
-                font-family: sans-serif;
-                text-align: center;
-                font-weight: 600;
-                margin-bottom: 0px;
-            "
-        >
-            Translate this page to your preferred language.
+        <p>This is an example of how to translate a webpage using the DeepL Node.js library.</p>
+        <p>
+            The Node.js script in this example translates the English version of this page into
+            other languages, and the buttons below lead to those translated pages.
+        </p>
+        <p>
+            To run the Node.js script, run the following in the
+            <b translate="no">website-translation</b> directory.
+            <br />
+            <code>
+                npm install
+                <br />
+                export DEEPL_AUTH_KEY=&lt;your auth key&gt;
+                <br />
+                npm run main
+            </code>
+        </p>
+        <p>
+            After the translated pages are generated, you can use the buttons below to view this
+            page in your preferred language.
         </p>
         <p style="margin-top: 40px">
             <a href="index.html">English</a>
