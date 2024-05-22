@@ -10,8 +10,8 @@ if (authKey === undefined) {
     process.exit(1);
 }
 const translator = new deepl.Translator(authKey);
-// Enter some language codes. P is given as an intentionally incorrect code for error reporting purposes.
-var languageCodes = ['bg', 'de', 'it', 'es', 'p'];
+// Enter some language codes. 
+var languageCodes = ['bg', 'de', 'it', 'es'];
 
 // Applying the translator to each language code. Using Promises to iterate through languages in parallel. Await waits for a response before conducting further logic on output.
 let translatePromises = languageCodes.map((code) =>
