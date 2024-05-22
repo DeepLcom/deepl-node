@@ -1,0 +1,14 @@
+{
+    "name": "website-translation",
+    "description": "Example for translating a website into multiple target languages",
+    "type": "module",
+    "dependencies": {
+        "@types/node": "^18.11.9",
+        "deepl-node": "file:../..",
+        "dotenv": "^16.4.5"
+    },
+    "main": "MultipleLanguagesIterator.js",
+    "scripts": {
+        "main": "node MultipleLanguagesIterator.js"
+    }
+}

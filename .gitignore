@@ -4,3 +4,5 @@ node_modules/
 coverage/
 junit.xml
 examples/**/package-lock.json
+examples/**/.env
+.DS_Store
