@@ -2,6 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
+import { isString } from './utils';
 import { DeepLError } from './errors';
 import {
     DocumentHandle,
@@ -10,13 +11,31 @@ import {
     GlossaryLanguagePair,
     Language,
     SourceGlossaryLanguageCode,
-    standardizeLanguageCode,
     TextResult,
     TargetGlossaryLanguageCode,
     UsageDetail,
     Usage,
-} from './index';
-import { GlossaryInfo, SourceLanguageCode } from './types';
+    GlossaryInfo,
+    SourceLanguageCode,
+    LanguageCode,
+} from './types';
+
+/**
+ * Changes the upper- and lower-casing of the given language code to match ISO 639-1 with an
+ * optional regional code from ISO 3166-1.
+ * For example, input 'EN-US' returns 'en-US'.
+ * @param langCode String containing language code to standardize.
+ * @return Standardized language code.
+ */
+export function standardizeLanguageCode(langCode: string): LanguageCode {
+    if (!isString(langCode) || langCode.length === 0) {
+        throw new DeepLError('langCode must be a non-empty string');
+    }
+    const [lang, region] = langCode.split('-', 2);
+    return (
+        region === undefined ? lang.toLowerCase() : `${lang.toLowerCase()}-${region.toUpperCase()}`
+    ) as LanguageCode;
+}
 
 /**
  * Type used during JSON parsing of API response for glossary info.

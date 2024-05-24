@@ -3,6 +3,154 @@
 // license that can be found in the LICENSE file.
 
 /**
+ * Information about the API usage: how much has been translated in this billing period, and the
+ * maximum allowable amount.
+ *
+ * Depending on the account type, different usage types are included: the character, document and
+ * teamDocument fields provide details about each corresponding usage type, allowing each usage type
+ * to be checked individually. The anyLimitReached() function checks if any usage type is exceeded.
+ */
+export interface Usage {
+    /** Usage details for characters, for example due to the translateText() function. */
+    readonly character?: UsageDetail;
+    /** Usage details for documents. */
+    readonly document?: UsageDetail;
+    /** Usage details for documents shared among your team. */
+    readonly teamDocument?: UsageDetail;
+
+    /** Returns true if any usage type limit has been reached or passed, otherwise false. */
+    anyLimitReached(): boolean;
+
+    /** Converts the usage details to a human-readable string. */
+    toString(): string;
+}
+
+/**
+ * Holds the result of a text translation request.
+ */
+export interface TextResult {
+    /**
+     * String containing the translated text.
+     */
+    readonly text: string;
+
+    /**
+     * Language code of the detected source language.
+     */
+    readonly detectedSourceLang: SourceLanguageCode;
+}
+
+/**
+ * Language codes that may be used as a target language for glossaries.
+ * Note: although the language code type definitions are case-sensitive, this package and the DeepL
+ * API accept case-insensitive language codes.
+ */
+export type TargetGlossaryLanguageCode = SourceGlossaryLanguageCode;
+
+/**
+ * Stores the count and limit for one usage type.
+ */
+export interface UsageDetail {
+    /** The amount used of this usage type. */
+    readonly count: number;
+    /** The maximum allowable amount for this usage type. */
+    readonly limit: number;
+
+    /**
+     * Returns true if the amount used has already reached or passed the allowable amount.
+     */
+    limitReached(): boolean;
+}
+
+/**
+ * Information about a language supported by DeepL translator.
+ */
+export interface Language {
+    /** Name of the language in English. */
+    readonly name: string;
+    /**
+     * Language code according to ISO 639-1, for example 'en'. Some target languages also include
+     * the regional variant according to ISO 3166-1, for example 'en-US'.
+     */
+    readonly code: LanguageCode;
+    /**
+     * Only defined for target languages. If defined, specifies whether the formality option is
+     * available for this target language.
+     */
+    readonly supportsFormality?: boolean;
+}
+
+/**
+ * Information about a pair of languages supported for DeepL glossaries.
+ */
+export interface GlossaryLanguagePair {
+    /**
+     * The code of the source language.
+     */
+    readonly sourceLang: SourceGlossaryLanguageCode;
+    /**
+     * The code of the target language.
+     */
+    readonly targetLang: TargetGlossaryLanguageCode;
+}
+
+export type DocumentStatusCode = 'queued' | 'translating' | 'error' | 'done';
+
+/**
+ * Status of a document translation request.
+ */
+export interface DocumentStatus {
+    /**
+     * One of the status values defined in DocumentStatusCode.
+     * @see DocumentStatusCode
+     */
+    readonly status: DocumentStatusCode;
+
+    /**
+     * Estimated time until document translation completes in seconds, otherwise undefined if
+     * unknown.
+     */
+    readonly secondsRemaining?: number;
+
+    /**
+     * Number of characters billed for this document, or undefined if unknown or before translation
+     * is complete.
+     */
+    readonly billedCharacters?: number;
+
+    /**
+     * A short description of the error, or undefined if no error has occurred.
+     */
+    readonly errorMessage?: string;
+
+    /**
+     * True if no error has occurred, otherwise false. Note that while the document translation is
+     * in progress, this returns true.
+     */
+    ok(): boolean;
+
+    /**
+     * True if the document translation completed successfully, otherwise false.
+     */
+    done(): boolean;
+}
+
+/**
+ * Handle to an in-progress document translation.
+ */
+export interface DocumentHandle {
+    /**
+     * ID of associated document request.
+     */
+    readonly documentId: string;
+
+    /**
+     * Key of associated document request.
+     */
+    readonly documentKey: string;
+}
+
+/**
  * Optional proxy configuration, may be specified as proxy in TranslatorOptions.
  * @see TranslatorOptions.proxy
  */
@@ -248,13 +396,6 @@ export type SourceGlossaryLanguageCode =
     | 'ru'
     | 'sv'
     | 'zh';
-
-/**
- * Language codes that may be used as a target language for glossaries.
- * Note: although the language code type definitions are case-sensitive, this package and the DeepL
- * API accept case-insensitive language codes.
- */
-export type TargetGlossaryLanguageCode = SourceGlossaryLanguageCode;
 
 /**
  * Extra request parameters to be passed with translation requests.

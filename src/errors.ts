@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import { DocumentHandle } from './index';
+import { DocumentHandle } from './types';
 
 export class DeepLError extends Error {
     public error?: Error;
