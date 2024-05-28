@@ -1,0 +1,173 @@
+name: NodeJS
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '30 0 * * *'
+
+env:
+  SECRET_DETECTION_JSON_REPORT_FILE: "gitleaks.json"
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Run eslint check
+        run: npm run lint
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Run npm audit
+        run: |
+          npm audit --production
+          # Suppressing NPM audit failures on dev dependencies due to CVE-2022-25883
+          #   in semver <7.5.2, used by test dependencies.
+          # See: https://github.com/npm/node-semver/pull/564
+          # Currently npm audit fix cannot resolve this issue.
+          npm audit || echo "Suppressing npm audit failures for dev dependencies"
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Run format check
+        run: npm run format
+
+  secret_detection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install and run secret detection
+        run: |
+          wget https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz
+          tar -xzf gitleaks_8.18.4_linux_x64.tar.gz
+          EXITCODE=0
+          ./gitleaks detect -r ${SECRET_DETECTION_JSON_REPORT_FILE} --source . --log-opts="--all --full-history" || EXITCODE=$?
+          if [[ $EXITCODE -ne 0 ]]; then
+            exit $EXITCODE
+          fi
+      - name: Upload secret detection artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: secret-detection-results
+          path: gitleaks.json
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: |
+          npm run clean
+          npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist
+
+
+# Test and `npm publish` stage are disabled for now. Code needs to be tested
+
+#######################################################
+  # test:
+  #   runs-on: ${{ matrix.config.docker-image }}
+  #   strategy:
+  #     matrix:
+  #       config:
+  #         - docker-image: 'node:18-alpine'
+  #         - docker-image: 'node:12-alpine'
+  #           use-mock-server: use-mock-server
+  #         - docker-image: 'node:14-alpine'
+  #           use-mock-server: use-mock-server
+  #         - docker-image: 'node:16-alpine'
+  #           use-mock-server: use-mock-server
+  #         - docker-image: 'node:17-alpine'
+  #           use-mock-server: use-mock-server
+  #         - docker-image: 'node:18-alpine'
+  #           use-mock-server: use-mock-server
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Run tests
+  #       run: |
+  #         if [[ ! -z "${{ matrix.config.use-mock-server }}" ]]; then
+  #           echo "Using mock server"
+  #           export DEEPL_SERVER_URL=http://deepl-mock:3000
+  #           export DEEPL_MOCK_SERVER_PORT=3000
+  #           export DEEPL_PROXY_URL=http://deepl-mock:3001
+  #           export DEEPL_MOCK_PROXY_SERVER_PORT=3001
+  #         fi
+  #         npm install
+  #         npm run test:coverage
+  #     - name: Upload test results
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: test-results
+  #         path: coverage/clover.xml
+
+  # examples:
+  #   runs-on: ${{ matrix.docker-image }}
+  #   strategy:
+  #     matrix:
+  #       docker-image:
+  #         - 'node:12-alpine'
+  #         - 'node:14-alpine'
+  #         - 'node:16-alpine'
+  #         - 'node:17-alpine'
+  #         - 'node:18-alpine'
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Install dependencies
+  #       run: npm install --production
+  #     - name: Run examples
+  #       run: |
+  #         export DEEPL_AUTH_KEY=mock-auth-key
+  #         export DEEPL_SERVER_URL=http://deepl-mock:3000
+  #         export DEEPL_MOCK_SERVER_PORT=3000
+  #         export DEEPL_PROXY_URL=http://deepl-mock:3001
+  #         export DEEPL_MOCK_PROXY_SERVER_PORT=3001
+  #         cd $CI_PROJECT_DIR/examples/commonjs
+  #         npm install
+  #         node index.js
+  #         cd $CI_PROJECT_DIR/examples/esmodule
+  #         npm install
+  #         node index.js
+  #         cd $CI_PROJECT_DIR/examples/typescript
+  #         npm install
+  #         npm run build
+  #         node index.js
+
+  # publish_to_npm:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: startsWith(github.ref, 'refs/tags/v')
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Publish to NPM
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+  #       run: npm publish
