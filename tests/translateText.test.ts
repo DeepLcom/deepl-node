@@ -22,6 +22,7 @@ describe('translate text', () => {
         const result = await translator.translateText(exampleText.en, null, 'de');
         expect(result.text).toBe(exampleText.de);
         expect(result.detectedSourceLang).toBe('en');
+        expect(result.billedCharacters).toBe(exampleText.en.length);
     });
 
     it('should translate an array of texts', async () => {

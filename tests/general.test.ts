@@ -44,6 +44,7 @@ describe('general', () => {
                 // eslint-disable-next-line @typescript-eslint/no-loop-func, promise/always-return
                 .then((result: deepl.TextResult) => {
                     expect(result.text.toLowerCase()).toContain('proton');
+                    expect(result.billedCharacters).toBe(inputText.length);
                 });
             promises.push(promise);
         }

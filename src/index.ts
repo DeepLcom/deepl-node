@@ -223,6 +223,11 @@ export interface TextResult {
      * Language code of the detected source language.
      */
     readonly detectedSourceLang: SourceLanguageCode;
+
+    /**
+     * Number of characters billed for this text.
+     */
+    readonly billedCharacters: number;
 }
 
 /**
@@ -576,6 +581,8 @@ export class Translator {
             options?.glossary,
             options?.extraRequestParameters,
         );
+        // Always send show_billed_characters=1, remove when the API default is changed to true
+        data.append('show_billed_characters', '1');
         const singular = appendTextsAndReturnIsSingular(data, texts);
         validateAndAppendTextOptions(data, options);
 

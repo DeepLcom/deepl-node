@@ -60,6 +60,7 @@ interface UsageApiResponse {
 interface TextResultApiResponse {
     text: string;
     detected_source_language: string;
+    billed_characters: number;
 }
 
 /**
@@ -310,6 +311,7 @@ export function parseTextResultArray(json: string): TextResult[] {
                 detectedSourceLang: standardizeLanguageCode(
                     translation.detected_source_language,
                 ) as SourceLanguageCode,
+                billedCharacters: translation.billed_characters,
             };
         });
     } catch (error) {

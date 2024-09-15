@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Added
+* Added `billedCharacters` field to text translation response.
+
+
 ## [1.13.1] - 2024-08-14
 ### Added
 * Added supported glossary languages: Danish (`'da'`), Norwegian (bokmål)
@@ -250,6 +255,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.13.1...HEAD
 [1.13.1]: https://github.com/DeepLcom/deepl-node/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/DeepLcom/deepl-node/compare/v1.12.0...v1.13.0
 [1.12.0]: https://github.com/DeepLcom/deepl-node/compare/v1.11.1...v1.12.0
