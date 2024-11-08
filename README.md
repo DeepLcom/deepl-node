@@ -127,6 +127,8 @@ following properties:
 - `text` is the translated text,
 - `detectedSourceLang` is the detected source language code,
 - `billedCharacters` is the number of characters billed for the text.
+- `modelTypeUsed` indicates the translation model used, but is `undefined`
+  unless the `modelType` option is specified.
 
 ```javascript
 // Translate text into a target language, in this case, French:
@@ -180,6 +182,14 @@ console.log(await translator.translateText('How are you?', null, 'de', { formali
     translated itself. Characters in the `context` parameter are not counted toward billing.
     See the [API documentation][api-docs-context-param] for more information and
     example usage.
+-   `modelType`: specifies the type of translation model to use, options are:
+    - `'quality_optimized'`: use a translation model that maximizes translation
+      quality, at the cost of response time. This option may be unavailable for
+      some language pairs.
+    - `'prefer_quality_optimized'`: use the highest-quality translation model 
+      for the given language pair.
+    - `'latency_optimized'`: use a translation model that minimizes response
+      time, at the cost of translation quality.
 -   `tagHandling`: type of tags to parse before translation, options are `'html'`
     and `'xml'`.
 

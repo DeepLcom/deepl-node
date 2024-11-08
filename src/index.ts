@@ -228,6 +228,11 @@ export interface TextResult {
      * Number of characters billed for this text.
      */
     readonly billedCharacters: number;
+
+    /**
+     * The translation model type used, if available.
+     */
+    readonly modelTypeUsed?: string;
 }
 
 /**
@@ -383,6 +388,9 @@ function validateAndAppendTextOptions(data: URLSearchParams, options?: Translate
     }
     if (options.context !== undefined) {
         data.append('context', options.context);
+    }
+    if (options.modelType !== undefined) {
+        data.append('model_type', options.modelType);
     }
     if (options.nonSplittingTags !== undefined) {
         data.append('non_splitting_tags', joinTagList(options.nonSplittingTags));

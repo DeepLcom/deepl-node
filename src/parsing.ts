@@ -61,6 +61,7 @@ interface TextResultApiResponse {
     text: string;
     detected_source_language: string;
     billed_characters: number;
+    model_type_used?: string;
 }
 
 /**
@@ -312,6 +313,7 @@ export function parseTextResultArray(json: string): TextResult[] {
                     translation.detected_source_language,
                 ) as SourceLanguageCode,
                 billedCharacters: translation.billed_characters,
+                modelTypeUsed: translation.model_type_used,
             };
         });
     } catch (error) {

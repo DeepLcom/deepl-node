@@ -76,6 +76,7 @@ export interface TranslatorOptions {
 export type Formality = 'less' | 'more' | 'default' | 'prefer_less' | 'prefer_more';
 export type SentenceSplittingMode = 'off' | 'on' | 'nonewlines' | 'default';
 export type TagHandlingMode = 'html' | 'xml';
+export type ModelType = 'quality_optimized' | 'latency_optimized' | 'prefer_quality_optimized';
 export type GlossaryId = string;
 export type TagList = string | string[];
 
@@ -135,6 +136,9 @@ export interface TranslateTextOptions {
      * toward billing.
      * See the API documentation for more information and example usage. */
     context?: string;
+
+    /** Type of translation model to use. */
+    modelType?: ModelType;
 
     /** List of XML tags that should be used to split text into sentences. */
     splittingTags?: TagList;

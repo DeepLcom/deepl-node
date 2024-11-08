@@ -14,7 +14,7 @@ import {
     withMockServer,
     withRealServer,
 } from './core';
-import { QuotaExceededError, TranslateTextOptions } from 'deepl-node';
+import { ModelType, QuotaExceededError, TranslateTextOptions } from 'deepl-node';
 
 describe('translate text', () => {
     it('should translate a single text', async () => {
@@ -24,6 +24,19 @@ describe('translate text', () => {
         expect(result.detectedSourceLang).toBe('en');
         expect(result.billedCharacters).toBe(exampleText.en.length);
     });
+
+    it.each([['quality_optimized'], ['latency_optimized'], ['prefer_quality_optimized']])(
+        'should translate using model_type = %s',
+        async (modelTypeStr) => {
+            const translator = makeTranslator();
+            const modelType = modelTypeStr as ModelType;
+            const result = await translator.translateText(exampleText.en, 'en', 'de', {
+                modelType: modelType,
+            });
+            const expectedModelTypeUsed = modelType.replace('prefer_', '');
+            expect(result.modelTypeUsed).toBe(expectedModelTypeUsed);
+        },
+    );
 
     it('should translate an array of texts', async () => {
         const translator = makeTranslator();
