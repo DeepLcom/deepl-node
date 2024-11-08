@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+### Added
+* Added `modelType` option to `translateText()` to use models with higher
+  translation quality (available for some language pairs), or better latency.
+  Options are `'quality_optimized'`, `'latency_optimized'`, and  `'prefer_quality_optimized'`
+* Added the `modelTypeUsed` field to `translateText()` response, that
+  indicates the translation model used when the `modelType` option is
+  specified.
+
+
 ## [1.14.0] - 2024-09-17
 ### Added
 * Added `billedCharacters` field to text translation response.
@@ -255,6 +265,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.14.0...HEAD
 [1.14.0]: https://github.com/DeepLcom/deepl-node/compare/v1.13.1...v1.14.0
 [1.13.1]: https://github.com/DeepLcom/deepl-node/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/DeepLcom/deepl-node/compare/v1.12.0...v1.13.0
