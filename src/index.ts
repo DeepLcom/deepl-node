@@ -11,6 +11,7 @@ import {
     GlossaryNotFoundError,
     QuotaExceededError,
     TooManyRequestsError,
+    WebsiteDownloadError,
 } from './errors';
 import { GlossaryEntries } from './glossaryEntries';
 import {
@@ -672,6 +673,37 @@ export class Translator {
     }
 
     /**
+     * Uploads the HTML of the specified webpage to DeepL to translate into given target language, waits for
+     * translation to complete, then downloads translated webpage to specified output path.
+     * @param webpageUrl String or URL containing the URL of the webpage to be translated.
+     * @param outputFile String containing file path to create translated document, or Stream or
+     *     FileHandle to write translated document content.
+     * @param sourceLang Language code of input document, or null to use auto-detection.
+     * @param targetLang Language code of language to translate into.
+     * @param options Optional DocumentTranslateOptions object containing additional options controlling translation.
+     * @return Fulfills with a DocumentStatus object for the completed translation. You can use the
+     *     billedCharacters property to check how many characters were billed for the document.
+     * @throws {Error} If no file exists at the input file path, or a file already exists at the output file path.
+     * @throws {DocumentTranslationError} If any error occurs during document upload, translation or
+     *     download. The `documentHandle` property of the error may be used to recover the document.
+     */
+    async translateWebpage(
+        webpageUrl: string | URL,
+        outputFile: string | fs.WriteStream | fs.promises.FileHandle,
+        sourceLang: SourceLanguageCode | null,
+        targetLang: TargetLanguageCode,
+        options?: DocumentTranslateOptions,
+    ): Promise<DocumentStatus> {
+        return this.translateDocument(
+            Buffer.from(await this.getContentFromWebpage(webpageUrl)),
+            outputFile,
+            sourceLang,
+            targetLang,
+            { filename: 'webpage.html', ...options },
+        );
+    }
+
+    /**
      * Uploads specified document to DeepL to translate into target language, and returns handle associated with the document.
      * @param inputFile String containing file path, stream containing file data, or FileHandle.
      *     Note: if a Buffer, Stream, or FileHandle is used, then `options.filename` must be specified.
@@ -733,6 +765,28 @@ export class Translator {
                 return handle;
             }
         }
+    }
+
+    /**
+     * Uploads specified webpage HTML to DeepL to translate into target language, and returns handle associated with the document.
+     * @param webpageUrl String or URL containing the URL of the webpage to be translated.
+     * @param sourceLang Language code of input document, or null to use auto-detection.
+     * @param targetLang Language code of language to translate into.
+     * @param options Optional DocumentTranslateOptions object containing additional options controlling translation.
+     * @return Fulfills with DocumentHandle associated with the in-progress translation.
+     */
+    async uploadWebpage(
+        webpageUrl: string | URL,
+        sourceLang: SourceLanguageCode | null,
+        targetLang: TargetLanguageCode,
+        options?: DocumentTranslateOptions,
+    ): Promise<DocumentHandle> {
+        return this.uploadDocument(
+            Buffer.from(await this.getContentFromWebpage(webpageUrl)),
+            sourceLang,
+            targetLang,
+            { filename: 'webpage.html', ...options },
+        );
     }
 
     /**
@@ -1027,6 +1081,18 @@ export class Translator {
             libraryInfoString += ` ${appInfo.appName}/${appInfo.appVersion}`;
         }
         return libraryInfoString;
+    }
+
+    private async getContentFromWebpage(webpageUrl: string | URL): Promise<string> {
+        const { statusCode, content, contentType } =
+            await this.httpClient.sendRequestWithBackoff<string>('GET', webpageUrl.toString());
+        await checkStatusCode(statusCode, content);
+
+        if (!contentType?.includes('text/html')) {
+            throw new WebsiteDownloadError('URL to translate must return HTML');
+        }
+
+        return content;
     }
 
     /**
