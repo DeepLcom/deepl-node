@@ -176,6 +176,76 @@ export function makeTranslator(options?: TestTranslatorOptions): deepl.Translato
     });
 }
 
+/**
+ * Create a Translator object using given options for authKey, timeouts & retries, and mock-server
+ * session settings.
+ * @param options Options controlling Translator behaviour and mock-server sessions settings.
+ */
+export function makeDeeplClient(options?: TestTranslatorOptions): deepl.DeepLClient {
+    if (!usingMockServer && process.env.DEEPL_AUTH_KEY === undefined) {
+        throw Error('DEEPL_AUTH_KEY environment variable must be defined unless using mock-server');
+    }
+
+    const authKey =
+        options?.authKey ||
+        (options?.randomAuthKey ? randomAuthKey() : process.env.DEEPL_AUTH_KEY || '');
+
+    const serverUrl = process.env.DEEPL_SERVER_URL;
+
+    const sessionHeaders: Record<string, string> = {};
+    if (options?.mockServerNoResponseTimes !== undefined)
+        sessionHeaders['mock-server-session-no-response-count'] = String(
+            options?.mockServerNoResponseTimes,
+        );
+    if (options?.mockServer429ResponseTimes !== undefined)
+        sessionHeaders['mock-server-session-429-count'] = String(
+            options?.mockServer429ResponseTimes,
+        );
+    if (options?.mockServerInitCharacterLimit !== undefined)
+        sessionHeaders['mock-server-session-init-character-limit'] = String(
+            options?.mockServerInitCharacterLimit,
+        );
+    if (options?.mockServerInitDocumentLimit !== undefined)
+        sessionHeaders['mock-server-session-init-document-limit'] = String(
+            options?.mockServerInitDocumentLimit,
+        );
+    if (options?.mockServerInitTeamDocumentLimit !== undefined)
+        sessionHeaders['mock-server-session-init-team-document-limit'] = String(
+            options?.mockServerInitTeamDocumentLimit,
+        );
+    if (options?.mockServerDocFailureTimes !== undefined)
+        sessionHeaders['mock-server-session-doc-failure'] = String(
+            options?.mockServerDocFailureTimes,
+        );
+    if (options?.mockServerDocQueueTime !== undefined)
+        sessionHeaders['mock-server-session-doc-queue-time'] = String(
+            options?.mockServerDocQueueTime,
+        );
+    if (options?.mockServerDocTranslateTime !== undefined)
+        sessionHeaders['mock-server-session-doc-translate-time'] = String(
+            options?.mockServerDocTranslateTime,
+        );
+    if (options?.mockServerExpectProxy !== undefined)
+        sessionHeaders['mock-server-session-expect-proxy'] = options?.mockServerExpectProxy
+            ? '1'
+            : '0';
+    if (Object.entries(sessionHeaders).length !== 0) {
+        if (!usingMockServer && !options?.mockServerOptional)
+            throw new Error('Mock-server session is only used if using mock-server.');
+        sessionHeaders['mock-server-session'] = makeSessionName();
+    }
+
+    return new deepl.DeepLClient(authKey, {
+        serverUrl: serverUrl,
+        headers: sessionHeaders,
+        minTimeout: options?.minTimeout,
+        maxRetries: options?.maxRetries,
+        proxy: options?.proxy,
+        sendPlatformInfo: options?.sendPlatformInfo,
+        appInfo: options?.appInfo,
+    });
+}
+
 // Use instead of it(...) for tests that require a mock-server
 export const withMockServer = usingMockServer ? it : it.skip;
 // Use instead of it(...) for tests that require a mock-server with proxy
@@ -214,6 +284,7 @@ module.exports = {
     withMockProxyServer,
     withRealServer,
     makeTranslator,
+    makeDeeplClient,
     documentTranslationTestTimeout,
     testTimeout,
     timeout,

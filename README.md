@@ -435,6 +435,36 @@ The available options are:
     the protocol, and authorization (as an auth object with username and
     password fields).
 
+### Rephrasing Text
+
+To rephrase text, call `rephraseText()`. The first argument is a string containing the text you want to rephrase, or an array of strings if you want to rephrase multiple texts.
+
+The second argument is the target language code. Language codes are **case-insensitive** strings, for example, `'de'`, `'fr'`, `'en'`. The target language code can also be `null` to enable auto-detection of the target language.
+
+The last two arguments, `writingStyle` and `tone`, are optional and specify the writing style and tone of the rephrased text. Possible values are defined in the `WritingStyle` and `WritingTone` enums.
+
+`rephraseText()` returns a Promise that fulfills with an `Improvement` object or an array of `Improvement` objects corresponding to your input text(s). The `Improvement` object has the following properties:
+- `text`: the rephrased text,
+- `detectedSourceLang`: the detected source language code,
+- `targetLanguage`: the target language code.
+
+```javascript
+// Rephrasing a text in academic style:
+const rephrasedResult = await deepLClient.rephraseText('This is an example text.', 'en', WritingStyle.ACADEMIC);
+console.log(rephrasedResult.text); // The rephrased text in academic style
+
+// Rephrasing multiple texts in a friendly tone:
+const rephrasedTexts = await deepLClient.rephraseText(
+    ['How are you?', 'What are you doing today?'],
+    'de',
+    null,
+    WritingTone.FRIENDLY,
+);
+console.log(rephrasedTexts[0].text); // The rephrased text for "How are you?" in a friendly tone
+console.log(rephrasedTexts[1].text); // The rephrased text for "What are you doing today?" in a friendly tone
+```
+
+
 #### Logging
 
 `deepl-node` logs debug and info messages for every HTTP request and response

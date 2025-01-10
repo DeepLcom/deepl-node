@@ -10,13 +10,15 @@ import {
     GlossaryLanguagePair,
     Language,
     SourceGlossaryLanguageCode,
-    standardizeLanguageCode,
     TextResult,
     TargetGlossaryLanguageCode,
     UsageDetail,
     Usage,
-} from './index';
-import { GlossaryInfo, SourceLanguageCode } from './types';
+    GlossaryInfo,
+    SourceLanguageCode,
+    WriteResult,
+} from './types';
+import { standardizeLanguageCode } from './utils';
 
 /**
  * Type used during JSON parsing of API response for glossary info.
@@ -70,6 +72,24 @@ interface TextResultApiResponse {
  */
 interface TextResultArrayApiResponse {
     translations: TextResultApiResponse[];
+}
+
+/**
+ * Type used during JSON parsing of API response for text translation results.
+ * @private
+ */
+interface WriteResultApiResponse {
+    text: string;
+    detected_source_language: string;
+    target_language: string;
+}
+
+/**
+ * Type used during JSON parsing of API response for lists of text rephrasing results.
+ * @private
+ */
+interface WriteResultArrayApiResponse {
+    improvements: WriteResultApiResponse[];
 }
 
 /**
@@ -314,6 +334,23 @@ export function parseTextResultArray(json: string): TextResult[] {
                 ) as SourceLanguageCode,
                 billedCharacters: translation.billed_characters,
                 modelTypeUsed: translation.model_type_used,
+            };
+        });
+    } catch (error) {
+        throw new DeepLError(`Error parsing response JSON: ${error}`);
+    }
+}
+
+export function parseWriteResultArray(json: string): WriteResult[] {
+    try {
+        const obj = JSON.parse(json) as WriteResultArrayApiResponse;
+        return obj.improvements.map((improvement: WriteResultApiResponse) => {
+            return {
+                text: improvement.text,
+                detectedSourceLang: standardizeLanguageCode(
+                    improvement.detected_source_language,
+                ) as SourceLanguageCode,
+                targetLang: improvement.target_language,
             };
         });
     } catch (error) {

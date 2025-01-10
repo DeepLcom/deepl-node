@@ -3,10 +3,24 @@
 // license that can be found in the LICENSE file.
 
 import * as deepl from 'deepl-node';
+import { TranslateTextOptions } from 'deepl-node';
 
 import fs from 'fs';
 
 import nock from 'nock';
+
+import {
+    appendTextsAndReturnIsSingular,
+    validateAndAppendTextOptions,
+    nonRegionalLanguageCode,
+    buildURLSearchParams,
+    isFreeAccountAuthKey,
+    isString,
+    logInfo,
+    streamToBuffer,
+    streamToString,
+    timeout,
+} from './../src/utils';
 
 import {
     exampleText,
@@ -18,7 +32,6 @@ import {
     urlToMockRegexp,
     withRealServer,
 } from './core';
-import { TranslateTextOptions } from 'deepl-node';
 
 const serverUrl = process.env.DEEPL_SERVER_URL;
 
@@ -38,7 +51,7 @@ describe('general', () => {
         const promises = [];
         for (const langCode in exampleText) {
             const inputText = exampleText[langCode];
-            const sourceLang = deepl.nonRegionalLanguageCode(langCode);
+            const sourceLang = nonRegionalLanguageCode(langCode);
             const promise = translator
                 .translateText(inputText, sourceLang, 'en-US')
                 // eslint-disable-next-line @typescript-eslint/no-loop-func, promise/always-return
@@ -231,8 +244,8 @@ describe('general', () => {
     });
 
     it('should determine API free accounts using auth key', () => {
-        expect(deepl.isFreeAccountAuthKey('0000:fx')).toBe(true);
-        expect(deepl.isFreeAccountAuthKey('0000')).toBe(false);
+        expect(isFreeAccountAuthKey('0000:fx')).toBe(true);
+        expect(isFreeAccountAuthKey('0000')).toBe(false);
     });
 
     withMockProxyServer('should support proxy usage', async () => {
