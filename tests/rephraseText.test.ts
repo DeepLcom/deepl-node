@@ -4,7 +4,7 @@
 
 import { exampleText, makeDeeplClient, testTimeout, withRealServer } from './core';
 
-import { WritingTone, WritingStyle } from './../src/deeplClient';
+import { WritingStyle, WritingTone } from './../src/deeplClient';
 
 describe('rephrase text', () => {
     it('should rephrase a single text', async () => {
@@ -20,6 +20,34 @@ describe('rephrase text', () => {
         const deeplClientPromise = deeplClient.rephraseText(exampleText.de, 'ja');
         await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
         await expect(deeplClientPromise).rejects.toThrow(/Value for 'target_lang' not supported/);
+    });
+
+    it('should throw an error for unsupported tone', async () => {
+        const deeplClient = makeDeeplClient();
+        const deeplClientPromise = deeplClient.rephraseText(
+            exampleText.de,
+            'es',
+            null,
+            WritingTone.CONFIDENT,
+        );
+        await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
+        await expect(deeplClientPromise).rejects.toThrow(
+            /Language Spanish does not support setting a tone/,
+        );
+    });
+
+    it('should throw an error for invalid writing_style parameter', async () => {
+        const deeplClient = makeDeeplClient();
+        const deeplClientPromise = deeplClient.rephraseText(
+            exampleText.de,
+            'es',
+            WritingStyle.BUSINESS,
+            null,
+        );
+        await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
+        await expect(deeplClientPromise).rejects.toThrow(
+            /Language Spanish does not support setting a writing style/,
+        );
     });
 
     withRealServer(
