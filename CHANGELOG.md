@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [1.16.0] - 2025-01-17
 ### Added
 * Added support for the Write API in the client library, the implementation
   can be found in the `DeepLClient` class. Please refer to the README for usage
@@ -276,7 +276,7 @@ client library took over this package name. Thanks to
 ownership.
 
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.15.0...HEAD
+[1.16.0]: https://github.com/DeepLcom/deepl-node/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/DeepLcom/deepl-node/compare/v1.14.0...v1.15.0
 [1.14.0]: https://github.com/DeepLcom/deepl-node/compare/v1.13.1...v1.14.0
 [1.13.1]: https://github.com/DeepLcom/deepl-node/compare/v1.13.0...v1.13.1
