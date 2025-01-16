@@ -15,13 +15,11 @@ describe('rephrase text', () => {
         expect(result.targetLang).toBe('de');
     });
 
-    // TODO change mock server to reject on unsupported languages
-    withRealServer('should throw an error for unsupported languages', async () => {
+    it('should throw an error for unsupported languages', async () => {
         const deeplClient = makeDeeplClient();
-        await expect(deeplClient.rephraseText(exampleText.de, 'ja')).rejects.toBeInstanceOf(Error);
-        await expect(deeplClient.rephraseText(exampleText.de, 'ja')).rejects.toThrow(
-            /Value for target_lang is not supported/,
-        );
+        const deeplClientPromise = deeplClient.rephraseText(exampleText.de, 'ja');
+        await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
+        await expect(deeplClientPromise).rejects.toThrow(/Value for 'target_lang' not supported/);
     });
 
     withRealServer(
