@@ -47,7 +47,7 @@ const internalExampleText: Record<string, string> = {
     zh: '质子束',
 };
 
-const usingMockServer = process.env.DEEPL_MOCK_SERVER_PORT !== undefined;
+export const usingMockServer = process.env.DEEPL_MOCK_SERVER_PORT !== undefined;
 const usingMockProxyServer =
     usingMockServer && process.env.DEEPL_MOCK_PROXY_SERVER_PORT !== undefined;
 
@@ -290,4 +290,5 @@ module.exports = {
     timeout,
     urlToMockRegexp,
     proxyConfig,
+    usingMockServer,
 };

@@ -2,7 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
-import { exampleText, makeDeeplClient, testTimeout, withRealServer } from './core';
+import { exampleText, makeDeeplClient, testTimeout, usingMockServer, withRealServer } from './core';
 
 import { WritingStyle, WritingTone } from './../src/deeplClient';
 
@@ -19,7 +19,7 @@ describe('rephrase text', () => {
         const deeplClient = makeDeeplClient();
         const deeplClientPromise = deeplClient.rephraseText(exampleText.de, 'ja');
         await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
-        await expect(deeplClientPromise).rejects.toThrow(/Value for 'target_lang' not supported/);
+        await expect(deeplClientPromise).rejects.toThrow(/Value for '?target_lang'? not supported/);
     });
 
     it('should throw an error for unsupported tone', async () => {
@@ -50,30 +50,38 @@ describe('rephrase text', () => {
         );
     });
 
-    withRealServer(
+    // TODO: update mock to return error if style and tone are provided
+    withRealServer('should throw an error if both style and tone are provided', async () => {
+        const deeplClient = makeDeeplClient();
+        const deeplClientPromise = deeplClient.rephraseText(
+            exampleText.de,
+            'en',
+            WritingStyle.BUSINESS,
+            WritingTone.CONFIDENT,
+        );
+        await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
+        await expect(deeplClientPromise).rejects.toThrow(/Both writing_style and tone defined/);
+    });
+
+    it(
         'should rephrase with style and tone',
         async () => {
             const deeplClient = makeDeeplClient();
             const input = 'How are yo dong guys?';
 
-            const outputConfident = "Tell me how you're doing, guys.";
+            const outputConfident = usingMockServer
+                ? 'proton beam'
+                : "Tell me how you're doing, guys.";
             expect(
                 (await deeplClient.rephraseText(input, 'en', null, WritingTone.CONFIDENT)).text,
             ).toBe(outputConfident);
 
-            const outputBusiness = 'Greetings, gentlemen. How are you?';
+            const outputBusiness = usingMockServer
+                ? 'proton beam'
+                : 'Greetings, gentlemen. How are you?';
             expect(
                 (await deeplClient.rephraseText(input, 'en', WritingStyle.BUSINESS, null)).text,
             ).toBe(outputBusiness);
-
-            const deeplClientPromise = deeplClient.rephraseText(
-                input,
-                'en',
-                WritingStyle.BUSINESS,
-                WritingTone.CONFIDENT,
-            );
-            await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
-            await expect(deeplClientPromise).rejects.toThrow(/Both writing_style and tone defined/);
         },
         testTimeout,
     );
