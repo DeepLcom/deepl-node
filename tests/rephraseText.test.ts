@@ -50,17 +50,55 @@ describe('rephrase text', () => {
         );
     });
 
-    // TODO: update mock to return error if style and tone are provided
-    withRealServer('should throw an error if both style and tone are provided', async () => {
+    it('should throw an error if both style and tone are provided', async () => {
         const deeplClient = makeDeeplClient();
         const deeplClientPromise = deeplClient.rephraseText(
-            exampleText.de,
+            exampleText.en,
             'en',
             WritingStyle.BUSINESS,
             WritingTone.CONFIDENT,
         );
         await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
         await expect(deeplClientPromise).rejects.toThrow(/Both writing_style and tone defined/);
+    });
+
+    it('should return success if style is default and tone is provided', async () => {
+        const deeplClient = makeDeeplClient();
+        const rephraseResponse = await deeplClient.rephraseText(
+            exampleText.en,
+            'en',
+            WritingStyle.DEFAULT,
+            WritingTone.CONFIDENT,
+        );
+        expect(rephraseResponse.text).toBeDefined();
+        expect(rephraseResponse.detectedSourceLang).toBeDefined();
+        expect(rephraseResponse.targetLang).toBe('en-US');
+    });
+
+    it('should return success if style is provided and tone is default', async () => {
+        const deeplClient = makeDeeplClient();
+        const rephraseResponse = await deeplClient.rephraseText(
+            exampleText.de,
+            'en',
+            WritingStyle.ACADEMIC,
+            WritingTone.DEFAULT,
+        );
+        expect(rephraseResponse.text).toBeDefined();
+        expect(rephraseResponse.detectedSourceLang).toBeDefined();
+        expect(rephraseResponse.targetLang).toBe('en-US');
+    });
+
+    it('should return success if both style and tone are not provided', async () => {
+        const deeplClient = makeDeeplClient();
+        const rephraseResponse = await deeplClient.rephraseText(
+            exampleText.de,
+            'en',
+            null,
+            undefined,
+        );
+        expect(rephraseResponse.text).toBeDefined();
+        expect(rephraseResponse.detectedSourceLang).toBeDefined();
+        expect(rephraseResponse.targetLang).toBe('en-US');
     });
 
     it(
