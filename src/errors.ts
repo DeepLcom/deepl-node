@@ -41,3 +41,15 @@ export class DocumentTranslationError extends DeepLError {
 export class GlossaryNotFoundError extends DeepLError {}
 
 export class DocumentNotReadyError extends DeepLError {}
+
+/**
+ * Error thrown if an error occurs during the minification phase.
+ * @see DocumentMinifier.minifyDocument
+ */
+export class DocumentMinificationError extends DeepLError {}
+
+/**
+ * Error thrown if an error occurs during the deminification phase.
+ * @see DocumentMinifier.deminifyDocument
+ */
+export class DocumentDeminificationError extends DeepLError {}

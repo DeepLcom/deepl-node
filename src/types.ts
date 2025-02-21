@@ -174,6 +174,9 @@ export interface DocumentTranslateOptions {
 
     /** Extra parameters to be added to a text translation request. */
     extraRequestParameters?: RequestParameters;
+
+    /** Controls whether to use Document Minification for translation, if available. */
+    enableDocumentMinification?: boolean;
 }
 
 /**

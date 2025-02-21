@@ -273,7 +273,15 @@ export const testTimeout = 60000;
 export const urlToMockRegexp =
     /(https?:\/\/api.*\.deepl\.com)|(deepl-mock:\d+)|(https?:\/\/localhost:\d+)/;
 
+// For Document Minification
+export const testFilePaths = {
+    pptx: 'tests/resources/example_presentation_template.pptx',
+    docx: 'tests/resources/example_document_template.docx',
+    zip: 'tests/resources/example_zip_template.zip',
+};
+
 module.exports = {
+    testFilePaths,
     exampleText,
     exampleDocumentInput,
     exampleDocumentOutput,

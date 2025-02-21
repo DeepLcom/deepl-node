@@ -59,6 +59,7 @@ import path from 'path';
 import * as os from 'os';
 import { URLSearchParams } from 'url';
 import * as util from 'util';
+import { DocumentMinifier } from './documentMinifier';
 
 /**
  * Checks the HTTP status code, and in case of failure, throws an exception with diagnostic information.
@@ -312,11 +313,30 @@ export class Translator {
 
         const { outputHandle, onError } = await getOutputHandleAndOnError();
 
+        const documentMinifier = new DocumentMinifier();
+        const willMinify =
+            (options?.enableDocumentMinification ?? false) &&
+            isString(inputFile) &&
+            DocumentMinifier.canMinifyFile(inputFile) &&
+            isString(outputFile);
+
+        const fileToUpload = willMinify
+            ? documentMinifier.minifyDocument(inputFile, true)
+            : inputFile;
+
         let documentHandle = undefined;
         try {
-            documentHandle = await this.uploadDocument(inputFile, sourceLang, targetLang, options);
+            documentHandle = await this.uploadDocument(
+                fileToUpload,
+                sourceLang,
+                targetLang,
+                options,
+            );
             const { status } = await this.isDocumentTranslationComplete(documentHandle);
             await this.downloadDocument(documentHandle, outputHandle);
+            if (willMinify) {
+                documentMinifier.deminifyDocument(inputFile, outputFile, true);
+            }
             return status;
         } catch (errorUnknown: unknown) {
             if (onError) await onError();
