@@ -50,6 +50,9 @@ import path from 'path';
 import * as os from 'os';
 import { URLSearchParams } from 'url';
 import * as util from 'util';
+import dotenv from 'dotenv';
+
+dotenv.config(); // Load environment variables from .env file
 
 export * from './errors';
 export * from './glossaryEntries';

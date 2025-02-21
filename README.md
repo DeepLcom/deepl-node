@@ -526,6 +526,35 @@ feature, please open an [issue][issues].
 We welcome Pull Requests, please read the
 [contributing guidelines](CONTRIBUTING.md).
 
+### Environment Variables
+
+There are multiple ways to manage your own environment variables. You can choose what works best for you. Make sure that only the values for one stage (local, prod, etc) are active at one time.
+
+**Using a global .rc file (such as ~/.bashrc):**
+
+```sh
+# Local
+export DEEPL_MOCK_SERVER_PORT=3000
+export DEEPL_AUTH_KEY=ANY_VALUE
+export DEEPL_SERVER_URL=http://localhost:3000
+```
+
+```sh
+# Prod
+# (Make sure to run `unset DEEPL_MOCK_SERVER_PORT` if it was previously assigned a value)
+export DEEPL_AUTH_KEY={YOUR_API_KEY}
+export DEEPL_SERVER_URL=https://api.deepl.com
+```
+
+**Using .env file**:
+
+(Benefits include: No need to refresh terminal when changing stages, no need to call `unset` to clear vars, can be used to isolate vars between multiple projects)
+
+- Copy `.env.example` file to a `.env` file 
+    - The `.env` file will never be stored in git, so your local credentials will not be shared
+- Edit `.env` file to your own desired variables
+    - If using local mock server, then point to local ports
+
 ### Tests
 
 Execute the tests using `npm test`. The tests communicate with the DeepL API
