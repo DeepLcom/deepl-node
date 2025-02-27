@@ -226,7 +226,14 @@ export type SourceLanguageCode = CommonLanguageCode | 'en' | 'pt';
  * Note: although the language code type definitions are case-sensitive, this package and the DeepL
  * API accept case-insensitive language codes.
  */
-export type TargetLanguageCode = CommonLanguageCode | 'en-GB' | 'en-US' | 'pt-BR' | 'pt-PT';
+export type TargetLanguageCode =
+    | CommonLanguageCode
+    | 'en-GB'
+    | 'en-US'
+    | 'pt-BR'
+    | 'pt-PT'
+    | 'zh-HANS'
+    | 'zh-HANT';
 
 /**
  * All language codes, including source-only and target-only language codes.

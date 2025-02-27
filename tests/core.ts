@@ -45,6 +45,8 @@ const internalExampleText: Record<string, string> = {
     tr: 'proton ışını',
     uk: 'протонний пучок',
     zh: '质子束',
+    'zh-HANS': '质子束',
+    'zh-HANT': '質子束',
 };
 
 export const usingMockServer = process.env.DEEPL_MOCK_SERVER_PORT !== undefined;
