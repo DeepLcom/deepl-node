@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+[//]: # (* add to here...)
+### Changed
+[//]: # (* add to here...)
+
 ## [1.17.0] - 2025-02-25
 ### Added
 * Added document minification as a feature before document translation, to 
@@ -283,7 +289,8 @@ client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-
+[//]: # (Unreleased should never be deleted)
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.17.0...HEAD
 [1.17.0]: https://github.com/DeepLcom/deepl-node/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/DeepLcom/deepl-node/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/DeepLcom/deepl-node/compare/v1.14.0...v1.15.0
