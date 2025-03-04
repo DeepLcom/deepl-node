@@ -167,10 +167,6 @@ export function buildURLSearchParams(
         throw new DeepLError(
             "targetLang='pt' is deprecated, please use 'pt-PT' or 'pt-BR' instead.",
         );
-    } else if (targetLang === 'zh') {
-        throw new DeepLError(
-            "targetLang='zh' is deprecated, please use 'zh-HANS' or 'zh-HANT' instead.",
-        );
     }
 
     const searchParams = new URLSearchParams({
