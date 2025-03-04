@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 <!-- * add to here... -->
 ### Changed
-- Adjust environment variable handling to avoid side effects in the published library
 <!-- * add to here... -->
+
+## [1.17.1] - 2025-03-04
+### Added
+- Update list of supported target languages
+### Changed
+- Adjust environment variable handling to avoid side effects in the published library
 
 ## [1.17.0] - 2025-02-25
 ### Added
@@ -290,8 +295,9 @@ client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-[//]: # (Unreleased should never be deleted)
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.17.0...HEAD
+<!-- (Unreleased should never be deleted) -->
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.17.1...HEAD
+[1.17.1]: https://github.com/DeepLcom/deepl-node/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/DeepLcom/deepl-node/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/DeepLcom/deepl-node/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/DeepLcom/deepl-node/compare/v1.14.0...v1.15.0
