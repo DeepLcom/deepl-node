@@ -227,6 +227,11 @@ export class HttpClient {
     ): Promise<{ statusCode: number; content: TContent }> {
         try {
             const response = await axiosInstance.request(axiosRequestConfig);
+            if (response.headers !== undefined) {
+                logDebug('Trace details:', {
+                    xTraceId: response.headers['x-trace-id'],
+                });
+            }
 
             if (axiosRequestConfig.responseType === 'text') {
                 // Workaround for axios-bug: https://github.com/axios/axios/issues/907
@@ -234,7 +239,10 @@ export class HttpClient {
                     response.data = JSON.stringify(response.data);
                 }
             }
-            return { statusCode: response.status, content: response.data };
+            return {
+                statusCode: response.status,
+                content: response.data,
+            };
         } catch (axios_error_raw) {
             const axiosError = axios_error_raw as AxiosError;
             const message: string = axiosError.message || '';

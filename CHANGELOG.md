@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 <!-- * add to here... -->
+* Include `x-trace-id` response headers in debug logs
 ### Changed
 <!-- * add to here... -->
 
