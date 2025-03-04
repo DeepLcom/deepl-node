@@ -5,5 +5,6 @@ const config = {
         'deepl-node(.*)': '<rootDir>/src$1',
         axios: 'axios/dist/node/axios.cjs',
     },
+    setupFiles: ['<rootDir>/jest.setup.js'],
 };
 module.exports = config;

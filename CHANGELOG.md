@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 <!-- * add to here... -->
 ### Changed
+- Adjust environment variable handling to avoid side effects in the published library
 <!-- * add to here... -->
 
 ## [1.17.0] - 2025-02-25
