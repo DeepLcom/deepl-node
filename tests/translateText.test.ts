@@ -60,6 +60,16 @@ describe('translate text', () => {
         expect(result.detectedSourceLang).toBe('en');
     });
 
+    withMockServer('should translate using overridden path', async () => {
+        const translator = makeTranslator();
+        const result = await translator.translateText(exampleText.en, null, 'de', {
+            __path: '/v2/translate_secondary',
+        });
+        expect(result.text).toBe(exampleText.de);
+        expect(result.detectedSourceLang).toBe('en');
+        expect(result.billedCharacters).toBe(exampleText.en.length);
+    });
+
     it('should reject deprecated target codes', async () => {
         const translator = makeTranslator();
 

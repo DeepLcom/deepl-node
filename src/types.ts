@@ -157,6 +157,9 @@ export interface TranslateTextOptions {
 
     /** Extra parameters to be added to a text translation request. */
     extraRequestParameters?: RequestParameters;
+
+    /** (internal only) Override path to send translate request to. */
+    __path?: string;
 }
 
 /**

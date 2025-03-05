@@ -252,9 +252,11 @@ export class Translator {
         const singular = appendTextsAndReturnIsSingular(data, texts);
         validateAndAppendTextOptions(data, options);
 
+        const translatePath = options?.__path ?? '/v2/translate';
+
         const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
             'POST',
-            '/v2/translate',
+            translatePath,
             { data },
         );
         await checkStatusCode(statusCode, content);
