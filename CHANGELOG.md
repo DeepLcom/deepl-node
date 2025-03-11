@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 <!-- * add to here... -->
 
+## [1.17.3] - 2025-03-11
+### Changed
+- Upgrade axios lib due to https://github.com/advisories/GHSA-jr5f-v2jv-69x6
+
 ## [1.17.2] - 2025-03-06
 ### Added
 - Added option to override translate path
@@ -300,8 +304,9 @@ client library took over this package name. Thanks to
 ownership.
 
 <!-- (Unreleased should never be deleted) -->
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.17.1...HEAD
-[1.17.1]: https://github.com/DeepLcom/deepl-node/compare/v1.17.1...v1.17.2
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.17.3...HEAD
+[1.17.3]: https://github.com/DeepLcom/deepl-node/compare/v1.17.2...v1.17.3
+[1.17.2]: https://github.com/DeepLcom/deepl-node/compare/v1.17.1...v1.17.2
 [1.17.1]: https://github.com/DeepLcom/deepl-node/compare/v1.17.0...v1.17.1
 [1.17.0]: https://github.com/DeepLcom/deepl-node/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/DeepLcom/deepl-node/compare/v1.15.0...v1.16.0
