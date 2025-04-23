@@ -38,7 +38,7 @@ To continue using this library, you should update to Node 18+.
 
 ## Usage
 
-Import the package and construct a `Translator`. The first argument is a string
+Import the package and construct a `DeepLClient`. The first argument is a string
 containing your API authentication key as found in your
 [DeepL Pro Account][pro-account].
 
@@ -50,10 +50,10 @@ An example using `async`/`await` and ES Modules:
 import * as deepl from 'deepl-node';
 
 const authKey = "f63c02c5-f056-..."; // Replace with your key
-const translator = new deepl.Translator(authKey);
+const deeplClient = new deepl.DeepLClient(authKey);
 
 (async () => {
-    const result = await translator.translateText('Hello, world!', null, 'fr');
+    const result = await deeplClient.translateText('Hello, world!', null, 'fr');
     console.log(result.text); // Bonjour, le monde !
 })();
 ```
@@ -66,18 +66,18 @@ If you are using CommonJS, you should instead require the package:
 
 ```javascript
 const deepl = require('deepl-node');
-const translator = new deepl.Translator(authKey);
+const deeplClient = new deepl.DeepLClient(authKey);
 ```
 
-`Translator` accepts options as the second argument, see
+`DeepLClient` accepts options as the second argument, see
 [Configuration](#configuration) for more information.
 
-All `Translator` functions return promises, and for brevity the examples in this
+All `DeepLClient` functions return promises, and for brevity the examples in this
 file use `await` and `try`/`catch` blocks, however Promise-chaining is also
 possible:
 
 ```javascript
-translator
+deeplClient
     .translateText('Hello, world!', null, 'fr')
     .then((result) => {
         console.log(result.text); // Bonjour, le monde !
@@ -94,7 +94,7 @@ import * as deepl from 'deepl-node';
 
 (async () => {
     const targetLang: deepl.TargetLanguageCode = 'fr';
-    const results = await translator.translateText(
+    const results = await deeplClient.translateText(
         ['Hello, world!', 'How are you?'],
         null,
         targetLang,
@@ -132,11 +132,11 @@ following properties:
 
 ```javascript
 // Translate text into a target language, in this case, French:
-const translationResult = await translator.translateText('Hello, world!', 'en', 'fr');
+const translationResult = await deeplClient.translateText('Hello, world!', 'en', 'fr');
 console.log(translationResult.text); // 'Bonjour, le monde !'
 
 // Translate multiple texts into British English:
-const translations = await translator.translateText(
+const translations = await deeplClient.translateText(
     ['お元気ですか？', '¿Cómo estás?'],
     null,
     'en-GB',
@@ -149,8 +149,8 @@ console.log(translations[1].detectedSourceLang); // 'es'
 console.log(translations[1].billedCharacters); // 12 - the number of characters in the source text "¿Cómo estás?"
 
 // Translate into German with less and more Formality:
-console.log(await translator.translateText('How are you?', null, 'de', { formality: 'less' })); // 'Wie geht es dir?'
-console.log(await translator.translateText('How are you?', null, 'de', { formality: 'more' })); // 'Wie geht es Ihnen?'
+console.log(await deeplClient.translateText('How are you?', null, 'de', { formality: 'less' })); // 'Wie geht es dir?'
+console.log(await deeplClient.translateText('How are you?', null, 'de', { formality: 'more' })); // 'Wie geht es Ihnen?'
 ```
 
 #### Text translation options
@@ -176,8 +176,8 @@ console.log(await translator.translateText('How are you?', null, 'de', { formali
     - `'prefer_less'`: use informal language if available, otherwise default.
     - `'prefer_more'`: use formal, more polite language if available, otherwise default.
 -   `glossary`: specifies a glossary to use with translation, either as a string
-    containing the glossary ID, or a `GlossaryInfo` as returned by
-    `getGlossary()`.
+    containing the glossary ID, or a `MultilingualGlossaryInfo`/`GlossaryInfo` as returned by
+    `getMultilingualGlossary()`/`getGlossary()`.
 -   `context`: specifies additional context to influence translations, that is not
     translated itself. Characters in the `context` parameter are not counted toward billing.
     See the [API documentation][api-docs-context-param] for more information and
@@ -229,7 +229,7 @@ translation options, see
 ```javascript
 // Translate a formal document from English to German:
 try {
-    await translator.translateDocument(
+    await deeplClient.translateDocument(
         'Instruction Manual.docx',
         'Bedienungsanleitung.docx',
         'en',
@@ -282,7 +282,7 @@ of the document to be translated.
 
 To use document minification, simply pass the option to the `translateDocument()` function:
 ```typescript
-await translator.translateDocument(
+await deeplClient.translateDocument(
     inFile, outFile, "en", "de", { enableDocumentMinification: true }
 );
 ```
@@ -329,29 +329,51 @@ Glossaries allow you to customize your translations using defined terms.
 Multiple glossaries can be stored with your account, each with a user-specified
 name and a uniquely-assigned ID.
 
-You can create a glossary with your desired terms and name using
-`createGlossary()`. Each glossary applies to a single source-target language
-pair. Note: glossaries are only supported for some language pairs, check the
+#### v2 versus v3 glossary APIs
+
+The newest version of the glossary APIs are the `/v3` endpoints, allowing both
+editing functionality plus support for multilingual glossaries. New methods and
+objects have been created to support interacting with these new glossaries. 
+Due to this  new functionality, users are recommended to utilize these 
+multilingual glossary methods. However, to continue using the `v2` glossary API 
+endpoints, please continue to use the existing endpoints in the `translator.ts` 
+(e.g. `createGlossary()`, `getGlossary()`, etc).
+
+To migrate to use the new multilingual glossary methods from the current 
+monolingual glossary methods, please refer to 
+[this migration guide](upgrade_to_multilingual_glossaries.md).
+
+The following sections describe how to interact with multilingual glossaries 
+using the new functionality:
+
+You can create a multi-lingual glossary with your desired terms and name using
+`createMultilingualGlossary()`. Glossaries created via the /v3 endpoints can now 
+support multiple source-target language pairs. Note: Glossaries are only 
+supported for some language pairs, check the
 [DeepL API documentation][api-docs] for more information.
 
 ```javascript
-// Create an English to German glossary with two terms:
+// Create a glossary with an English to German dictionary containing two terms:
 const entries = new deepl.GlossaryEntries({ entries: { artist: 'Maler', prize: 'Gewinn' } });
-const glossaryEnToDe = await translator.createGlossary('My glossary', 'en', 'de', entries);
+const glossaryEnToDe = await deeplClient.createMultilingualGlossary('My glossary', [{sourceLangCode: 'en', targetLangCode: 'de', entries: entries}]);
 ```
 
 You can also upload a glossary downloaded from the DeepL website using
 `createGlossaryWithCsv()`. Instead of supplying the entries as a dictionary,
-provide the CSV file as a string containing the file path, or a Stream, Buffer,
-or FileHandle containing the CSV file content:
+provide the CSV content as a string.
 
 ```javascript
-const csvFilePath = '/path/to/glossary_file.csv';
-const glossaryEnToDe = await translator.createGlossaryWithCsv(
-    'My glossary',
-    'en',
-    'de',
-    csvFilePath);
+const fs = require('fs').promises;
+const filePath = '/path/to/glossary_file.csv';
+let csvContent = '';
+try {
+    csvContent = await fs.readFile(filePath, 'utf-8');
+} catch (error) {
+    console.error(`Error reading file at ${filePath}:`, error);
+    throw error;
+}
+const csvContent = await readCsvFile(filePath);
+const glossaryEnToDe = await deeplClient.createMultilingualGlossaryWithCsv('My glossary', 'en', 'de', csvContent);
 ```
 
 The [API documentation][api-docs-csv-format] explains the expected CSV format in
@@ -361,20 +383,20 @@ Functions to get, list, and delete stored glossaries are also provided.
 
 ```javascript
 // Find details about the glossary named 'My glossary'
-const glossaries = await translator.listGlossaries();
+const glossaries = await deeplClient.listMultilingualGlossaries();
 const glossary = glossaries.find((glossary) => glossary.name == 'My glossary');
-console.log(
-    `Glossary ID: ${glossary.glossaryId}, source: ${glossary.sourceLang}, ` +
-        `target: ${glossary.targetLang}, contains ${glossary.entryCount} entries.`,
-);
+console.log(`Glossary ID: ${glossary.glossaryId}`);
+for (const glossaryDict of glossary.dictionaries) {
+    console.log(`Contains dictionary, source: ${glossaryDict.sourceLang}, target: ${glossaryDict.targetLang}, with ${glossaryDict.entryCount} entries.`;)
+}
 ```
 
 To use a glossary when translating text and documents, include the ID
-(or `Glossary` object returned by `listGlossaries()` or `createGlossary()`) in
+(or `MultilingualGlossaryInfo` object returned by `listMultilingualGlossaries()` or `createMultilingualGlossary()`) in
 the function call. The source and target languages must match the glossary.
 
 ```javascript
-const resultWithGlossary = await translator.translateText(
+const resultWithGlossary = await deeplClient.translateText(
     'The artist was awarded a prize.',
     'en',
     'de',
@@ -383,6 +405,82 @@ const resultWithGlossary = await translator.translateText(
 console.log(resultWithGlossary.text); // 'Der Maler wurde mit einem Gewinn ausgezeichnet.'
 // Without using a glossary would give:  'Der Künstler wurde mit einem Preis ausgezeichnet.'
 ```
+
+#### Getting, listing, and deleting stored glossaries
+
+Functions to get, list, and delete stored glossaries are also provided:
+
+- `getMultilingualGlossary()` takes a glossary ID and returns a 
+  `Promise<MultilingualGlossaryInfo>` object for a stored glossary, or raises an
+  exception if no such glossary is found.
+- `listMultilingualGlossaries()` returns a promise of a list of `MultilingualGlossaryInfo` objects
+  corresponding to all of your stored glossaries.
+- `deleteMultilingualGlossary()` takes a glossary ID or `MultilingualGlossaryInfo` 
+  object and deletes the stored glossary from the server, or raises an 
+  exception if no such glossary is found.
+- `deleteMultilingualGlossaryDictionary()` takes a glossary ID or `GlossaryInfo` object to 
+  identify the glossary. Additionally takes in a source and target language or a 
+  `MultilingualGlossaryDictionaryInfo` object and deletes the stored dictionary
+   from the server, or raises an exception if no such glossary dictionary is found.
+
+```javascript
+const glossaryDicts = [{sourceLangCode: 'en', targetLangCode: 'de', entries: new deepl.GlossaryEntries({ entries: {'hello': 'hallo'}})}, {sourceLangCode: 'de', targetLangCode: 'en', entries: new deepl.GlossaryEntries({ entries: {'hallo': 'hello'}})}];
+const createdGlossary = await deeplClient.createMultilingualGlossary('My Glossary', glossaryDicts);
+const glossaries = await deeplClient.listMultilingualGlossaries();
+
+// Delete a dictionary in a glossary
+await deeplClient.deleteMultilingualGlossaryDictionary(createdGlossary, 'de', 'en');
+
+// Delete a glossary by name
+for (const glossary of glossaries) {
+  if (glossary.name === "Old glossary") {
+    await deeplClient.deleteMultilingualGlossary(glossary);
+  }
+}
+```
+
+#### Listing entries in a stored glossary
+
+The `MultilingualGlossaryInfo` object does not contain the glossary entries, but
+instead only the number of entries in the `entryCount` property.
+
+To list the entries contained within a stored glossary, use
+`getMultilingualGlossaryEntries()` providing either the `MultilingualGlossaryInfo` object or glossary
+ID and the source and target language pair:
+
+```javascript
+const entriesObj = await deeplClient.getMultilingualGlossaryDictionaryEntries(createdGlossary, 'en', 'de');
+console.log(entriesObj.entries.toTsv()); // 'hello\thallo'
+```
+
+#### Editing a glossary
+
+Functions to edit stored glossaries are also provided:
+
+- `updateMultilingualGlossaryDictionary()` takes a glossary ID or `MultilingualGlossaryInfo`
+  object, plus a source language, target language, and a dictionary of entries.
+  It will then either update the list of entries for that dictionary (either
+  inserting new entries or replacing the target phrase for any existing
+  entries) or will insert a new glossary dictionary if that language pair is
+  not currently in the stored glossary.
+- `replaceMultilingualGlossaryDictionary()` takes a glossary ID or `MultilingualGlossaryInfo`
+  object, plus a source language, target language, and a dictionary of entries.
+  It will then either set the entries to the parameter value, completely
+  replacing any pre-existing entries for that language pair.
+- `updateMultilingualGlossaryName()` takes a glossary ID or `MultilingualGlossaryInfo`
+  object, plus the new name of the glossary.
+
+```javascript
+const glossaryDicts = [{sourceLangCode: 'en', targetLangCode: 'de', entries: new deepl.GlossaryEntries({ entries: {"artist": "Maler", "hello": "guten tag"} })}];
+const myGlossary = await deeplClient.createMultilingualGlossary('My Glossary', glossaryDicts);
+const newDict = {sourceLangCode: 'en', targetLangCode: 'de', entries: new deepl.GlossaryEntries({ entries: {"hello": "hallo", "prize": "Gewinn"} })};
+const updatedGlossary = await deeplClient.updateMultilingualGlossaryDictionary(myGlossary, newDict);
+
+const entriesObj = await deeplClient.getMultilingualGlossaryDictionaryEntries(createdGlossary, 'en', 'de');
+console.log(entriesObj.entries.toTsv()); // {'artist': 'Maler', 'hello': 'hallo', 'prize': 'Gewinn'}
+```
+
+For examples for the other methods please see [this migration guide](upgrade_to_multilingual_glossaries.md)
 
 ### Checking account usage
 
@@ -398,7 +496,7 @@ that checks if the usage has reached the limit. The top level `Usage` object has
 the `anyLimitReached()` function to check all usage subtypes.
 
 ```javascript
-const usage = await translator.getUsage();
+const usage = await deeplClient.getUsage();
 if (usage.anyLimitReached()) {
     console.log('Translation limit exceeded.');
 }
@@ -422,13 +520,13 @@ for target languages, and is a `Boolean` indicating whether the target language
 supports the optional `formality` parameter.
 
 ```javascript
-const sourceLanguages = await translator.getSourceLanguages();
+const sourceLanguages = await deeplClient.getSourceLanguages();
 for (let i = 0; i < sourceLanguages.length; i++) {
     const lang = sourceLanguages[i];
     console.log(`${lang.name} (${lang.code})`); // Example: 'English (en)'
 }
 
-const targetLanguages = await translator.getTargetLanguages();
+const targetLanguages = await deeplClient.getTargetLanguages();
 for (let i = 0; i < targetLanguages.length; i++) {
     const lang = targetLanguages[i];
     if (lang.supportsFormality) {
@@ -445,7 +543,7 @@ properties indicating that that pair of language codes is supported for
 glossaries.
 
 ```javascript
-const glossaryLanguages = await translator.getGlossaryLanguagePairs();
+const glossaryLanguages = await deeplClient.getGlossaryLanguagePairs();
 for (let i = 0; i < glossaryLanguages.length; i++) {
     const languagePair = glossaryLanguages[i];
     console.log(`${languagePair.sourceLang} to ${languagePair.targetLang}`);
@@ -456,11 +554,11 @@ for (let i = 0; i < glossaryLanguages.length; i++) {
 ### Writing a Plugin
 
 If you use this library in an application, please identify the application with
-the `appInfo` field in the `TranslatorOptions`, which takes the name and version of the app:
+the `appInfo` field in the `DeepLClientOptions`, which takes the name and version of the app:
 
 ```javascript
 const options = {appInfo: { appName: 'sampleNodeTranslationApp', appVersion: '1.2.3' },};
-const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
+const deepl = new deepl.DeepLClient('YOUR_AUTH_KEY', options);
 ```
 
 This information is passed along when the library makes calls to the DeepL API.
@@ -468,12 +566,12 @@ Both name and version are required.
 
 ### Configuration
 
-The `Translator` constructor accepts configuration options as a second argument,
+The `DeepLClient` constructor accepts configuration options as a second argument,
 for example:
 
 ```javascript
 const options = { maxRetries: 5, minTimeout: 10000 };
-const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
+const deepl = new deepl.DeepLClient('YOUR_AUTH_KEY', options);
 ```
 
 The available options are:
@@ -541,11 +639,11 @@ The `loglevel` package also supports plugins, see
 #### Proxy configuration
 
 You can configure a proxy by specifying the `proxy` argument when constructing a
-`deepl.Translator`:
+`deepl.DeepLClient`:
 
 ```javascript
 const options = {proxy: {host: 'localhost', port: 3000}};
-const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
+const deepl = new deepl.DeepLClient('YOUR_AUTH_KEY', options);
 ```
 
 The proxy argument is passed to the underlying `axios` request, see the
@@ -557,19 +655,19 @@ By default, we send some basic information about the platform the client library
 is running on with each request, see [here for an explanation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent).
 This data is completely anonymous and only used to improve our product, not track
 any individual users. If you do not wish to send this data, you can opt-out when
-creating your `Translator` object by setting the `sendPlatformInfo` flag in
-the `TranslatorOptions` to `false` like so:
+creating your `DeepLClient` object by setting the `sendPlatformInfo` flag in
+the `DeepLClientOptions` to `false` like so:
 
 ```javascript
 const options = {sendPlatformInfo: false};
-const deepl = new deepl.Translator('YOUR_AUTH_KEY', options);
+const deepl = new deepl.DeepLClient('YOUR_AUTH_KEY', options);
 ```
 
 ### Request retries
 
 Requests to the DeepL API that fail due to transient conditions (for example,
 network timeouts or high server-load) will be retried. The maximum number of
-retries can be configured when constructing the `Translator` object using the
+retries can be configured when constructing the `DeepLClient` object using the
 `maxRetries` option. The timeout for each request attempt may be controlled
 using the `minTimeout` option. An exponential-backoff strategy is used, so
 requests that fail multiple times will incur delays.

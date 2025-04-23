@@ -2,6 +2,7 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
+import { GlossaryEntries } from './glossaryEntries';
 import { DeepLError } from './errors';
 import {
     DocumentHandle,
@@ -17,6 +18,12 @@ import {
     GlossaryInfo,
     SourceLanguageCode,
     WriteResult,
+    MultilingualGlossaryInfo,
+    MultilingualGlossaryDictionaryInfo,
+    MultilingualGlossaryDictionaryEntries,
+    MultilingualGlossaryDictionaryApiResponse,
+    MultilingualGlossaryDictionaryEntriesApiResponse,
+    ListMultilingualGlossaryApiResponse,
 } from './types';
 import { standardizeLanguageCode } from './utils';
 
@@ -32,6 +39,17 @@ interface GlossaryInfoApiResponse {
     target_lang: string;
     creation_time: string;
     entry_count: number;
+}
+
+/**
+ * Type used during JSON parsing of API response for multilingual glossary info.
+ * @private
+ */
+interface MultilingualGlossaryInfoApiResponse {
+    glossary_id: string;
+    name: string;
+    dictionaries: MultilingualGlossaryDictionaryApiResponse[];
+    creation_time: string;
 }
 
 /**
@@ -117,6 +135,17 @@ interface GlossaryLanguagePairApiResponse {
  */
 interface GlossaryLanguagePairArrayApiResponse {
     supported_languages: GlossaryInfoApiResponse[];
+}
+
+/**
+ * Type used during JSON parsing of API response for multilingual glossary info.
+ * @private
+ */
+interface MultilingualGlossaryInfoApiResponse {
+    glossary_id: string;
+    name: string;
+    dictionaries: MultilingualGlossaryDictionaryApiResponse[];
+    creation_time: string;
 }
 
 /**
@@ -243,6 +272,66 @@ function parseRawGlossaryInfo(obj: GlossaryInfoApiResponse): GlossaryInfo {
 }
 
 /**
+ * Parses the given multilingual glossary info API response to a GlossaryInfo object.
+ * @private
+ */
+export function parseMultilingualGlossaryDictionaryInfo(
+    obj: MultilingualGlossaryDictionaryApiResponse,
+): MultilingualGlossaryDictionaryInfo {
+    return {
+        sourceLangCode: obj.source_lang as SourceGlossaryLanguageCode,
+        targetLangCode: obj.target_lang as TargetGlossaryLanguageCode,
+        entryCount: obj.entry_count,
+    };
+}
+
+/**
+ * Parses the given multilingual glossary info API response to a GlossaryInfo object.
+ * @private
+ */
+function parseRawMultilingualGlossaryInfo(
+    obj: MultilingualGlossaryInfoApiResponse,
+): MultilingualGlossaryInfo {
+    return {
+        glossaryId: obj.glossary_id,
+        name: obj.name,
+        creationTime: new Date(obj.creation_time),
+        dictionaries: obj.dictionaries.map((dict) => parseMultilingualGlossaryDictionaryInfo(dict)),
+    };
+}
+
+/**
+ * Parses the given multilingual glossary entries API response to a GlossaryDictionaryEntries object.
+ * @private
+ */
+export function parseMultilingualGlossaryDictionaryEntries(
+    obj: MultilingualGlossaryDictionaryEntriesApiResponse,
+): MultilingualGlossaryDictionaryEntries[] {
+    return obj.dictionaries.map((dict) => ({
+        sourceLangCode: dict.source_lang as SourceGlossaryLanguageCode,
+        targetLangCode: dict.target_lang as TargetGlossaryLanguageCode,
+        entries: new GlossaryEntries({ tsv: dict.entries }),
+    }));
+}
+
+/**
+ * Parses the given list multilingual glossaries API response.
+ * @private
+ */
+export function parseListMultilingualGlossaries(
+    obj: ListMultilingualGlossaryApiResponse,
+): MultilingualGlossaryInfo[] {
+    return obj.glossaries.map((glossary) => ({
+        glossaryId: glossary.glossary_id,
+        name: glossary.name,
+        dictionaries: glossary.dictionaries.map((dict) =>
+            parseMultilingualGlossaryDictionaryInfo(dict),
+        ),
+        creationTime: new Date(glossary.creation_time),
+    }));
+}
+
+/**
  * Parses the given JSON string to a GlossaryInfo object.
  * @private
  */
@@ -250,6 +339,19 @@ export function parseGlossaryInfo(json: string): GlossaryInfo {
     try {
         const obj = JSON.parse(json) as GlossaryInfoApiResponse;
         return parseRawGlossaryInfo(obj);
+    } catch (error) {
+        throw new DeepLError(`Error parsing response JSON: ${error}`);
+    }
+}
+
+/**
+ * Parses the given JSON string to a MultilingualGlossaryInfo object.
+ * @private
+ */
+export function parseMultilingualGlossaryInfo(json: string): MultilingualGlossaryInfo {
+    try {
+        const obj = JSON.parse(json) as MultilingualGlossaryInfoApiResponse;
+        return parseRawMultilingualGlossaryInfo(obj);
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }

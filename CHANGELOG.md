@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 <!-- * add to here... -->
 * Include `x-trace-id` response headers in debug logs
+* Added support for the /v3 Glossary APIs in the client library while providing backwards
+  compatibility for the previous /v2 Glossary endpoints. Please refer to the README for
+  usage instructions.
 ### Changed
 <!-- * add to here... -->
 

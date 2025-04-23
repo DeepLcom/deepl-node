@@ -53,3 +53,5 @@ export class DocumentMinificationError extends DeepLError {}
  * @see DocumentMinifier.deminifyDocument
  */
 export class DocumentDeminificationError extends DeepLError {}
+
+export class ArgumentError extends DeepLError {}

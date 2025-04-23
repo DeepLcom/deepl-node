@@ -14,6 +14,8 @@ import {
     SentenceSplittingMode,
     TagList,
     TranslateTextOptions,
+    MultilingualGlossaryInfo,
+    MultilingualGlossaryDictionaryEntries,
 } from './types';
 
 const logger = loglevel.getLogger('deepl');
@@ -138,7 +140,7 @@ export function buildURLSearchParams(
     sourceLang: LanguageCode | null,
     targetLang: LanguageCode,
     formality: Formality | undefined,
-    glossary: GlossaryId | GlossaryInfo | undefined,
+    glossary: GlossaryId | GlossaryInfo | MultilingualGlossaryInfo | undefined,
     extraRequestParameters: RequestParameters | undefined,
 ): URLSearchParams {
     targetLang = standardizeLanguageCode(targetLang);
@@ -148,15 +150,6 @@ export function buildURLSearchParams(
 
     if (glossary !== undefined && sourceLang === null) {
         throw new DeepLError('sourceLang is required if using a glossary');
-    }
-
-    if (glossary !== undefined && !isString(glossary)) {
-        if (
-            nonRegionalLanguageCode(targetLang) !== glossary.targetLang ||
-            sourceLang !== glossary.sourceLang
-        ) {
-            throw new DeepLError('sourceLang and targetLang must match glossary');
-        }
     }
 
     if (targetLang === 'en') {
@@ -280,4 +273,50 @@ export function validateAndAppendTextOptions(
     if (options.ignoreTags !== undefined) {
         data.append('ignore_tags', joinTagList(options.ignoreTags));
     }
+}
+
+/**
+ * Appends glossary dictionaries to HTTP request parameters.
+ * @param data URL-encoded parameters for a HTTP request.
+ * @param dictionaries Glossary dictionaries to append.
+ * @private
+ */
+export function appendDictionaryEntries(
+    data: URLSearchParams,
+    dictionaries: MultilingualGlossaryDictionaryEntries[],
+): void {
+    dictionaries.forEach((dict, index) => {
+        data.append(`dictionaries[${index}].source_lang`, dict.sourceLangCode);
+        data.append(`dictionaries[${index}].target_lang`, dict.targetLangCode);
+        data.append(`dictionaries[${index}].entries`, dict.entries.toTsv());
+        data.append(`dictionaries[${index}].entries_format`, 'tsv');
+    });
+}
+/**
+ * Appends a glossary dictionary with CSV entries to HTTP request parameters.
+ * @param data URL-encoded parameters for a HTTP request.
+ * @param sourceLanguageCode Source language code of the dictionary.
+ * @param targetLanguageCode Target language code of the dictionary.
+ * @param csvContent CSV-formatted string containing the dictionary entries.
+ * @private
+ */
+export function appendCsvDictionaryEntries(
+    data: URLSearchParams,
+    sourceLanguageCode: string,
+    targetLanguageCode: string,
+    csvContent: string,
+): void {
+    data.append('dictionaries[0].source_lang', sourceLanguageCode);
+    data.append('dictionaries[0].target_lang', targetLanguageCode);
+    data.append('dictionaries[0].entries', csvContent);
+    data.append('dictionaries[0].entries_format', 'csv');
+}
+
+/**
+ * Extract the glossary ID from the argument.
+ * @param glossary The glossary as a string, GlossaryInfo, or MultilingualGlossaryInfo.
+ * @private
+ */
+export function extractGlossaryId(glossary: GlossaryId | GlossaryInfo | MultilingualGlossaryInfo) {
+    return typeof glossary === 'string' ? glossary : glossary.glossaryId;
 }

@@ -343,7 +343,7 @@ describe('translate using glossaries', () => {
         testTimeout,
     ); // Increased timeout for test involving translation
 
-    it(
+    withRealServer(
         'should reject translating invalid text with glossaries',
         async () => {
             const text = 'Test';
@@ -367,7 +367,7 @@ describe('translate using glossaries', () => {
                 ).rejects.toThrowError('sourceLang is required');
                 await expect(
                     translator.translateText(text, 'de', 'en-US', { glossary: glossaryEnDe }),
-                ).rejects.toThrowError('Lang must match glossary');
+                ).rejects.toThrowError('No dictionary found for language pair');
                 const targetLangEn = <deepl.TargetLanguageCode>'en'; // Type cast to silence type-checks
                 await expect(
                     translator.translateText(text, 'de', targetLangEn, { glossary: glossaryDeEn }),

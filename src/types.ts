@@ -2,6 +2,8 @@
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
 
+import { GlossaryEntries } from './glossaryEntries';
+
 /**
  * Optional proxy configuration, may be specified as proxy in TranslatorOptions.
  * @see TranslatorOptions.proxy
@@ -87,7 +89,9 @@ export type GlossaryId = string;
 export type TagList = string | string[];
 
 /**
- * Information about a glossary, excluding the entry list.
+ * Information about a glossary, excluding the entry list. {@link GlossaryInfo} is compatible with the
+ * /v2 glossary endpoints and can only support mono-lingual glossaries (e.g. a glossary with only one source and
+ * target language defined).
  */
 export interface GlossaryInfo {
     /** Unique ID assigned to the glossary. */
@@ -128,8 +132,10 @@ export interface TranslateTextOptions {
     /** Controls whether translations should lean toward formal or informal language. */
     formality?: Formality;
 
-    /** Specifies the ID of a glossary to use with translation. */
-    glossary?: GlossaryId | GlossaryInfo;
+    /** Specifies the ID of a glossary to use with translation. Or
+     * using the given v2 glossary or given multilingual glossary.
+     */
+    glossary?: GlossaryId | GlossaryInfo | MultilingualGlossaryInfo;
 
     /** Type of tags to parse before translation, options are 'html' and 'xml'. */
     tagHandling?: TagHandlingMode;
@@ -169,8 +175,10 @@ export interface DocumentTranslateOptions {
     /** Controls whether translations should lean toward formal or informal language. */
     formality?: Formality;
 
-    /** Specifies the ID of a glossary to use with translation. */
-    glossary?: GlossaryId | GlossaryInfo;
+    /** Specifies the ID of a glossary to use with translation. Or
+     * using the given v2 glossary or given multilingual glossary.
+     */
+    glossary?: GlossaryId | GlossaryInfo | MultilingualGlossaryInfo;
 
     /** Filename including extension, only required when translating documents as streams. */
     filename?: string;
@@ -342,6 +350,47 @@ export interface Language {
 }
 
 /**
+ * Information about a glossary dictionary, excluding the entry list. Is compatible with
+ * the /v3 glossary endpoints and supports multi-lingual glossaries compared to the v2 version.
+ * Glossaries now have multiple glossary dictionaries each with their own source language, target
+ * language and entries.
+ */
+export interface MultilingualGlossaryDictionaryInfo {
+    /** Language code of the glossary dictionary source terms. */
+    readonly sourceLangCode: string;
+    /** Language code of the glossary dictionary target terms. */
+    readonly targetLangCode: string;
+    /** The number of entries contained in the glossary dictionary. */
+    readonly entryCount: number;
+}
+
+/**
+ * Information about a multilingual glossary, excluding the entry list.
+ */
+export interface MultilingualGlossaryInfo {
+    /** ID of the associated glossary. */
+    readonly glossaryId: string;
+    /** Name of the glossary chosen during creation. */
+    readonly name: string;
+    /** The dictionaries of the glossary. */
+    readonly dictionaries: MultilingualGlossaryDictionaryInfo[];
+    /** Time when the glossary was created. */
+    readonly creationTime: Date;
+}
+
+/**
+ * Information about a glossary dictionary, including the entry list
+ */
+export interface MultilingualGlossaryDictionaryEntries {
+    /** Language code of the glossary dictionary source terms. */
+    readonly sourceLangCode: string;
+    /** Language code of the glossary dictionary target terms. */
+    readonly targetLangCode: string;
+    /** The entries in the glossary dictionary. */
+    readonly entries: GlossaryEntries;
+}
+
+/**
  * Information about a pair of languages supported for DeepL glossaries.
  */
 export interface GlossaryLanguagePair {
@@ -454,4 +503,43 @@ export interface WriteResult {
      * Language code of the target language from the request.
      */
     readonly targetLang: string;
+}
+
+/**
+ * Type used during JSON parsing of API response for getting multilingual glossary dictionary entries.
+ * @private
+ */
+export interface MultilingualGlossaryDictionaryEntriesApiResponse {
+    dictionaries: [
+        {
+            source_lang: string;
+            target_lang: string;
+            entries: string;
+        },
+    ];
+}
+
+/**
+ * Type used during JSON parsing of API response for multilingual glossary dictionaries.
+ * @private
+ */
+export interface MultilingualGlossaryDictionaryApiResponse {
+    source_lang: string;
+    target_lang: string;
+    entry_count: number;
+}
+
+/**
+ * Type used during JSON parsing of API response for listing multilingual glossaries.
+ * @private
+ */
+export interface ListMultilingualGlossaryApiResponse {
+    glossaries: [
+        {
+            glossary_id: string;
+            name: string;
+            dictionaries: MultilingualGlossaryDictionaryApiResponse[];
+            creation_time: string;
+        },
+    ];
 }

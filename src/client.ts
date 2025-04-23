@@ -13,7 +13,7 @@ import { ProxyConfig } from './types';
 import * as https from 'https';
 import * as http from 'http';
 
-type HttpMethod = 'GET' | 'DELETE' | 'POST';
+type HttpMethod = 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
 
 const axiosInstance = axios.create({
     httpAgent: new http.Agent({ keepAlive: true }),
