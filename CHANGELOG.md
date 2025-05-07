@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   usage instructions.
 ### Changed
 <!-- * add to here... -->
+### Fixed
+* Upgrade Babel library
 
 ## [1.17.3] - 2025-03-11
 ### Changed
