@@ -1,11 +1,11 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: deepl-node
-  title: DeepL Node.js Library
-  description: Public Node.js library for interacting with the DeepL API
+    name: deepl-node
+    title: DeepL Node.js Library
+    description: Public Node.js library for interacting with the DeepL API
 spec:
-  type: library
-  lifecycle: production
-  owner: api-core-team
-  system: oss-client-libraries
+    type: library
+    lifecycle: production
+    owner: api-core-team
+    system: oss-client-libraries
