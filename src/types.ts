@@ -206,6 +206,7 @@ type CommonLanguageCode =
     | 'et'
     | 'fi'
     | 'fr'
+    | 'he'
     | 'hu'
     | 'id'
     | 'it'
@@ -221,8 +222,10 @@ type CommonLanguageCode =
     | 'sk'
     | 'sl'
     | 'sv'
+    | 'th'
     | 'tr'
     | 'uk'
+    | 'vi'
     | 'zh';
 
 /**
@@ -265,19 +268,37 @@ export type NonRegionalLanguageCode = CommonLanguageCode | 'en' | 'pt';
  * API accept case-insensitive language codes.
  */
 export type SourceGlossaryLanguageCode =
+    | 'ar'
+    | 'bg'
+    | 'cs'
     | 'da'
     | 'de'
+    | 'el'
     | 'en'
     | 'es'
+    | 'et'
+    | 'fi'
     | 'fr'
+    | 'he'
+    | 'hu'
+    | 'id'
     | 'it'
     | 'ja'
+    | 'ko'
+    | 'lt'
+    | 'lv'
     | 'nb'
     | 'nl'
     | 'pl'
     | 'pt'
+    | 'ro'
     | 'ru'
+    | 'sk'
+    | 'sl'
     | 'sv'
+    | 'tr'
+    | 'uk'
+    | 'vi'
     | 'zh';
 
 /**
