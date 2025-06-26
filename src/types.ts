@@ -272,10 +272,12 @@ export type SourceGlossaryLanguageCode =
     | 'fr'
     | 'it'
     | 'ja'
+    | 'ko'
     | 'nb'
     | 'nl'
     | 'pl'
     | 'pt'
+    | 'ro'
     | 'ru'
     | 'sv'
     | 'zh';
