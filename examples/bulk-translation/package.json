@@ -1,0 +1,17 @@
+{
+    "name": "deepl-node-example-typescript",
+    "description": "Example for deepl-node using TypeScript",
+    "type": "module",
+    "dependencies": {
+        "@types/node": "^18.11.9",
+        "deepl-node": "file:../..",
+        "p-limit": "^6.2.0"
+    },
+    "main": "index.ts",
+    "scripts": {
+        "build": "tsc -p tsconfig.json"
+    },
+    "devDependencies": {
+        "typescript": ">=3.0 && <5.1"
+    }
+}
