@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 <!-- * add to here... -->
 ### Changed
-<!-- * add to here... -->
+* Update form-data lib due to https://github.com/advisories/GHSA-fjxv-7rqg-78g4
 
 ## [1.19.0] - 2025-06-26
 ### Added
