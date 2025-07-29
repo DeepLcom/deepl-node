@@ -15,6 +15,14 @@ describe('rephrase text', () => {
         expect(result.targetLang).toBe('de');
     });
 
+    withRealServer('should rephrase a single text without a target language', async () => {
+        const deeplClient = makeDeeplClient();
+        const result = await deeplClient.rephraseText(exampleText.de);
+        expect(result.text).toBe(exampleText.de);
+        expect(result.detectedSourceLang).toBe('de');
+        expect(result.targetLang).toBe('de');
+    });
+
     it('should throw an error for unsupported languages', async () => {
         const deeplClient = makeDeeplClient();
         const deeplClientPromise = deeplClient.rephraseText(exampleText.de, 'ja');

@@ -4,7 +4,6 @@
 
 import { Translator, checkStatusCode } from './translator';
 import {
-    SourceLanguageCode,
     DeepLClientOptions,
     WriteResult,
     MultilingualGlossaryDictionaryEntries,
@@ -61,7 +60,7 @@ export class DeepLClient extends Translator {
 
     async rephraseText<T extends string | string[]>(
         texts: T,
-        targetLang: SourceLanguageCode | null,
+        targetLang?: string | null,
         writingStyle?: string | null,
         tone?: string | null,
     ): Promise<T extends string ? WriteResult : WriteResult[]> {
