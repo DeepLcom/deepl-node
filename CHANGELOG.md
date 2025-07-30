@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Update form-data lib due to https://github.com/advisories/GHSA-fjxv-7rqg-78g4
 * Fixed `targetLang` parameter in `DeepLClient::rephraseText` to be an optional `string` parameter.
+* Update brace-expansion lib due to https://github.com/advisories/GHSA-v6h2-p8h4-qcjw
 
 ## [1.19.0] - 2025-06-26
 ### Added
