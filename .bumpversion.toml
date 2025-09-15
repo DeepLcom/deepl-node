@@ -1,0 +1,33 @@
+# Configuration file for bumpversion
+# See https://github.com/callowayproject/bump-my-version
+[tool.bumpversion]
+current_version = "1.20.0"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+tag = false
+allow_dirty = false
+commit = false
+
+[[tool.bumpversion.files]]
+filename = "src/translator.ts"
+search = "deepl-node/{current_version}"
+replace = "deepl-node/{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "package.json"
+search = "\"version\": \"{current_version}\""
+replace = "\"version\": \"{new_version}\""
+
+[[tool.bumpversion.files]]
+filename = "package-lock.json"
+search = "\"deepl-node\",\n    \"version\": \"{current_version}\""
+replace = "\"deepl-node\",\n    \"version\": \"{new_version}\""
+
+[[tool.bumpversion.files]]
+filename = "package-lock.json"
+search = "\"deepl-node\",\n            \"version\": \"{current_version}\""
+replace = "\"deepl-node\",\n            \"version\": \"{new_version}\""
