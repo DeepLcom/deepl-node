@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Added
-<!-- * add to here... -->
+
+
+## [1.19.1] - 2025-09-16
 ### Changed
 * Update form-data lib due to https://github.com/advisories/GHSA-fjxv-7rqg-78g4
 * Fixed `targetLang` parameter in `DeepLClient::rephraseText` to be an optional `string` parameter.
@@ -320,7 +321,8 @@ client library took over this package name. Thanks to
 ownership.
 
 <!-- (Unreleased should never be deleted) -->
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.19.1...HEAD
+[1.19.1]: https://github.com/DeepLcom/deepl-node/compare/v1.19.0...v1.19.1
 [1.19.0]: https://github.com/DeepLcom/deepl-node/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/DeepLcom/deepl-node/compare/v1.17.3...v1.18.0
 [1.17.3]: https://github.com/DeepLcom/deepl-node/compare/v1.17.2...v1.17.3
