@@ -321,7 +321,7 @@ ownership.
 
 <!-- (Unreleased should never be deleted) -->
 [Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.19.0...HEAD
-[1.19.0]: https://github.com/DeepLcom/deepl-node/compare/v1.17.3...v1.18.0
+[1.19.0]: https://github.com/DeepLcom/deepl-node/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/DeepLcom/deepl-node/compare/v1.17.3...v1.18.0
 [1.17.3]: https://github.com/DeepLcom/deepl-node/compare/v1.17.2...v1.17.3
 [1.17.2]: https://github.com/DeepLcom/deepl-node/compare/v1.17.1...v1.17.2
