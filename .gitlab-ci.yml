@@ -11,8 +11,8 @@ include:
 
 # Global --------------------------
 
-# Use Active LTS (18)
-image: node:18-alpine
+# Use Active LTS (22)
+image: node:22-alpine
 
 workflow:
     rules:
@@ -145,7 +145,7 @@ build:
         KUBERNETES_MEMORY_LIMIT: 8Gi
     parallel:
         matrix:
-            - DOCKER_IMAGE: 'node:18-alpine'
+            - DOCKER_IMAGE: 'node:22-alpine'
             - DOCKER_IMAGE: 'node:12-alpine'
               USE_MOCK_SERVER: 'use mock server'
             - DOCKER_IMAGE: 'node:14-alpine'
@@ -155,6 +155,12 @@ build:
             - DOCKER_IMAGE: 'node:17-alpine'
               USE_MOCK_SERVER: 'use mock server'
             - DOCKER_IMAGE: 'node:18-alpine'
+              USE_MOCK_SERVER: 'use mock server'
+            - DOCKER_IMAGE: 'node:20-alpine'
+              USE_MOCK_SERVER: 'use mock server'
+            - DOCKER_IMAGE: 'node:22-alpine'
+              USE_MOCK_SERVER: 'use mock server'
+            - DOCKER_IMAGE: 'node:24-alpine'
               USE_MOCK_SERVER: 'use mock server'
     image: ${DOCKER_IMAGE}
     script:
@@ -197,6 +203,9 @@ test_manual:
             - DOCKER_IMAGE: 'node:16-alpine'
             - DOCKER_IMAGE: 'node:17-alpine'
             - DOCKER_IMAGE: 'node:18-alpine'
+            - DOCKER_IMAGE: 'node:20-alpine'
+            - DOCKER_IMAGE: 'node:22-alpine'
+            - DOCKER_IMAGE: 'node:24-alpine'
     image: ${DOCKER_IMAGE}
     before_script: # Note: replaces global before_script
         - npm install --production

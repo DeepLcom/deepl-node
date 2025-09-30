@@ -29,12 +29,9 @@ you can translate up to 500,000 characters/month for free.
 
 ### Requirements
 
-The package officially supports Node.js version 12, 14, 16, 17, and 18.
+The package officially supports Node.js version 12, 14, 16, 17, 18, 20, 22 and 24.
 
-Starting in 2024, we will drop support for older Node versions that have reached
-official end-of-life. You can find the Node versions and support timelines
-[here][node-version-list].
-To continue using this library, you should update to Node 18+.
+We strongly recommend upgrading to a supported Node.js version as we will be dropping support for end-of-life versions in 2025. You can find the Node versions and support timelines [here][node-version-list].
 
 ## Usage
 

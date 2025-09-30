@@ -3,7 +3,6 @@
     "description": "Example for deepl-node using TypeScript",
     "type": "module",
     "dependencies": {
-        "@types/node": "^18.11.9",
         "deepl-node": "file:../..",
         "p-limit": "^6.2.0"
     },
