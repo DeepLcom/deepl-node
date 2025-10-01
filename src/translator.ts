@@ -309,8 +309,9 @@ export class Translator {
                     }
                 };
                 return { outputHandle, onError };
+            } else {
+                return { outputHandle: outputFile };
             }
-            return { outputHandle: outputFile };
         }
 
         const { outputHandle, onError } = await getOutputHandleAndOnError();
@@ -337,7 +338,8 @@ export class Translator {
             const { status } = await this.isDocumentTranslationComplete(documentHandle);
             await this.downloadDocument(documentHandle, outputHandle);
             if (willMinify) {
-                documentMinifier.deminifyDocument(inputFile, outputFile, true);
+                // Intentionally replace outputFile with a deminified version of the outputFile
+                documentMinifier.deminifyDocument(outputFile, outputFile, true);
             }
             return status;
         } catch (errorUnknown: unknown) {
