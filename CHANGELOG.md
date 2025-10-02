@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Official support for Node.js versions 20, 22 and 24
 ### Fixed
 * Fixed document minification/deminification to preserve translated content. Previously, when document minification was enabled, the deminify process would use the original minified file instead of the translated version, causing translations to be lost.
+* Fixed handling of documents without media files during translation. The library now correctly processes documents that don't contain embedded media.
 
 ## [1.19.1] - 2025-09-16
 ### Changed

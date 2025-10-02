@@ -3,7 +3,11 @@ import * as fs from 'fs';
 import { FsHelper } from '../../src/fsHelper';
 import { makeTranslator, testFilePaths, withRealServer } from '../core';
 import { DocumentTranslationError, Translator } from '../../src';
-import { createMinifiableTestDocument, verifyDocumentIsTranslated } from './testHelpers';
+import {
+    createMinifiableTestDocument,
+    verifyDocumentIsTranslated,
+    createMinifiableTestDocumentWithoutMedia,
+} from './testHelpers';
 import mock from 'mock-fs';
 
 jest.setTimeout(100000);
@@ -131,5 +135,24 @@ describe('minification lifecycle with translate', () => {
                 filename: path.basename(minifiableFilePath),
             }),
         ).rejects.toThrowError(DocumentTranslationError);
+    });
+
+    withRealServer('should pass when document contains no media', async () => {
+        const originalFile = testFilePaths.no_media;
+        const translator = makeTranslator() as Translator;
+
+        const docxWithoutMediaPath = createMinifiableTestDocumentWithoutMedia(
+            originalFile,
+            `${tempDir}/test-document-zip-content-stream`,
+            tempDir,
+        );
+
+        const outputFilePath = `${tempDir}/translatedNoMedia${path.extname(originalFile)}`;
+
+        await translator.translateDocument(docxWithoutMediaPath, outputFilePath, 'en', 'de', {
+            enableDocumentMinification: true,
+        });
+
+        expect(fs.existsSync(outputFilePath)).toBe(true);
     });
 });

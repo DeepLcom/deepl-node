@@ -62,3 +62,22 @@ export const verifyDocumentIsTranslated = (inputFilePath: string, outputFilePath
     // We should find at least some translated content
     expect(foundTranslatedContent).toBe(true);
 };
+
+export const createMinifiableTestDocumentWithoutMedia = (
+    testFilePath: string,
+    tempZipContentDirectory: string,
+    outputDirectory: string,
+): string => {
+    if (!fs.existsSync(testFilePath)) {
+        throw new Error(`Test file does not exist: ${testFilePath}`);
+    }
+    const zipExtractor = new AdmZip(testFilePath);
+    zipExtractor.extractAllTo(tempZipContentDirectory);
+
+    const fileName = path.basename(testFilePath);
+    const outputFilePath = path.join(outputDirectory, fileName);
+    const zipCombiner = new AdmZip();
+    zipCombiner.addLocalFolder(tempZipContentDirectory);
+    zipCombiner.writeZip(outputFilePath);
+    return outputFilePath;
+};

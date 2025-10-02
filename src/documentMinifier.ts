@@ -247,7 +247,11 @@ export class DocumentMinifier implements IDocumentMinifier {
             );
         }
 
-        this.replaceMediaInDir(extractedDocDirectory, mediaDir);
+        try {
+            this.replaceMediaInDir(extractedDocDirectory, mediaDir);
+        } catch (error) {
+            throw new DocumentDeminificationError(`Error when deminifying images. Error: ${error}`);
+        }
 
         try {
             if (fs.existsSync(outputFilePath)) {
@@ -370,6 +374,11 @@ export class DocumentMinifier implements IDocumentMinifier {
      * @throws {DocumentMinificationError} If a problem occurred when trying to reinsert the media
      */
     private replaceMediaInDir(inputDirectory: string, mediaDirectory: string): void {
+        if (!fs.existsSync(mediaDirectory)) {
+            // if document has no images
+            return;
+        }
+
         const filesAndDirs = FsHelper.readdirSyncRecursive(mediaDirectory);
         const files = filesAndDirs.filter((file) => {
             const ext = path.extname(file).toLowerCase();
