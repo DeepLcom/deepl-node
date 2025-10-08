@@ -697,7 +697,7 @@ export class Translator {
         sendPlatformInfo: boolean,
         appInfo: AppInfo | undefined,
     ): string {
-        let libraryInfoString = 'deepl-node/1.19.1';
+        let libraryInfoString = 'deepl-node/1.20.0';
         if (sendPlatformInfo) {
             const systemType = os.type();
             const systemVersion = os.version();
