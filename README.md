@@ -202,9 +202,12 @@ The following options are only used if `tagHandling` is `'xml'`:
     into sentences. Format and default are the same as for `splittingTags`.
 -   `ignoreTags`: list of XML tags that containing content that should not be
     translated. Format and default are the same as for `splittingTags`.
--   `extraRequestParameters`: Extra body parameters to be passed along with the 
+-   `extraRequestParameters`: Extra body parameters to be passed along with the
     HTTP request. Only string values are permitted.
     For example: `{'param': 'value', 'param2': 'value2'}`
+    Note: Extra request parameters can override parameters explicitly set by the library
+    (such as `target_lang`, `source_lang`, etc.). This is primarily useful for testing or
+    accessing beta features.
 
 
 ### Translating documents

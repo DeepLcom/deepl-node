@@ -89,6 +89,23 @@ export type GlossaryId = string;
 export type TagList = string | string[];
 
 /**
+ * Extra request parameters to be passed with translation requests.
+ */
+export type RequestParameters = Record<string, string>;
+
+/**
+ * Base options that apply to all translation endpoints. Planned to be extended to other endpoints in future.
+ */
+export interface BaseRequestOptions {
+    /**
+     * Extra parameters to be added to the request body.
+     * Keys in this object will be added to the request body, and can override built-in parameters.
+     * This is mostly used by DeepL employees to test functionality, or for beta programs.
+     */
+    extraRequestParameters?: RequestParameters;
+}
+
+/**
  * Information about a glossary, excluding the entry list. {@link GlossaryInfo} is compatible with the
  * /v2 glossary endpoints and can only support mono-lingual glossaries (e.g. a glossary with only one source and
  * target language defined).
@@ -113,7 +130,7 @@ export interface GlossaryInfo {
 /**
  * Options that can be specified when translating text.
  */
-export interface TranslateTextOptions {
+export interface TranslateTextOptions extends BaseRequestOptions {
     /**
      * Specifies how input translation text should be split into sentences.
      * - 'on': Input translation text will be split into sentences using both newlines and
@@ -161,9 +178,6 @@ export interface TranslateTextOptions {
     /** List of XML tags containing content that should not be translated. */
     ignoreTags?: TagList;
 
-    /** Extra parameters to be added to a text translation request. */
-    extraRequestParameters?: RequestParameters;
-
     /** (internal only) Override path to send translate request to. */
     __path?: string;
 }
@@ -171,7 +185,7 @@ export interface TranslateTextOptions {
 /**
  * Options that can be specified when translating documents.
  */
-export interface DocumentTranslateOptions {
+export interface DocumentTranslateOptions extends BaseRequestOptions {
     /** Controls whether translations should lean toward formal or informal language. */
     formality?: Formality;
 
@@ -182,9 +196,6 @@ export interface DocumentTranslateOptions {
 
     /** Filename including extension, only required when translating documents as streams. */
     filename?: string;
-
-    /** Extra parameters to be added to a text translation request. */
-    extraRequestParameters?: RequestParameters;
 
     /** Controls whether to use Document Minification for translation, if available. */
     enableDocumentMinification?: boolean;
@@ -307,12 +318,6 @@ export type SourceGlossaryLanguageCode =
  * API accept case-insensitive language codes.
  */
 export type TargetGlossaryLanguageCode = SourceGlossaryLanguageCode;
-
-/**
- * Extra request parameters to be passed with translation requests.
- * They are stored as an object where each field represents a request parameter.
- */
-export type RequestParameters = Record<string, string>;
 
 /**
  * Information about the API usage: how much has been translated in this billing period, and the

@@ -270,6 +270,17 @@ describe('translate text', () => {
         expect(result.text).toContain('<p translate="no">My first paragraph.</p>');
     });
 
+    it('allows extra parameters to override standard parameters', async () => {
+        const translator = makeTranslator();
+        const options: TranslateTextOptions = {
+            extraRequestParameters: { target_lang: 'fr', example_extra_param: 'true' },
+        };
+        const result = await translator.translateText(exampleText.en, null, 'de', options);
+        expect(result.text).toBe(exampleText.fr);
+        expect(result.detectedSourceLang).toBe('en');
+        expect(result.billedCharacters).toBe(exampleText.en.length);
+    });
+
     describe('request parameter tests', () => {
         beforeAll(() => {
             nock.disableNetConnect();

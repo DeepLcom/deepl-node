@@ -185,7 +185,7 @@ export function buildURLSearchParams(
     }
     if (extraRequestParameters !== undefined) {
         for (const paramName in extraRequestParameters) {
-            searchParams.append(paramName, extraRequestParameters[paramName]);
+            searchParams.set(paramName, extraRequestParameters[paramName]);
         }
     }
     return searchParams;
