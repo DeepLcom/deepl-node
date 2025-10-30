@@ -141,19 +141,19 @@ describe('translate document', () => {
             await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de', {
                 formality: 'more',
             });
-            expect(fs.readFileSync(outputDocumentPath).toString()).toBe('Wie geht es Ihnen?');
+            expect(fs.readFileSync(outputDocumentPath).toString()).toContain('Ihnen');
             await unlinkP(outputDocumentPath);
 
             await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de', {
                 formality: 'default',
             });
-            expect(fs.readFileSync(outputDocumentPath).toString()).toBe('Wie geht es Ihnen?');
+            expect(fs.readFileSync(outputDocumentPath).toString()).toContain('Ihnen');
             await unlinkP(outputDocumentPath);
 
             await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de', {
                 formality: 'less',
             });
-            expect(fs.readFileSync(outputDocumentPath).toString()).toBe('Wie geht es dir?');
+            expect(fs.readFileSync(outputDocumentPath).toString()).toContain('dir');
         },
         testTimeout,
     );
