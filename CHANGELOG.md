@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.21.0] - 2025-11-03
+
 ### Added
 * Added `extraRequestParameters` option to text and document translation methods to pass arbitrary parameters in the request body. This can be used to access beta features or override built-in parameters (such as `target_lang`, `source_lang`, etc.).
 
@@ -330,7 +332,8 @@ client library took over this package name. Thanks to
 ownership.
 
 <!-- (Unreleased should never be deleted) -->
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.21.1...HEAD
+[1.21.0]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...v1.21.1
 [1.20.0]: https://github.com/DeepLcom/deepl-node/compare/v1.19.1...v1.20.0
 [1.19.1]: https://github.com/DeepLcom/deepl-node/compare/v1.19.0...v1.19.1
 [1.19.0]: https://github.com/DeepLcom/deepl-node/compare/v1.18.0...v1.19.0
