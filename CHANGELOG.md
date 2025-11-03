@@ -326,12 +326,11 @@ Initial release.
 
 ## 1.0.0 - 2019-02-04
 This version of the package on NPM refers to an earlier unofficial DeepL Node.js
-client library, which can be found [here][1.0.0]. The official DeepL Node.js
-client library took over this package name. Thanks to
+client library, which can be found [here](https://github.com/icrotz/deepl). The
+official DeepL Node.js client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-<!-- (Unreleased should never be deleted) -->
 [Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.21.1...HEAD
 [1.21.0]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...v1.21.1
 [1.20.0]: https://github.com/DeepLcom/deepl-node/compare/v1.19.1...v1.20.0
@@ -375,4 +374,3 @@ ownership.
 [0.1.2]: https://github.com/DeepLcom/deepl-node/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/DeepLcom/deepl-node/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/DeepLcom/deepl-node/releases/tag/v0.1.0
-[1.0.0]: https://github.com/icrotz/deepl
