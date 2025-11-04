@@ -303,19 +303,6 @@ official DeepL Node.js client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-## [0.1.2] - 2022-03-10
-### Changed
-- Change TypeScript-example to match other examples.
-- Improvements to code style and formatting.
-- Increase TypeScript compiler target to `es2019`.
-
-## [0.1.1] - 2022-03-04
-### Fixed
-- Fix error in package version.
-
-## [0.1.0] - 2022-03-04
-Initial release.
-
 [Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.21.0...HEAD
 [1.21.0]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/DeepLcom/deepl-node/compare/v1.19.1...v1.20.0
@@ -356,7 +343,4 @@ Initial release.
 [1.2.0]: https://github.com/DeepLcom/deepl-node/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/DeepLcom/deepl-node/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/DeepLcom/deepl-node/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/DeepLcom/deepl-node/compare/v0.1.2...v1.0.0
-[0.1.2]: https://github.com/DeepLcom/deepl-node/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/DeepLcom/deepl-node/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/DeepLcom/deepl-node/releases/tag/v0.1.0
+[1.0.0]: https://github.com/DeepLcom/deepl-node/releases/tag/v1.0.0
