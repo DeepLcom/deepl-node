@@ -86,6 +86,7 @@ export type SentenceSplittingMode = 'off' | 'on' | 'nonewlines' | 'default';
 export type TagHandlingMode = 'html' | 'xml';
 export type ModelType = 'quality_optimized' | 'latency_optimized' | 'prefer_quality_optimized';
 export type GlossaryId = string;
+export type StyleId = string;
 export type TagList = string | string[];
 
 /**
@@ -154,6 +155,11 @@ export interface TranslateTextOptions extends BaseRequestOptions {
      */
     glossary?: GlossaryId | GlossaryInfo | MultilingualGlossaryInfo;
 
+    /** Specifies the ID of a style rule to use with translation, or
+     * a StyleRuleInfo object as returned by getAllStyleRules().
+     */
+    styleRule?: StyleId | StyleRuleInfo;
+
     /** Type of tags to parse before translation, options are 'html' and 'xml'. */
     tagHandling?: TagHandlingMode;
 
@@ -193,6 +199,11 @@ export interface DocumentTranslateOptions extends BaseRequestOptions {
      * using the given v2 glossary or given multilingual glossary.
      */
     glossary?: GlossaryId | GlossaryInfo | MultilingualGlossaryInfo;
+
+    /** Specifies the ID of a style rule to use with translation, or
+     * a StyleRuleInfo object as returned by getAllStyleRules().
+     */
+    styleRule?: StyleId | StyleRuleInfo;
 
     /** Filename including extension, only required when translating documents as streams. */
     filename?: string;
@@ -568,4 +579,93 @@ export interface ListMultilingualGlossaryApiResponse {
             creation_time: string;
         },
     ];
+}
+
+/**
+ * Custom instruction for a style rule.
+ */
+export interface CustomInstruction {
+    /** Label for the custom instruction. */
+    readonly label: string;
+    /** Prompt text for the custom instruction. */
+    readonly prompt: string;
+    /** Optional source language code for the custom instruction. */
+    readonly sourceLanguage?: string;
+}
+
+/**
+ * Configuration rules for a style rule list.
+ */
+export interface ConfiguredRules {
+    /** Date and time formatting rules. */
+    readonly datesAndTimes?: Record<string, string>;
+    /** Text formatting rules. */
+    readonly formatting?: Record<string, string>;
+    /** Number formatting rules. */
+    readonly numbers?: Record<string, string>;
+    /** Punctuation rules. */
+    readonly punctuation?: Record<string, string>;
+    /** Spelling and grammar rules. */
+    readonly spellingAndGrammar?: Record<string, string>;
+    /** Style and tone rules. */
+    readonly styleAndTone?: Record<string, string>;
+    /** Vocabulary rules. */
+    readonly vocabulary?: Record<string, string>;
+}
+
+/**
+ * Information about a style rule list.
+ */
+export interface StyleRuleInfo {
+    /** Unique ID assigned to the style rule list. */
+    readonly styleId: StyleId;
+    /** User-defined name assigned to the style rule list. */
+    readonly name: string;
+    /** Time when the style rule list was created. */
+    readonly creationTime: Date;
+    /** Time when the style rule list was last updated. */
+    readonly updatedTime: Date;
+    /** Language code for the style rule list. */
+    readonly language: string;
+    /** Version number of the style rule list. */
+    readonly version: number;
+    /** The predefined rules that have been enabled. */
+    readonly configuredRules?: ConfiguredRules;
+    /** Optional list of custom instructions. */
+    readonly customInstructions?: CustomInstruction[];
+}
+
+/**
+ * Type used during JSON parsing of API response for style rule info.
+ * @private
+ */
+export interface StyleRuleInfoApiResponse {
+    style_id: string;
+    name: string;
+    creation_time: string;
+    updated_time: string;
+    language: string;
+    version: number;
+    configured_rules?: {
+        dates_and_times?: Record<string, string>;
+        formatting?: Record<string, string>;
+        numbers?: Record<string, string>;
+        punctuation?: Record<string, string>;
+        spelling_and_grammar?: Record<string, string>;
+        style_and_tone?: Record<string, string>;
+        vocabulary?: Record<string, string>;
+    };
+    custom_instructions?: Array<{
+        label: string;
+        prompt: string;
+        source_language?: string;
+    }>;
+}
+
+/**
+ * Type used during JSON parsing of API response for listing style rules.
+ * @private
+ */
+export interface ListStyleRuleApiResponse {
+    style_rules: StyleRuleInfoApiResponse[];
 }

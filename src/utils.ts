@@ -12,10 +12,12 @@ import {
     NonRegionalLanguageCode,
     RequestParameters,
     SentenceSplittingMode,
+    StyleId,
     TagList,
     TranslateTextOptions,
     MultilingualGlossaryInfo,
     MultilingualGlossaryDictionaryEntries,
+    StyleRuleInfo,
 } from './types';
 
 const logger = loglevel.getLogger('deepl');
@@ -272,6 +274,16 @@ export function validateAndAppendTextOptions(
     }
     if (options.ignoreTags !== undefined) {
         data.append('ignore_tags', joinTagList(options.ignoreTags));
+    }
+    if (options.styleRule !== undefined) {
+        if (!isString(options.styleRule)) {
+            if (options.styleRule.styleId === undefined) {
+                throw new DeepLError(
+                    'styleRule option should be a StyleId (string) containing the Style Rule ID or a StyleRuleInfo object.',
+                );
+            }
+            data.append('style_id', options.styleRule.styleId);
+        }
     }
 }
 

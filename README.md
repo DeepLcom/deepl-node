@@ -175,6 +175,8 @@ console.log(await deeplClient.translateText('How are you?', null, 'de', { formal
 -   `glossary`: specifies a glossary to use with translation, either as a string
     containing the glossary ID, or a `MultilingualGlossaryInfo`/`GlossaryInfo` as returned by
     `getMultilingualGlossary()`/`getGlossary()`.
+-   `styleRule`: specifies a style rule to use with translation, either as a string
+    containing the style rule ID, or a `StyleRuleInfo` as returned by `getAllStyleRules()`.
 -   `context`: specifies additional context to influence translations, that is not
     translated itself. Characters in the `context` parameter are not counted toward billing.
     See the [API documentation][api-docs-context-param] for more information and
@@ -261,6 +263,7 @@ directly:
 
 -   `formality`: same as in [Text translation options](#text-translation-options).
 -   `glossary`: same as in [Text translation options](#text-translation-options).
+-   `styleRule`: same as in [Text translation options](#text-translation-options).
 -   `filename`: if the input file is not provided as file path, this option is
     needed to specify the file extension.
 -   `extraRequestParameters`: same as in [Text translation options](#text-translation-options).
@@ -481,6 +484,42 @@ console.log(entriesObj.entries.toTsv()); // {'artist': 'Maler', 'hello': 'hallo'
 ```
 
 For examples for the other methods please see [this migration guide](upgrade_to_multilingual_glossaries.md)
+
+### Style Rules
+
+Style rules allow you to customize your translations using a managed, shared list
+of rules for style, formatting, and more. Multiple style rules can be stored with 
+your account, each with a user-specified name and a uniquely-assigned ID.
+
+#### Creating and managing style rules
+
+Currently style rules must be created and managed in the DeepL UI via
+https://www.deepl.com/en/custom-rules. Full CRUD functionality via the APIs will
+come shortly.
+
+#### Listing all style rules
+
+`getAllStyleRules()` returns a list of `StyleRuleInfo` objects
+corresponding to all of your stored style rules. The method accepts optional
+parameters: `page` (page number for pagination, 0-indexed), `pageSize` (number
+of items per page), and `detailed` (whether to include detailed configuration
+rules in the `configuredRules` property).
+
+```javascript
+// Get all style rules
+const styleRules = await deeplClient.getAllStyleRules();
+for (const rule of styleRules) {
+    console.log(`${rule.name} (${rule.styleId})`);
+}
+
+// Get style rules with detailed configuration
+const styleRules = await deeplClient.getAllStyleRules({ detailed: true });
+for (const rule of styleRules) {
+    if (rule.configuredRules) {
+        console.log(`  Number formatting: ${rule.configuredRules.numbers}`);
+    }
+}
+```
 
 ### Checking account usage
 

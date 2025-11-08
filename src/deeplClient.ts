@@ -13,6 +13,7 @@ import {
     MultilingualGlossaryDictionaryEntriesApiResponse,
     GlossaryId,
     ListMultilingualGlossaryApiResponse,
+    StyleRuleInfo,
 } from './types';
 import {
     parseMultilingualGlossaryDictionaryInfo,
@@ -20,6 +21,7 @@ import {
     parseWriteResultArray,
     parseMultilingualGlossaryDictionaryEntries,
     parseListMultilingualGlossaries,
+    parseStyleRuleInfoList,
 } from './parsing';
 import {
     appendCsvDictionaryEntries,
@@ -541,5 +543,41 @@ export class DeepLClient extends Translator {
 
         await checkStatusCode(statusCode, content, true /* usingGlossary */);
         return parseMultilingualGlossaryInfo(content);
+    }
+
+    /**
+     * Retrieves a list of all style rules available for the authenticated user.
+     *
+     * @param page: Page number for pagination, 0-indexed (optional).
+     * @param pageSize: Number of items per page (optional).
+     * @param detailed: Whether to include detailed configuration rules in the `configuredRules` property (optional).
+     * @returns {Promise<StyleRuleInfo[]>} An array of objects containing details about each style rule.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async getAllStyleRules(
+        page?: number,
+        pageSize?: number,
+        detailed?: boolean,
+    ): Promise<StyleRuleInfo[]> {
+        const queryParams = new URLSearchParams();
+        if (page !== undefined) {
+            queryParams.append('page', String(page));
+        }
+        if (pageSize !== undefined) {
+            queryParams.append('page_size', String(pageSize));
+        }
+        if (detailed !== undefined) {
+            queryParams.append('detailed', String(detailed).toLowerCase());
+        }
+
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'GET',
+            '/v3/style_rules',
+            { data: queryParams },
+        );
+
+        await checkStatusCode(statusCode, content);
+        return parseStyleRuleInfoList(content);
     }
 }

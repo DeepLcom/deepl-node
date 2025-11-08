@@ -24,6 +24,11 @@ import {
     MultilingualGlossaryDictionaryApiResponse,
     MultilingualGlossaryDictionaryEntriesApiResponse,
     ListMultilingualGlossaryApiResponse,
+    StyleRuleInfo,
+    StyleRuleInfoApiResponse,
+    ListStyleRuleApiResponse,
+    ConfiguredRules,
+    CustomInstruction,
 } from './types';
 import { standardizeLanguageCode } from './utils';
 
@@ -523,6 +528,83 @@ export function parseDocumentHandle(json: string): DocumentHandle {
     try {
         const obj = JSON.parse(json) as DocumentHandleApiResponse;
         return { documentId: obj.document_id, documentKey: obj.document_key };
+    } catch (error) {
+        throw new DeepLError(`Error parsing response JSON: ${error}`);
+    }
+}
+
+/**
+ * Parses the given style rule API response to a ConfiguredRules object.
+ * @private
+ */
+function parseConfiguredRules(
+    configuredRulesData?: StyleRuleInfoApiResponse['configured_rules'],
+): ConfiguredRules | undefined {
+    if (!configuredRulesData) {
+        return undefined;
+    }
+    return {
+        datesAndTimes: configuredRulesData.dates_and_times,
+        formatting: configuredRulesData.formatting,
+        numbers: configuredRulesData.numbers,
+        punctuation: configuredRulesData.punctuation,
+        spellingAndGrammar: configuredRulesData.spelling_and_grammar,
+        styleAndTone: configuredRulesData.style_and_tone,
+        vocabulary: configuredRulesData.vocabulary,
+    };
+}
+
+/**
+ * Parses the given custom instruction API response to a CustomInstruction object.
+ * @private
+ */
+function parseCustomInstruction(instruction: {
+    label: string;
+    prompt: string;
+    source_language?: string;
+}): CustomInstruction {
+    return {
+        label: instruction.label,
+        prompt: instruction.prompt,
+        sourceLanguage: instruction.source_language,
+    };
+}
+
+/**
+ * Parses the given style rule API response to a StyleRuleInfo object.
+ * @private
+ */
+function parseStyleRuleInfo(styleRule: StyleRuleInfoApiResponse): StyleRuleInfo {
+    try {
+        const customInstructions = styleRule.custom_instructions
+            ? styleRule.custom_instructions.map(parseCustomInstruction)
+            : undefined;
+
+        return {
+            styleId: styleRule.style_id,
+            name: styleRule.name,
+            creationTime: new Date(styleRule.creation_time),
+            updatedTime: new Date(styleRule.updated_time),
+            language: styleRule.language,
+            version: styleRule.version,
+            configuredRules: parseConfiguredRules(styleRule.configured_rules),
+            customInstructions,
+        };
+    } catch (error) {
+        throw new DeepLError(`Error parsing response JSON: ${error}`);
+    }
+}
+
+/**
+ * Parses the given JSON string to an array of StyleRuleInfo objects.
+ * @private
+ */
+export function parseStyleRuleInfoList(json: string): StyleRuleInfo[] {
+    try {
+        const obj = JSON.parse(json) as ListStyleRuleApiResponse;
+        return obj.style_rules.map((styleRule: StyleRuleInfoApiResponse) =>
+            parseStyleRuleInfo(styleRule),
+        );
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }
