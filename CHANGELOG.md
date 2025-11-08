@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.22.0] - 2025-11-12
+### Added
+- Added support for the `GET /v3/style_rules` endpoint in the client library, the
+  implementation can be found in the `DeepLClient` class. Please refer to the
+  README for usage instructions
+- Added `styleId` option to `translateText()` and `translateDocument()` which allows text and document translation with
+  style rules.
+
 ## [1.21.0] - 2025-11-03
 ### Added
 - Added `extraRequestParameters` option to text and document translation methods to pass arbitrary parameters in the request body. This can be used to access beta features or override built-in parameters (such as `target_lang`, `source_lang`, etc.).
@@ -303,7 +311,8 @@ official DeepL Node.js client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.21.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.22.0...HEAD
+[1.22.0]: https://github.com/DeepLcom/deepl-node/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/DeepLcom/deepl-node/compare/v1.19.1...v1.20.0
 [1.19.1]: https://github.com/DeepLcom/deepl-node/compare/v1.19.0...v1.19.1
