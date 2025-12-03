@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.23.0] - 2025-12-03
+### Added
+- Added `customInstructions` parameter to `translateText()` to customize translation
+  behavior with up to 10 instructions (max 300 characters each). Only supported for
+  target languages: `de`, `en`, `es`, `fr`, `it`, `ja`, `ko`, `zh` and their variants.
+  Note: using the `customInstructions` parameter will use `quality_optimized` model type
+  as the default. Requests combining `customInstructions` and the `latency_optimized`
+  model type will be rejected.
+
 ## [1.22.0] - 2025-11-12
 ### Added
 - Added support for the `GET /v3/style_rules` endpoint in the client library, the
@@ -311,7 +320,8 @@ official DeepL Node.js client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.22.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/DeepLcom/deepl-node/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/DeepLcom/deepl-node/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/DeepLcom/deepl-node/compare/v1.19.1...v1.20.0
