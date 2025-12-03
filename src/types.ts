@@ -184,6 +184,12 @@ export interface TranslateTextOptions extends BaseRequestOptions {
     /** List of XML tags containing content that should not be translated. */
     ignoreTags?: TagList;
 
+    /**
+     * List of custom instructions to guide the translation. Maximum 10 instructions,
+     * each with a maximum length of 300 characters.
+     */
+    customInstructions?: string[];
+
     /** (internal only) Override path to send translate request to. */
     __path?: string;
 }

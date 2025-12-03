@@ -181,6 +181,13 @@ console.log(await deeplClient.translateText('How are you?', null, 'de', { formal
     translated itself. Characters in the `context` parameter are not counted toward billing.
     See the [API documentation][api-docs-context-param] for more information and
     example usage.
+-   `customInstructions`: an array of instructions to customize the translation behavior.
+    Up to 10 custom instructions can be specified, each with a maximum of 300 characters.
+    Important: The target language must be `de`, `en`, `es`, `fr`, `it`, `ja`, `ko`, `zh`
+    or any variants of these languages.
+    Note: Any request with the `customInstructions` parameter enabled will use 
+    the `quality_optimized` model type as the default. Requests combining 
+    `customInstructions` and `modelType: latency_optimized` will be rejected.
 -   `modelType`: specifies the type of translation model to use, options are:
     - `'quality_optimized'`: use a translation model that maximizes translation
       quality, at the cost of response time. This option may be unavailable for

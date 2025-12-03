@@ -285,6 +285,11 @@ export function validateAndAppendTextOptions(
             data.append('style_id', options.styleRule.styleId);
         }
     }
+    if (options.customInstructions !== undefined) {
+        for (const instruction of options.customInstructions) {
+            data.append('custom_instructions', instruction);
+        }
+    }
 }
 
 /**

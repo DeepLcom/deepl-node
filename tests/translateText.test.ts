@@ -281,6 +281,25 @@ describe('translate text', () => {
         expect(result.billedCharacters).toBe(exampleText.en.length);
     });
 
+    withRealServer('should translate with custom instructions', async () => {
+        const translator = makeTranslator();
+        const text = 'Hello world. I am testing if custom instructions are working correctly.';
+        const resultWithCustomInstructions = await translator.translateText(text, null, 'de', {
+            customInstructions: ['Use informal language', 'Be concise'],
+        });
+        const resultWithoutCustomInstructions = await translator.translateText(text, null, 'de');
+        expect(resultWithCustomInstructions.text).toBeTruthy();
+        expect(resultWithoutCustomInstructions.text).not.toBe(resultWithCustomInstructions.text);
+    });
+
+    it('should translate with empty custom instructions array', async () => {
+        const translator = makeTranslator();
+        const result = await translator.translateText(exampleText.en, null, 'de', {
+            customInstructions: [],
+        });
+        expect(result.text).toBe(exampleText.de);
+    });
+
     describe('request parameter tests', () => {
         beforeAll(() => {
             nock.disableNetConnect();
