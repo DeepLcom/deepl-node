@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.24.0] - 2025-12-10
 ### Added
 - Added `tagHandlingVersion` parameter to `translateText()` to specify which version of the tag handling algorithm to use. Options are `v1` and `v2`.
 
@@ -322,7 +324,8 @@ official DeepL Node.js client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.23.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.24.0...HEAD
+[1.24.0]: https://github.com/DeepLcom/deepl-node/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/DeepLcom/deepl-node/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/DeepLcom/deepl-node/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/DeepLcom/deepl-node/compare/v1.20.0...v1.21.0
