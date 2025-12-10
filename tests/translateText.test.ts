@@ -213,6 +213,26 @@ describe('translate text', () => {
         await translator.translateText(text, null, 'de', { tagHandling: 'html' });
     });
 
+    it('should translate with tag_handling_version option', async () => {
+        const text = '<p>Hello world</p>';
+        const translator = makeTranslator();
+        // Test with v1
+        const resultV1 = await translator.translateText(text, null, 'de', {
+            tagHandling: 'html',
+            tagHandlingVersion: 'v1',
+        });
+        expect(resultV1.text).toBeTruthy();
+        expect(resultV1.detectedSourceLang).toBe('en');
+
+        // Test with v2
+        const resultV2 = await translator.translateText(text, null, 'de', {
+            tagHandling: 'html',
+            tagHandlingVersion: 'v2',
+        });
+        expect(resultV2.text).toBeTruthy();
+        expect(resultV2.detectedSourceLang).toBe('en');
+    });
+
     it('should translate with context option', async () => {
         const translator = makeTranslator();
         const text = 'Das ist scharf!';

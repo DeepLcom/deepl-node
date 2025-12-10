@@ -84,6 +84,7 @@ export interface DeepLClientOptions extends TranslatorOptions {}
 export type Formality = 'less' | 'more' | 'default' | 'prefer_less' | 'prefer_more';
 export type SentenceSplittingMode = 'off' | 'on' | 'nonewlines' | 'default';
 export type TagHandlingMode = 'html' | 'xml';
+export type TagHandlingVersion = 'v1' | 'v2';
 export type ModelType = 'quality_optimized' | 'latency_optimized' | 'prefer_quality_optimized';
 export type GlossaryId = string;
 export type StyleId = string;
@@ -162,6 +163,9 @@ export interface TranslateTextOptions extends BaseRequestOptions {
 
     /** Type of tags to parse before translation, options are 'html' and 'xml'. */
     tagHandling?: TagHandlingMode;
+
+    /** Version of tag handling to use, options are 'v1' and 'v2'. */
+    tagHandlingVersion?: TagHandlingVersion;
 
     /** Set to false to disable automatic tag detection, default is true. */
     outlineDetection?: boolean;

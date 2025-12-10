@@ -257,6 +257,9 @@ export function validateAndAppendTextOptions(
     if (options.tagHandling !== undefined) {
         data.append('tag_handling', options.tagHandling);
     }
+    if (options.tagHandlingVersion !== undefined) {
+        data.append('tag_handling_version', options.tagHandlingVersion);
+    }
     if (options.outlineDetection !== undefined) {
         data.append('outline_detection', toBoolString(options.outlineDetection));
     }

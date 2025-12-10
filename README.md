@@ -198,6 +198,8 @@ console.log(await deeplClient.translateText('How are you?', null, 'de', { formal
       time, at the cost of translation quality.
 -   `tagHandling`: type of tags to parse before translation, options are `'html'`
     and `'xml'`.
+-   `tagHandlingVersion`: specifies which version of the tag handling algorithm to use.
+    Options are `v1` and `v2`.
 
 The following options are only used if `tagHandling` is `'xml'`:
 
