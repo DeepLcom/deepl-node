@@ -104,7 +104,7 @@ export async function checkStatusCode(
             );
         case 404:
             if (usingGlossary) throw new GlossaryNotFoundError(`Glossary not found${message}`);
-            throw new DeepLError(`Not found, check server_url${message}`);
+            throw new DeepLError(`Not found${message}`);
         case 400:
             throw new DeepLError(`Bad request${message}`);
         case 429:
