@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Removed Node 12 from the CI as it broke and is end-of-life.
+- Updated our model type tests to expect the `model_type_used` to be populated when the `model_type` is specified in the request
+- Updated a tag handling test to add a missing `</p>` tag
 
 ## [1.24.0] - 2025-12-10
 ### Added
