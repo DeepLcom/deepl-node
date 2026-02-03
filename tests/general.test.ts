@@ -73,7 +73,7 @@ describe('general', () => {
         const translator = makeTranslator();
         const options: TranslateTextOptions = { tagHandling: 'xml', ignoreTags: 'ignore' };
         const arIgnorePart = '<ignore>يجب تجاهل هذا الجزء.</ignore>';
-        const enSentenceWithARIgnorePart = `<p>This is a <b>short</b> <i>sentence</i>. ${arIgnorePart} This is another sentence.`;
+        const enSentenceWithARIgnorePart = `<p>This is a <b>short</b> <i>sentence</i>.</p> ${arIgnorePart} This is another sentence.`;
         const enIgnorePart = '<ignore>This part should be ignored.</ignore>';
         const arSentenceWithENIgnorePart = `<p>هذه <i>جملة</i> <b>قصيرة</b>. ${enIgnorePart} هذه جملة أخرى.</p>`;
 
