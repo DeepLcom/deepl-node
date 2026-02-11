@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated our model type tests to expect the `model_type_used` to be populated when the `model_type` is specified in the request
 - Updated a tag handling test to add a missing `</p>` tag
 - Improved `NotFoundException` error message by removing the misleading "check server_url" suggestion.
+- Bumped `axios` dependency due to CVE-2026-25639
 
 ## [1.24.0] - 2025-12-10
 ### Added
