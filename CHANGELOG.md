@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added new language constants from January 2026 API release of 81 new languages.
+
 ### Changed
 - Removed Node 12 from the CI as it broke and is end-of-life.
 - Updated our model type tests to expect the `model_type_used` to be populated when the `model_type` is specified in the request
