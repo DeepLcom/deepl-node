@@ -26,10 +26,16 @@ const axiosInstance = axios.create({
  */
 interface SendRequestOptions {
     /**
-     * Fields to include in message body (or params). Values must be either strings, or arrays of
-     * strings (for repeated parameters).
+     * Fields to include in message body (or params) as form-encoded data. Values must be either
+     * strings, or arrays of strings (for repeated parameters).
+     * Cannot be used together with jsonBody.
      */
     data?: URLSearchParams;
+    /**
+     * JSON body to send with the request. If provided, Content-Type will be set to
+     * application/json. Cannot be used together with data or fileBuffer.
+     */
+    jsonBody?: Record<string, unknown>;
     /** Extra HTTP headers to include in request, in addition to headers defined in constructor. */
     headers?: Record<string, string>;
     /** Buffer containing file data to include. */
@@ -140,6 +146,12 @@ export class HttpClient {
                 axiosRequestConfig.headers = {};
             }
             Object.assign(axiosRequestConfig.headers, form.getHeaders());
+        } else if (options.jsonBody) {
+            axiosRequestConfig.data = options.jsonBody;
+            if (axiosRequestConfig.headers === undefined) {
+                axiosRequestConfig.headers = {};
+            }
+            axiosRequestConfig.headers['Content-Type'] = 'application/json';
         } else if (options.data) {
             if (method === 'GET') {
                 axiosRequestConfig.params = options.data;
