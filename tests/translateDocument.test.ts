@@ -144,10 +144,14 @@ describe('translate document', () => {
             expect(fs.readFileSync(outputDocumentPath).toString()).toContain('Ihnen');
             await unlinkP(outputDocumentPath);
 
+            // Default formality is automatic, so the output may be either formal or informal
             await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de', {
                 formality: 'default',
             });
-            expect(fs.readFileSync(outputDocumentPath).toString()).toContain('Ihnen');
+            const defaultDocResult = fs.readFileSync(outputDocumentPath).toString();
+            expect(defaultDocResult.includes('Ihnen') || defaultDocResult.includes('dir')).toBe(
+                true,
+            );
             await unlinkP(outputDocumentPath);
 
             await translator.translateDocument(exampleDocument, outputDocumentPath, null, 'de', {

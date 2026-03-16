@@ -119,13 +119,18 @@ describe('translate text', () => {
             const input = 'How are you?';
             const formal = 'Ihnen'; // Wie geht es Ihnen?
             const informal = 'dir'; // Wie geht es dir?
-            expect((await translator.translateText(input, null, 'de')).text).toContain(formal);
+            // Default formality is automatic, so the output may be either formal or informal
+            const defaultResult = (await translator.translateText(input, null, 'de')).text;
+            expect(defaultResult.includes(formal) || defaultResult.includes(informal)).toBe(true);
             expect(
                 (await translator.translateText(input, null, 'de', { formality: 'less' })).text,
             ).toContain(informal);
+            const defaultExplicitResult = (
+                await translator.translateText(input, null, 'de', { formality: 'default' })
+            ).text;
             expect(
-                (await translator.translateText(input, null, 'de', { formality: 'default' })).text,
-            ).toContain(formal);
+                defaultExplicitResult.includes(formal) || defaultExplicitResult.includes(informal),
+            ).toBe(true);
             expect(
                 (await translator.translateText(input, null, 'de', { formality: 'more' })).text,
             ).toContain(formal);
@@ -137,10 +142,13 @@ describe('translate text', () => {
             ).toContain(informal);
 
             const formalityDefault = <deepl.Formality>'DEFAULT'; // Type cast to silence type-checks
+            const formalityDefaultResult = (
+                await translator.translateText(input, null, 'de', { formality: formalityDefault })
+            ).text;
             expect(
-                (await translator.translateText(input, null, 'de', { formality: formalityDefault }))
-                    .text,
-            ).toContain(formal);
+                formalityDefaultResult.includes(formal) ||
+                    formalityDefaultResult.includes(informal),
+            ).toBe(true);
 
             const formalityMore = <deepl.Formality>'MORE'; // Type cast to silence type-checks
             expect(
