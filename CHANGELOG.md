@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new language constants from January 2026 API release of 81 new languages.
 
 ### Changed
+- Updated formality tests to accept either formal or informal output when using default formality,
+  since default formality is now automatic.
 - Removed Node 12 from the CI as it broke and is end-of-life.
 - Updated our model type tests to expect the `model_type_used` to be populated when the `model_type` is specified in the request
 - Updated a tag handling test to add a missing `</p>` tag
