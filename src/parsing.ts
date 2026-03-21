@@ -558,12 +558,14 @@ function parseConfiguredRules(
  * Parses the given custom instruction API response to a CustomInstruction object.
  * @private
  */
-function parseCustomInstruction(instruction: {
+export function parseCustomInstruction(instruction: {
+    id?: string;
     label: string;
     prompt: string;
     source_language?: string;
 }): CustomInstruction {
     return {
+        id: instruction.id,
         label: instruction.label,
         prompt: instruction.prompt,
         sourceLanguage: instruction.source_language,
@@ -574,7 +576,7 @@ function parseCustomInstruction(instruction: {
  * Parses the given style rule API response to a StyleRuleInfo object.
  * @private
  */
-function parseStyleRuleInfo(styleRule: StyleRuleInfoApiResponse): StyleRuleInfo {
+export function parseStyleRuleInfo(styleRule: StyleRuleInfoApiResponse): StyleRuleInfo {
     try {
         const customInstructions = styleRule.custom_instructions
             ? styleRule.custom_instructions.map(parseCustomInstruction)

@@ -677,6 +677,8 @@ export interface ListMultilingualGlossaryApiResponse {
  * Custom instruction for a style rule.
  */
 export interface CustomInstruction {
+    /** Unique ID of the custom instruction (present in API responses). */
+    readonly id?: string;
     /** Label for the custom instruction. */
     readonly label: string;
     /** Prompt text for the custom instruction. */
@@ -748,6 +750,7 @@ export interface StyleRuleInfoApiResponse {
         vocabulary?: Record<string, string>;
     };
     custom_instructions?: Array<{
+        id?: string;
         label: string;
         prompt: string;
         source_language?: string;

@@ -14,6 +14,9 @@ import {
     GlossaryId,
     ListMultilingualGlossaryApiResponse,
     StyleRuleInfo,
+    StyleRuleInfoApiResponse,
+    StyleId,
+    CustomInstruction,
 } from './types';
 import {
     parseMultilingualGlossaryDictionaryInfo,
@@ -22,6 +25,8 @@ import {
     parseMultilingualGlossaryDictionaryEntries,
     parseListMultilingualGlossaries,
     parseStyleRuleInfoList,
+    parseStyleRuleInfo,
+    parseCustomInstruction,
 } from './parsing';
 import {
     appendCsvDictionaryEntries,
@@ -30,6 +35,18 @@ import {
     extractGlossaryId,
 } from './utils';
 import { ArgumentError, GlossaryNotFoundError } from './errors';
+export type CustomInstructionRequestBody = {
+    label: string;
+    prompt: string;
+    source_language?: string;
+};
+
+export type CreateStyleRuleRequestBody = {
+    name: string;
+    language: string;
+    configured_rules?: Record<string, Record<string, string>>;
+    custom_instructions?: CustomInstructionRequestBody[];
+};
 
 export enum WritingStyle {
     ACADEMIC = 'academic',
@@ -579,5 +596,239 @@ export class DeepLClient extends Translator {
 
         await checkStatusCode(statusCode, content);
         return parseStyleRuleInfoList(content);
+    }
+
+    /**
+     * Creates a new style rule.
+     *
+     * @param styleRule: The style rule parameters including name, language, and optional configured_rules and custom_instructions.
+     * @returns {Promise<StyleRuleInfo>} The created style rule info.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async createStyleRule(styleRule: CreateStyleRuleRequestBody): Promise<StyleRuleInfo> {
+        if (!styleRule.name) {
+            throw new ArgumentError('Parameter "name" must not be empty');
+        }
+        if (!styleRule.language) {
+            throw new ArgumentError('Parameter "language" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'POST',
+            '/v3/style_rules',
+            { jsonBody: styleRule },
+        );
+        await checkStatusCode(statusCode, content);
+        return parseStyleRuleInfo(JSON.parse(content) as StyleRuleInfoApiResponse);
+    }
+
+    /**
+     * Retrieves a single style rule by ID.
+     *
+     * @param styleId: The ID of the style rule to retrieve.
+     * @returns {Promise<StyleRuleInfo>} The style rule info.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async getStyleRule(styleId: StyleId): Promise<StyleRuleInfo> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'GET',
+            `/v3/style_rules/${encodeURIComponent(styleId)}`,
+        );
+        await checkStatusCode(statusCode, content);
+        return parseStyleRuleInfo(JSON.parse(content) as StyleRuleInfoApiResponse);
+    }
+
+    /**
+     * Updates the name of a style rule.
+     *
+     * @param styleId: The ID of the style rule to update.
+     * @param name: The new name for the style rule.
+     * @returns {Promise<StyleRuleInfo>} The updated style rule info.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async updateStyleRuleName(styleId: StyleId, name: string): Promise<StyleRuleInfo> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        if (!name) {
+            throw new ArgumentError('Parameter "name" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'PATCH',
+            `/v3/style_rules/${encodeURIComponent(styleId)}`,
+            { jsonBody: { name } },
+        );
+        await checkStatusCode(statusCode, content);
+        return parseStyleRuleInfo(JSON.parse(content) as StyleRuleInfoApiResponse);
+    }
+
+    /**
+     * Deletes a style rule.
+     *
+     * @param styleId: The ID of the style rule to delete.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async deleteStyleRule(styleId: StyleId): Promise<void> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'DELETE',
+            `/v3/style_rules/${encodeURIComponent(styleId)}`,
+        );
+        await checkStatusCode(statusCode, content);
+    }
+
+    /**
+     * Updates the configured rules of a style rule.
+     *
+     * @param styleId: The ID of the style rule to update.
+     * @param configuredRules: The new configured rules mapping.
+     * @returns {Promise<StyleRuleInfo>} The updated style rule info.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async updateStyleRuleConfiguredRules(
+        styleId: StyleId,
+        configuredRules: Record<string, Record<string, string>>,
+    ): Promise<StyleRuleInfo> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'PUT',
+            `/v3/style_rules/${encodeURIComponent(styleId)}/configured_rules`,
+            { jsonBody: configuredRules },
+        );
+        await checkStatusCode(statusCode, content);
+        return parseStyleRuleInfo(JSON.parse(content) as StyleRuleInfoApiResponse);
+    }
+
+    /**
+     * Creates a custom instruction for a style rule.
+     *
+     * @param styleId: The ID of the style rule.
+     * @param instruction: The custom instruction parameters including label, prompt, and optional source_language.
+     * @returns {Promise<CustomInstruction>} The created custom instruction.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async createStyleRuleCustomInstruction(
+        styleId: StyleId,
+        instruction: CustomInstructionRequestBody,
+    ): Promise<CustomInstruction> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        if (!instruction.label) {
+            throw new ArgumentError('Parameter "label" must not be empty');
+        }
+        if (!instruction.prompt) {
+            throw new ArgumentError('Parameter "prompt" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'POST',
+            `/v3/style_rules/${encodeURIComponent(styleId)}/custom_instructions`,
+            { jsonBody: instruction },
+        );
+        await checkStatusCode(statusCode, content);
+        return parseCustomInstruction(JSON.parse(content));
+    }
+
+    /**
+     * Retrieves a custom instruction for a style rule.
+     *
+     * @param styleId: The ID of the style rule.
+     * @param instructionId: The ID of the custom instruction.
+     * @returns {Promise<CustomInstruction>} The custom instruction.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async getStyleRuleCustomInstruction(
+        styleId: StyleId,
+        instructionId: string,
+    ): Promise<CustomInstruction> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        if (!instructionId) {
+            throw new ArgumentError('Parameter "instructionId" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'GET',
+            `/v3/style_rules/${encodeURIComponent(
+                styleId,
+            )}/custom_instructions/${encodeURIComponent(instructionId)}`,
+        );
+        await checkStatusCode(statusCode, content);
+        return parseCustomInstruction(JSON.parse(content));
+    }
+
+    /**
+     * Updates a custom instruction for a style rule.
+     *
+     * @param styleId: The ID of the style rule.
+     * @param instructionId: The ID of the custom instruction to update.
+     * @param instruction: The custom instruction parameters including label, prompt, and optional source_language.
+     * @returns {Promise<CustomInstruction>} The updated custom instruction.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async updateStyleRuleCustomInstruction(
+        styleId: StyleId,
+        instructionId: string,
+        instruction: CustomInstructionRequestBody,
+    ): Promise<CustomInstruction> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        if (!instructionId) {
+            throw new ArgumentError('Parameter "instructionId" must not be empty');
+        }
+        if (!instruction.label) {
+            throw new ArgumentError('Parameter "label" must not be empty');
+        }
+        if (!instruction.prompt) {
+            throw new ArgumentError('Parameter "prompt" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'PUT',
+            `/v3/style_rules/${encodeURIComponent(
+                styleId,
+            )}/custom_instructions/${encodeURIComponent(instructionId)}`,
+            { jsonBody: instruction },
+        );
+        await checkStatusCode(statusCode, content);
+        return parseCustomInstruction(JSON.parse(content));
+    }
+
+    /**
+     * Deletes a custom instruction from a style rule.
+     *
+     * @param styleId: The ID of the style rule.
+     * @param instructionId: The ID of the custom instruction to delete.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async deleteStyleRuleCustomInstruction(styleId: StyleId, instructionId: string): Promise<void> {
+        if (!styleId) {
+            throw new ArgumentError('Parameter "styleId" must not be empty');
+        }
+        if (!instructionId) {
+            throw new ArgumentError('Parameter "instructionId" must not be empty');
+        }
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'DELETE',
+            `/v3/style_rules/${encodeURIComponent(
+                styleId,
+            )}/custom_instructions/${encodeURIComponent(instructionId)}`,
+        );
+        await checkStatusCode(statusCode, content);
     }
 }

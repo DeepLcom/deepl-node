@@ -500,34 +500,96 @@ Style rules allow you to customize your translations using a managed, shared lis
 of rules for style, formatting, and more. Multiple style rules can be stored with 
 your account, each with a user-specified name and a uniquely-assigned ID.
 
-#### Creating and managing style rules
+#### Creating a style rule
 
-Currently style rules must be created and managed in the DeepL UI via
-https://www.deepl.com/en/custom-rules. Full CRUD functionality via the APIs will
-come shortly.
+Use `createStyleRule()` to create a new style rule with a name and language
+code. You can optionally provide `configuredRules` and `customInstructions`.
 
-#### Listing all style rules
+```javascript
+const rule = await deeplClient.createStyleRule('My Style Rule', 'en');
+console.log(`Created: ${rule.name} (${rule.styleId})`);
+```
+
+#### Retrieving and listing style rules
+
+Use `getStyleRule()` to retrieve a single style rule by ID, or
+`getAllStyleRules()` to list all style rules.
 
 `getAllStyleRules()` returns a list of `StyleRuleInfo` objects
 corresponding to all of your stored style rules. The method accepts optional
 parameters: `page` (page number for pagination, 0-indexed), `pageSize` (number
-of items per page), and `detailed` (whether to include detailed configuration
-rules in the `configuredRules` property).
+of items per page), and `detailed`. When `true`, the response includes
+`configuredRules` and `customInstructions` for each style rule. When `false`
+(default), these fields are omitted for faster responses.
 
 ```javascript
-// Get all style rules
+// Get a single style rule by ID
+const rule = await deeplClient.getStyleRule('YOUR_STYLE_ID');
+console.log(`${rule.name} (${rule.language})`);
+
+// List all style rules
 const styleRules = await deeplClient.getAllStyleRules();
-for (const rule of styleRules) {
-    console.log(`${rule.name} (${rule.styleId})`);
+for (const r of styleRules) {
+    console.log(`${r.name} (${r.styleId})`);
 }
 
-// Get style rules with detailed configuration
-const styleRules = await deeplClient.getAllStyleRules({ detailed: true });
-for (const rule of styleRules) {
-    if (rule.configuredRules) {
-        console.log(`  Number formatting: ${rule.configuredRules.numbers}`);
+// List with detailed configuration
+const detailed = await deeplClient.getAllStyleRules(undefined, undefined, true);
+for (const r of detailed) {
+    if (r.configuredRules) {
+        console.log(`  Number formatting: ${JSON.stringify(r.configuredRules.numbers)}`);
     }
 }
+```
+
+#### Updating a style rule
+
+Use `updateStyleRuleName()` to rename a style rule, and
+`updateStyleRuleConfiguredRules()` to update its configured rules.
+
+```javascript
+// Update the name
+const updated = await deeplClient.updateStyleRuleName('YOUR_STYLE_ID', 'New Name');
+
+// Update configured rules
+const updatedRules = await deeplClient.updateStyleRuleConfiguredRules(
+    'YOUR_STYLE_ID',
+    { style_and_tone: { formality: 'formal' } },
+);
+```
+
+#### Managing custom instructions
+
+Custom instructions allow you to add free-text prompts to a style rule. Use
+`createStyleRuleCustomInstruction()`, `getStyleRuleCustomInstruction()`,
+`updateStyleRuleCustomInstruction()`, and
+`deleteStyleRuleCustomInstruction()` to manage them.
+
+```javascript
+// Create a custom instruction
+const instruction = await deeplClient.createStyleRuleCustomInstruction(
+    'YOUR_STYLE_ID', 'Formal tone', 'Always use formal language');
+console.log(`Created instruction: ${instruction.id}`);
+
+// Get a custom instruction
+const fetched = await deeplClient.getStyleRuleCustomInstruction(
+    'YOUR_STYLE_ID', instruction.id);
+
+// Update a custom instruction
+const updated = await deeplClient.updateStyleRuleCustomInstruction(
+    'YOUR_STYLE_ID', instruction.id, 'Updated label', 'Use very formal language');
+
+// Delete a custom instruction
+await deeplClient.deleteStyleRuleCustomInstruction(
+    'YOUR_STYLE_ID', instruction.id);
+```
+
+#### Deleting a style rule
+
+Use `deleteStyleRule()` to delete a style rule by ID.
+
+```javascript
+await deeplClient.deleteStyleRule('YOUR_STYLE_ID');
 ```
 
 ### Checking account usage
