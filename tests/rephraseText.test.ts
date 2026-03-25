@@ -25,7 +25,7 @@ describe('rephrase text', () => {
 
     it('should throw an error for unsupported languages', async () => {
         const deeplClient = makeDeeplClient();
-        const deeplClientPromise = deeplClient.rephraseText(exampleText.de, 'ja');
+        const deeplClientPromise = deeplClient.rephraseText(exampleText.de, 'lv');
         await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
         await expect(deeplClientPromise).rejects.toThrow(/Value for '?target_lang'? not supported/);
     });
