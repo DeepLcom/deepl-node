@@ -177,6 +177,12 @@ console.log(await deeplClient.translateText('How are you?', null, 'de', { formal
     `getMultilingualGlossary()`/`getGlossary()`.
 -   `styleRule`: specifies a style rule to use with translation, either as a string
     containing the style rule ID, or a `StyleRuleInfo` as returned by `getAllStyleRules()`.
+-   `translationMemory`: specifies a translation memory to use with translation,
+    either as a string containing the translation memory ID, or a
+    `TranslationMemoryInfo` as returned by `listTranslationMemories()`.
+-   `translationMemoryThreshold`: a number from 0 to 100 that specifies the
+    minimum matching percentage for translation memory matches. We recommend
+    a minimum threshold of 75%.
 -   `context`: specifies additional context to influence translations, that is not
     translated itself. Characters in the `context` parameter are not counted toward billing.
     See the [API documentation][api-docs-context-param] for more information and
@@ -590,6 +596,59 @@ Use `deleteStyleRule()` to delete a style rule by ID.
 
 ```javascript
 await deeplClient.deleteStyleRule('YOUR_STYLE_ID');
+```
+
+### Translation Memories
+
+Translation memories store and reuse previously created translations, helping to
+maintain consistency and reduce translation costs by leveraging past work.
+
+#### Uploading and managing translation memories
+
+Currently translation memories must be uploaded and managed in the DeepL UI via
+https://www.deepl.com/translation-memory. Full CRUD functionality via the APIs will
+come shortly.
+
+#### Listing translation memories
+
+Use `listTranslationMemories()` to list available translation memories
+associated with your account.
+
+```javascript
+const translationMemories = await deeplClient.listTranslationMemories();
+for (const tm of translationMemories) {
+    console.log(`${tm.name} (${tm.translationMemoryId})`);
+}
+```
+
+#### Using a translation memory in translations
+
+Pass the `translationMemory` option to `translateText()` to apply a translation
+memory during translation. You can provide either the translation memory ID as a
+string, or a `TranslationMemoryInfo` object returned by
+`listTranslationMemories()`. Optionally, use `translationMemoryThreshold` to
+control the minimum similarity for matches.
+
+```typescript
+// Using a translation memory ID
+const result = await deeplClient.translateText(
+    'Hello, world!',
+    'en',
+    'de',
+    { translationMemory: 'YOUR_TM_ID' },
+);
+
+// Using a TranslationMemoryInfo object with a similarity threshold
+const translationMemories = await deeplClient.listTranslationMemories();
+const result = await deeplClient.translateText(
+    'Hello, world!',
+    'en',
+    'de',
+    {
+        translationMemory: translationMemories[0],
+        translationMemoryThreshold: 80,
+    },
+);
 ```
 
 ### Checking account usage

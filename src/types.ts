@@ -88,6 +88,7 @@ export type TagHandlingVersion = 'v1' | 'v2';
 export type ModelType = 'quality_optimized' | 'latency_optimized' | 'prefer_quality_optimized';
 export type GlossaryId = string;
 export type StyleId = string;
+export type TranslationMemoryId = string;
 export type TagList = string | string[];
 
 /**
@@ -160,6 +161,14 @@ export interface TranslateTextOptions extends BaseRequestOptions {
      * a StyleRuleInfo object as returned by getAllStyleRules().
      */
     styleRule?: StyleId | StyleRuleInfo;
+
+    /** Specifies the ID of a translation memory to use with translation, or
+     * a TranslationMemoryInfo object as returned by listTranslationMemories().
+     */
+    translationMemory?: TranslationMemoryId | TranslationMemoryInfo;
+
+    /** Specifies the minimum similarity threshold (0 to 100) for translation memory matches. */
+    translationMemoryThreshold?: number;
 
     /** Type of tags to parse before translation, options are 'html' and 'xml'. */
     tagHandling?: TagHandlingMode;
@@ -763,4 +772,35 @@ export interface StyleRuleInfoApiResponse {
  */
 export interface ListStyleRuleApiResponse {
     style_rules: StyleRuleInfoApiResponse[];
+}
+
+/**
+ * Information about a translation memory.
+ */
+export interface TranslationMemoryInfo {
+    readonly translationMemoryId: TranslationMemoryId;
+    readonly name: string;
+    readonly sourceLanguage: string;
+    readonly targetLanguages: string[];
+    readonly segmentCount: number;
+}
+
+/**
+ * Type used during JSON parsing of API response for translation memory info.
+ * @private
+ */
+export interface TranslationMemoryInfoApiResponse {
+    translation_memory_id: string;
+    name: string;
+    source_language: string;
+    target_languages: string[];
+    segment_count: number;
+}
+
+/**
+ * Type used during JSON parsing of API response for listing translation memories.
+ * @private
+ */
+export interface ListTranslationMemoryApiResponse {
+    translation_memories: TranslationMemoryInfoApiResponse[];
 }

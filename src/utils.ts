@@ -288,6 +288,27 @@ export function validateAndAppendTextOptions(
             data.append('style_id', options.styleRule.styleId);
         }
     }
+    if (options.translationMemory !== undefined) {
+        if (!isString(options.translationMemory)) {
+            if (options.translationMemory.translationMemoryId === undefined) {
+                throw new DeepLError(
+                    'translationMemory option should be a TranslationMemoryId (string) or a TranslationMemoryInfo object.',
+                );
+            }
+            data.append('translation_memory_id', options.translationMemory.translationMemoryId);
+        } else {
+            data.append('translation_memory_id', options.translationMemory);
+        }
+    }
+    if (options.translationMemoryThreshold !== undefined) {
+        if (options.translationMemory === undefined) {
+            throw new DeepLError('translationMemoryThreshold requires translationMemory');
+        }
+        if (options.translationMemoryThreshold < 0 || options.translationMemoryThreshold > 100) {
+            throw new DeepLError('translationMemoryThreshold must be a number between 0 and 100.');
+        }
+        data.append('translation_memory_threshold', options.translationMemoryThreshold.toString());
+    }
     if (options.customInstructions !== undefined) {
         for (const instruction of options.customInstructions) {
             data.append('custom_instructions', instruction);

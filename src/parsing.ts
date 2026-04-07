@@ -29,6 +29,9 @@ import {
     ListStyleRuleApiResponse,
     ConfiguredRules,
     CustomInstruction,
+    TranslationMemoryInfo,
+    TranslationMemoryInfoApiResponse,
+    ListTranslationMemoryApiResponse,
 } from './types';
 import { standardizeLanguageCode } from './utils';
 
@@ -607,6 +610,35 @@ export function parseStyleRuleInfoList(json: string): StyleRuleInfo[] {
         return obj.style_rules.map((styleRule: StyleRuleInfoApiResponse) =>
             parseStyleRuleInfo(styleRule),
         );
+    } catch (error) {
+        throw new DeepLError(`Error parsing response JSON: ${error}`);
+    }
+}
+
+/**
+ * Parses the given translation memory API response to a TranslationMemoryInfo object.
+ * @private
+ */
+export function parseTranslationMemoryInfo(
+    tm: TranslationMemoryInfoApiResponse,
+): TranslationMemoryInfo {
+    return {
+        translationMemoryId: tm.translation_memory_id,
+        name: tm.name,
+        sourceLanguage: tm.source_language,
+        targetLanguages: tm.target_languages,
+        segmentCount: tm.segment_count,
+    };
+}
+
+/**
+ * Parses the given JSON string to an array of TranslationMemoryInfo objects.
+ * @private
+ */
+export function parseTranslationMemoryInfoList(json: string): TranslationMemoryInfo[] {
+    try {
+        const obj = JSON.parse(json) as ListTranslationMemoryApiResponse;
+        return obj.translation_memories.map(parseTranslationMemoryInfo);
     } catch (error) {
         throw new DeepLError(`Error parsing response JSON: ${error}`);
     }

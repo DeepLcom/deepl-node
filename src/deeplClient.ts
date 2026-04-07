@@ -17,6 +17,7 @@ import {
     StyleRuleInfoApiResponse,
     StyleId,
     CustomInstruction,
+    TranslationMemoryInfo,
 } from './types';
 import {
     parseMultilingualGlossaryDictionaryInfo,
@@ -27,6 +28,7 @@ import {
     parseStyleRuleInfoList,
     parseStyleRuleInfo,
     parseCustomInstruction,
+    parseTranslationMemoryInfoList,
 } from './parsing';
 import {
     appendCsvDictionaryEntries,
@@ -596,6 +598,38 @@ export class DeepLClient extends Translator {
 
         await checkStatusCode(statusCode, content);
         return parseStyleRuleInfoList(content);
+    }
+
+    /**
+     * Retrieves a list of available translation memories. The maximum number of translation
+     * memories returned is controlled by pageSize (max 25).
+     *
+     * @param page: Page number for pagination, 0-indexed (optional).
+     * @param pageSize: Number of items per page (optional).
+     * @returns {Promise<TranslationMemoryInfo[]>} An array of objects containing details about each translation memory.
+     *
+     * @throws {DeepLError} If any error occurs while communicating with the DeepL API.
+     */
+    async listTranslationMemories(
+        page?: number,
+        pageSize?: number,
+    ): Promise<TranslationMemoryInfo[]> {
+        const queryParams = new URLSearchParams();
+        if (page !== undefined) {
+            queryParams.append('page', String(page));
+        }
+        if (pageSize !== undefined) {
+            queryParams.append('page_size', String(pageSize));
+        }
+
+        const { statusCode, content } = await this.httpClient.sendRequestWithBackoff<string>(
+            'GET',
+            '/v3/translation_memories',
+            { data: queryParams },
+        );
+
+        await checkStatusCode(statusCode, content);
+        return parseTranslationMemoryInfoList(content);
     }
 
     /**
