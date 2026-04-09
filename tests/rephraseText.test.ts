@@ -34,27 +34,27 @@ describe('rephrase text', () => {
         const deeplClient = makeDeeplClient();
         const deeplClientPromise = deeplClient.rephraseText(
             exampleText.de,
-            'es',
+            'ja',
             null,
             WritingTone.CONFIDENT,
         );
         await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
         await expect(deeplClientPromise).rejects.toThrow(
-            /Language Spanish does not support setting a tone/,
+            /Language ja does not support setting a tone/,
         );
     });
 
-    it('should throw an error for invalid writing_style parameter', async () => {
+    it('should throw an error for unsupported writing_style parameter', async () => {
         const deeplClient = makeDeeplClient();
         const deeplClientPromise = deeplClient.rephraseText(
             exampleText.de,
-            'es',
+            'ja',
             WritingStyle.BUSINESS,
             null,
         );
         await expect(deeplClientPromise).rejects.toBeInstanceOf(Error);
         await expect(deeplClientPromise).rejects.toThrow(
-            /Language Spanish does not support setting a writing style/,
+            /Language ja does not support setting a writing style/,
         );
     });
 
