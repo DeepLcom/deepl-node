@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `listTranslationMemories()` method to the `DeepLClient` class for
   listing available translation memories.
 
+### Changed
+- Bumped `axios` dependency due to CVE-2025-62718
+
 ### Fixed
 - Fix write tests that broke from language expansion
 
