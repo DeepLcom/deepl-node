@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - Bump follow-redirects to 1.16.0 due to GHSA-r4q5-vmmm-2653.
 
-
 ## [1.26.0] - 2026-04-09
 ### Added
 - Added support for translation memories in text translation via
