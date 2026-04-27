@@ -7,7 +7,7 @@ import * as deepl from 'deepl-node';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { v4 as randomUUID } from 'uuid';
+import { randomUUID } from 'crypto';
 
 // Note: this constant cannot be exported immediately, because exports are locally undefined
 const internalExampleText: Record<string, string> = {

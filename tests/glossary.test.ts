@@ -6,7 +6,7 @@ import * as deepl from 'deepl-node';
 
 import fs from 'fs';
 import { makeTranslator, tempFiles, withRealServer, testTimeout } from './core';
-import { v4 as randomUUID } from 'uuid';
+import { randomUUID } from 'crypto';
 
 const invalidGlossaryId = 'invalid_glossary_id';
 const nonExistentGlossaryId = '96ab91fd-e715-41a1-adeb-5d701f84a483';
