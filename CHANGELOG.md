@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- HTTP requests that fail with `ECONNRESET`, `EPIPE`, or `EAI_AGAIN` are now
+  retried. Previously these were classified as non-retryable, surfacing
+  transient transport failures (e.g. stale keep-alive sockets) as hard errors
+  on the first attempt. Behavior now aligns with deepl-python.
+
 ### Security
 - Bump follow-redirects to 1.16.0 due to GHSA-r4q5-vmmm-2653.
 
