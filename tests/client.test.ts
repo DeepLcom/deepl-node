@@ -19,23 +19,19 @@ jest.mock('loglevel', () => ({
 
 describe('client tests', () => {
     describe('retry classification', () => {
-        it.each([
-            ['ETIMEDOUT'],
-            ['ECONNABORTED'],
-            ['ECONNRESET'],
-            ['EPIPE'],
-            ['EAI_AGAIN'],
-        ])('treats axios error code %s as retryable', (code) => {
-            expect(RETRYABLE_AXIOS_ERROR_CODES.has(code)).toBe(true);
-        });
+        it.each([['ETIMEDOUT'], ['ECONNABORTED'], ['ECONNRESET'], ['EPIPE'], ['EAI_AGAIN']])(
+            'treats axios error code %s as retryable',
+            (code) => {
+                expect(RETRYABLE_AXIOS_ERROR_CODES.has(code)).toBe(true);
+            },
+        );
 
-        it.each([
-            ['ENOTFOUND'],
-            ['ECONNREFUSED'],
-            ['CERT_HAS_EXPIRED'],
-        ])('does not treat axios error code %s as retryable', (code) => {
-            expect(RETRYABLE_AXIOS_ERROR_CODES.has(code)).toBe(false);
-        });
+        it.each([['ENOTFOUND'], ['ECONNREFUSED'], ['CERT_HAS_EXPIRED']])(
+            'does not treat axios error code %s as retryable',
+            (code) => {
+                expect(RETRYABLE_AXIOS_ERROR_CODES.has(code)).toBe(false);
+            },
+        );
     });
 
     describe('log debug', () => {
