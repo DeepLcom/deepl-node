@@ -5,7 +5,7 @@ import { DocumentMinifier } from '../../src/documentMinifier';
 import AdmZip from 'adm-zip';
 import { DocumentMinificationError } from '../../src';
 import { FsHelper } from '../../src/fsHelper';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import mock from 'mock-fs';
 
 describe('DocumentMinifier helperMethods', () => {
@@ -32,7 +32,7 @@ describe('DocumentMinifier helperMethods', () => {
         });
 
         it('should use provided temp directory when specified', () => {
-            const customTempDir = path.join(os.tmpdir(), 'custom_temp_dir' + uuidv4());
+            const customTempDir = path.join(os.tmpdir(), 'custom_temp_dir' + randomUUID());
             fs.mkdirSync(customTempDir);
 
             const minifier = new DocumentMinifier(customTempDir);

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { DocumentDeminificationError, DocumentMinificationError } from './errors';
 import AdmZip from 'adm-zip';
 import { FsHelper } from './fsHelper';
@@ -283,7 +283,7 @@ export class DocumentMinifier implements IDocumentMinifier {
      * @throws {DocumentMinificationError} If the temporary directory could not be created
      */
     private static createTemporaryDirectory(): string {
-        const tempDir = path.join(os.tmpdir(), 'document_minification_' + uuidv4());
+        const tempDir = path.join(os.tmpdir(), 'document_minification_' + randomUUID());
 
         if (fs.existsSync(tempDir)) {
             throw new DocumentMinificationError(
