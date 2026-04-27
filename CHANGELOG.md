@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.27.0] - 2026-04-27
+### Changed
+- Replaced the `uuid` dependency with Node's built-in `crypto.randomUUID()`.
+  Resolves GHSA-w5hq-g745-h8pq (`uuid <14.0.0`) and removes a runtime
+  dependency.
+- Bumped minimum Node version from `>=12.0` to `>=14.17`. Node 12 reached
+  end of life in April 2022, and `crypto.randomUUID()` is available from
+  Node 14.17 onward.
+
+### Fixed
+- HTTP requests that fail with `ECONNRESET`, `EPIPE`, or `EAI_AGAIN` are now
+  retried. Previously these were classified as non-retryable, surfacing
+  transient transport failures (e.g. stale keep-alive sockets) as hard errors
+  on the first attempt. Behavior now aligns with deepl-python.
+
 ### Security
 - Bump follow-redirects to 1.16.0 due to GHSA-r4q5-vmmm-2653.
 
