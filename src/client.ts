@@ -15,6 +15,19 @@ import * as http from 'http';
 
 type HttpMethod = 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
 
+/**
+ * Axios error codes for transient transport-level failures that should be retried.
+ * Mirrors deepl-python's broader ConnectionError retry coverage.
+ * @internal
+ */
+export const RETRYABLE_AXIOS_ERROR_CODES = new Set([
+    'ETIMEDOUT',
+    'ECONNABORTED',
+    'ECONNRESET',
+    'EPIPE',
+    'EAI_AGAIN',
+]);
+
 const axiosInstance = axios.create({
     httpAgent: new http.Agent({ keepAlive: true }),
     httpsAgent: new https.Agent({ keepAlive: true }),
@@ -261,9 +274,7 @@ export class HttpClient {
 
             const error = new ConnectionError(`Connection failure: ${message}`);
             error.error = axiosError;
-            if (axiosError.code === 'ETIMEDOUT') {
-                error.shouldRetry = true;
-            } else if (axiosError.code === 'ECONNABORTED') {
+            if (axiosError.code !== undefined && RETRYABLE_AXIOS_ERROR_CODES.has(axiosError.code)) {
                 error.shouldRetry = true;
             } else {
                 logDebug('Unrecognized axios error', axiosError);

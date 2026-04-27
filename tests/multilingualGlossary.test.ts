@@ -4,7 +4,7 @@
 
 import * as deepl from 'deepl-node';
 
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { makeDeeplClient, withRealServer } from './core';
 
 describe('Multilingual Glossary Tests', () => {
@@ -29,7 +29,7 @@ describe('Multilingual Glossary Tests', () => {
 
         constructor(client: deepl.DeepLClient, testName: string) {
             this.client = client;
-            const uuid = uuidv4();
+            const uuid = randomUUID();
             this.glossaryName = `${GLOSSARY_NAME_PREFIX}: ${testName} ${uuid}`;
         }
 

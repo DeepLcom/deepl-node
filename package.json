@@ -1,7 +1,7 @@
 {
     "name": "deepl-node",
     "description": "deepl-node is the official DeepL Node.js client library",
-    "version": "1.26.0",
+    "version": "1.27.0",
     "author": "DeepL SE <open-source@deepl.com> (https://www.deepl.com)",
     "license": "MIT",
     "repository": {
@@ -11,7 +11,7 @@
     "bugs": "https://github.com/DeepLcom/deepl-node/issues",
     "homepage": "https://www.deepl.com/",
     "engines": {
-        "node": ">=12.0"
+        "node": ">=14.17"
     },
     "keywords": [
         "deepl",
@@ -23,14 +23,12 @@
         "adm-zip": "^0.5.16",
         "axios": "^1.7.4",
         "form-data": "^3.0.4",
-        "loglevel": ">=1.6.2",
-        "uuid": "^8.3.2"
+        "loglevel": ">=1.6.2"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.5.7",
         "@types/jest": "^29.5.0",
         "@types/mock-fs": "^4.13.4",
-        "@types/uuid": "^8.3.4",
         "@typescript-eslint/eslint-plugin": "^5.6.0",
         "@typescript-eslint/parser": "^5.6.0",
         "dotenv": "^16.4.7",
