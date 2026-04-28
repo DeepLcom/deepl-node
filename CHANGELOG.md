@@ -378,7 +378,8 @@ official DeepL Node.js client library took over this package name. Thanks to
 [Tristan De Oliveira](https://github.com/icrotz) for transferring the package
 ownership.
 
-[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.26.0...HEAD
+[Unreleased]: https://github.com/DeepLcom/deepl-node/compare/v1.27.0...HEAD
+[1.27.0]: https://github.com/DeepLcom/deepl-node/compare/v1.26.0...v1.27.0
 [1.26.0]: https://github.com/DeepLcom/deepl-node/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/DeepLcom/deepl-node/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/DeepLcom/deepl-node/compare/v1.23.0...v1.24.0
